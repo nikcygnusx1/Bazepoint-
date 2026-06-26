@@ -38,7 +38,7 @@ export function Trust() {
       id="trust"
       aria-labelledby="trust-title"
       ref={sectionRef}
-      className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)]"
+      className="py-24 bg-[var(--color-bz-surface)] trust-hatch border-y border-[var(--color-bz-border)]"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
@@ -71,7 +71,7 @@ export function Trust() {
         <div className="flex flex-wrap justify-center gap-12 lg:gap-24 max-w-4xl mx-auto border-t border-[var(--color-bz-border)] pt-12">
           {stats.map((stat, i) => (
             <div key={i} className="text-center min-w-[120px]">
-              <div className="text-4xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-2">
+              <div className="text-4xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-2 tabular-nums">
                 {stat.prefix}{counters[i].count}{stat.suffix}
               </div>
               <div className="text-sm font-body text-[var(--color-bz-text-muted)] uppercase tracking-wider font-semibold">

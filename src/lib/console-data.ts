@@ -17,6 +17,13 @@ export interface Manufacturer {
   verified: boolean;
   verifiedLabel: string; // "Verified" | "Pending"
   emailDraft: EmailDraft;
+  auditScore: number;          // integer 88–97
+  establishedYear: number;     // 4-digit year
+  exportCertified: boolean;
+  capacityPerMonth: string;    // e.g. "12,000 units/mo"
+  responseTime: string;        // e.g. "< 4 hrs"
+  minOrderValue: string;       // pre-computed e.g. "$700"
+  initials: string;            // first two letters of name, e.g. "AG"
 }
 
 export const MANUFACTURERS: Manufacturer[] = [
@@ -49,7 +56,14 @@ I've reviewed your profile on Bazepoint and your verified export record was reas
 Looking forward to discussing further.
 
 [Founder Name]`
-    }
+    },
+    auditScore: 96,
+    establishedYear: 2008,
+    exportCertified: true,
+    capacityPerMonth: "18,000 units/mo",
+    responseTime: "< 3 hrs",
+    minOrderValue: "$700",
+    initials: "AG"
   },
   {
     id: "ozpack",
@@ -78,7 +92,14 @@ Could you send a sample catalogue and your price sheet for 300–1,000 units? We
 Looking forward to hearing from you.
 
 [Founder Name]`
-    }
+    },
+    auditScore: 91,
+    establishedYear: 2011,
+    exportCertified: true,
+    capacityPerMonth: "9,500 units/mo",
+    responseTime: "< 6 hrs",
+    minOrderValue: "$1,350",
+    initials: "OP"
   },
   {
     id: "merpack",
@@ -107,7 +128,14 @@ Can you confirm whether you export to the UAE and GCC region, and whether you've
 Looking forward to hearing from you.
 
 [Founder Name]`
-    }
+    },
+    auditScore: 94,
+    establishedYear: 2003,
+    exportCertified: true,
+    capacityPerMonth: "22,000 units/mo",
+    responseTime: "< 4 hrs",
+    minOrderValue: "$480",
+    initials: "MA"
   }
 ];
 
@@ -120,5 +148,7 @@ export const HERO_SCENARIO = {
     { label: "Budget", value: "< $2 / unit" }
   ],
   manufacturers: MANUFACTURERS,
-  autoSelectManufacturerId: "alghazal"
+  autoSelectManufacturerId: "alghazal",
+  sessionId: "SRC-4471",
+  tradeRegion: "MENA",
 };

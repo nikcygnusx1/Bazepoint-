@@ -56,6 +56,36 @@ export function BazeConsole({
   // Typewriter typing progress of current email body (0 to 1)
   const [typingProgress, setTypingProgress] = useState(0);
 
+  // Typewriter typing progress of current brief (0 to 1)
+  const [briefTypingProgress, setBriefTypingProgress] = useState(0);
+  const [showGhostHint, setShowGhostHint] = useState(false);
+  const [displayedLines, setDisplayedLines] = useState<string[]>([]);
+
+  // Generate random interactive session ID once
+  const interactiveSessionIdRef = useRef('SRC-' + (Math.floor(Math.random() * 9000) + 1000).toString());
+
+  const sessionId = useMemo(() => {
+    if (mode === 'hero') return scenario.sessionId || "SRC-4471";
+    if (mode === 'fragment') return "SRC-4471";
+    return interactiveSessionIdRef.current;
+  }, [mode, scenario]);
+
+  const activeBrief = useMemo(() => {
+    if (mode === 'hero') return scenario.brief;
+    if (mode === 'fragment') return "Premium apparel production · Istanbul · MOQ 200";
+    return interactiveBrief || "Describe your product above and hit search...";
+  }, [mode, scenario, interactiveBrief]);
+
+  const tradeRegion = useMemo(() => {
+    if (mode === 'hero') return scenario.tradeRegion || "MENA";
+    if (mode === 'fragment') return "MENA";
+    const text = activeBrief.toLowerCase();
+    if (/turkey|istanbul|mena|uae|dubai/i.test(text)) return "MENA";
+    if (/indonesia|vietnam|asia|sea/i.test(text)) return "SEA";
+    if (/australia|ozpack/i.test(text)) return "AUS";
+    return "Global";
+  }, [mode, scenario, activeBrief]);
+
   // Determine active stages/briefs/activeId depending on mode
   const currentStage = useMemo(() => {
     if (mode === 'hero') {
@@ -67,12 +97,6 @@ export function BazeConsole({
     if (mode === 'fragment') return 'results';
     return interactiveState;
   }, [mode, beat, interactiveState]);
-
-  const activeBrief = useMemo(() => {
-    if (mode === 'hero') return scenario.brief;
-    if (mode === 'fragment') return "Premium apparel production · Istanbul · MOQ 200";
-    return interactiveBrief || "Describe your product above and hit search...";
-  }, [mode, scenario, interactiveBrief]);
 
   const activeId = useMemo(() => {
     if (mode === 'hero') {
@@ -176,6 +200,91 @@ Best,
     animFrameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animFrameId);
   }, [activeId, shouldReduceMotion]);
+
+  // Brief Typing Effect Trigger
+  useEffect(() => {
+    if (mode !== 'hero') return;
+    if (beat !== 1) {
+      setBriefTypingProgress(0);
+      return;
+    }
+    
+    if (shouldReduceMotion) {
+      setBriefTypingProgress(1);
+      return;
+    }
+
+    setBriefTypingProgress(0);
+    const startTime = performance.now();
+    const duration = 2100; // 2.1 seconds typing
+
+    let animFrameId: number;
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      setBriefTypingProgress(progress);
+      if (progress < 1) {
+        animFrameId = requestAnimationFrame(tick);
+      }
+    };
+    animFrameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animFrameId);
+  }, [beat, mode, shouldReduceMotion]);
+
+  // Ghost hint timing logic
+  useEffect(() => {
+    if (beat !== 1 || mode !== 'hero') {
+      setShowGhostHint(false);
+      return;
+    }
+    if (briefTypingProgress >= 1) {
+      const timer = setTimeout(() => {
+        setShowGhostHint(true);
+      }, 280);
+      return () => clearTimeout(timer);
+    } else {
+      setShowGhostHint(false);
+    }
+  }, [briefTypingProgress, beat, mode]);
+
+  // Beat 2 Terminal Scan Lines interval
+  useEffect(() => {
+    if (mode !== 'hero') return;
+    if (beat !== 2) {
+      setDisplayedLines([]);
+      return;
+    }
+
+    const SCAN_LINES = [
+      '[00:00.1]  Parsing brief · category: Packaging Systems',
+      '[00:00.3]  Loading MENA supplier index · 412 records',
+      '[00:00.6]  Cross-referencing SEA verified network · 218 records',
+      '[00:00.9]  Applying filters · MOQ ≤ 500, budget < $2.00/unit',
+      '[00:01.2]  Audit score pass threshold: 88.0 — 3 suppliers matched ✓',
+    ];
+
+    if (shouldReduceMotion) {
+      setDisplayedLines(SCAN_LINES);
+      return;
+    }
+
+    setDisplayedLines([]);
+    let currentIndex = 0;
+    const intervalId = setInterval(() => {
+      setDisplayedLines(prev => {
+        if (currentIndex < SCAN_LINES.length) {
+          const nextLines = [...prev, SCAN_LINES[currentIndex]];
+          currentIndex++;
+          return nextLines;
+        } else {
+          clearInterval(intervalId);
+          return prev;
+        }
+      });
+    }, 360);
+
+    return () => clearInterval(intervalId);
+  }, [beat, mode, shouldReduceMotion]);
 
   // Clipboard copy handler
   const handleCopyEmail = () => {
@@ -358,7 +467,7 @@ Best,
 
   return (
     <div 
-      className="w-full bg-[var(--bz-console-bg)] border border-[var(--bz-console-border)] rounded-xl overflow-hidden flex flex-col font-sans shadow-2xl relative"
+      className="w-full bg-[var(--bz-console-bg)] border border-[var(--bz-console-border)] rounded-xl overflow-hidden flex flex-col font-console shadow-2xl relative"
       role="toolbar" 
       aria-label="Baze sourcing console"
     >
@@ -370,7 +479,7 @@ Best,
           </div>
           <span className="text-xs font-semibold text-[var(--bz-console-text)] tracking-tight">baze</span>
           <div className="w-px h-3 bg-[var(--bz-console-border)]"></div>
-          <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--bz-console-text-muted)]">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--bz-console-text-muted)] font-console">
             {(mode === 'hero' && (beat === 1 || beat === 2)) ? 'baze://sourcing/brief' : 'Sourcing Run'}
           </span>
         </div>
@@ -385,6 +494,24 @@ Best,
         )}
 
         <div className="flex items-center gap-2">
+          {/* Session ID */}
+          <div
+            className="hidden sm:flex items-center px-1.5 py-0.5 rounded-[3px] font-console text-[9px]"
+            style={{ background: 'var(--bz-console-session-bg)', color: 'var(--bz-console-text-faint)' }}
+          >
+            #{sessionId}
+          </div>
+
+          {/* Trade Region */}
+          {tradeRegion && (
+            <div
+              className="hidden sm:flex items-center px-1.5 py-0.5 rounded-[3px] font-console text-[9px] font-medium"
+              style={{ background: 'var(--bz-console-amber-dim)', color: 'var(--bz-console-amber)' }}
+            >
+              {tradeRegion}
+            </div>
+          )}
+
           {/* Status Pill */}
           <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${statusInfo.color}`}>
             <span className={`w-1.5 h-1.5 rounded-full bg-current ${currentStage === 'scanning' ? 'animate-ping' : ''}`}></span>
@@ -413,10 +540,56 @@ Best,
               <span className="w-1.5 h-1.5 rounded-full bg-[#00C8B0]"></span>
               <span>Describe your product</span>
             </div>
+            
             <div className="font-mono text-sm text-[var(--bz-console-text)] border border-[var(--bz-console-border)] bg-[var(--bz-console-bg)] p-3 rounded flex items-center justify-between">
-              <span className="truncate">{activeBrief}</span>
-              <span className="w-1.5 h-4 bg-[#00C8B0] ml-1 animate-pulse flex-shrink-0"></span>
+              {beat === 1 ? (
+                <span className="truncate">
+                  {activeBrief.slice(0, Math.floor(briefTypingProgress * activeBrief.length))}
+                  {briefTypingProgress < 1 && (
+                    <span className="w-[2px] h-[13px] inline-block bg-[var(--bz-console-teal)] ml-[2px] animate-pulse align-middle" />
+                  )}
+                </span>
+              ) : (
+                <span className="truncate">{activeBrief}</span>
+              )}
+              {beat === 1 && briefTypingProgress < 1 && (
+                <span className="w-1.5 h-4 bg-[#00C8B0] ml-1 animate-pulse flex-shrink-0"></span>
+              )}
             </div>
+
+            {beat === 1 && showGhostHint && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.55 }}
+                transition={{ duration: 0.4 }}
+                className="mt-2.5 font-console text-[10px] italic text-left"
+                style={{ color: 'var(--bz-console-text-faint)' }}
+              >
+                → Baze will search 847 verified suppliers across MENA & SEA
+              </motion.p>
+            )}
+
+            {beat === 2 && (
+              <div 
+                className="font-console text-left mt-3 p-3 rounded-md border border-[var(--bz-console-border)] bg-[var(--bz-console-bg)] overflow-hidden max-h-[96px] sm:max-h-[120px]"
+              >
+                {displayedLines.map((line, idx) => {
+                  const isLast = idx === 4;
+                  return (
+                    <div 
+                      key={idx} 
+                      className="text-[10px] leading-relaxed"
+                      style={{
+                        color: isLast ? 'var(--bz-console-log-complete)' : 'var(--bz-console-log-dim)',
+                        fontWeight: isLast ? 600 : 400
+                      }}
+                    >
+                      {line}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -504,6 +677,10 @@ Best,
                   // Define transition with delay for staggered entry in Beat 3 & 4
                   const staggerDelay = (mode === 'hero' && beat >= 3) ? idx * 0.15 : 0;
 
+                  const rowBg = idx % 2 === 0
+                    ? 'bg-[var(--bz-console-bg)]'
+                    : 'bg-[var(--bz-console-row-alt)]';
+
                   return (
                     <motion.div
                       key={m.id}
@@ -517,13 +694,26 @@ Best,
                         borderColor: isBeat4Selected ? '#00C8B0' : undefined,
                         transform: isBeat4Selected ? 'translateY(-3px)' : undefined,
                       }}
-                      className={`p-3.5 flex flex-col cursor-pointer text-left select-none relative transition-colors duration-200 outline-none group ${isActive ? 'bg-[var(--bz-console-raised)] border-l-2 border-[#00C8B0]' : isBeat4Selected ? 'bg-[var(--bz-console-raised)] border-l-2 border-[#00C8B0]' : 'hover:bg-[var(--bz-console-surface)]/20 border-l-2 border-transparent'}`}
+                      className={`p-3.5 flex flex-col cursor-pointer text-left select-none relative transition-colors duration-200 outline-none group ${isActive ? 'bg-[var(--bz-console-raised)] border-l-2 border-[#00C8B0]' : isBeat4Selected ? 'bg-[var(--bz-console-raised)] border-l-2 border-[#00C8B0]' : `${rowBg} hover:bg-[var(--bz-console-surface)]/30 border-l-2 border-transparent`}`}
                       role="option"
                       aria-selected={isActive || isBeat4Selected}
                       tabIndex={0}
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-2.5 min-w-0">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          {/* 2A. Avatar Initials Chip */}
+                          <div
+                            className="hidden sm:flex w-7 h-7 rounded-[5px] items-center justify-center flex-shrink-0 font-console text-[9px] font-bold tracking-wider select-none"
+                            style={{
+                              background: 'var(--bz-console-surface)',
+                              border: '1px solid var(--bz-console-border-active)',
+                              color: 'var(--bz-console-text-muted)',
+                            }}
+                            aria-hidden="true"
+                          >
+                            {m.initials}
+                          </div>
+
                           <span className="text-[10px] font-mono font-medium text-[var(--bz-console-text-faint)] mt-0.5">{m.rank}</span>
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
@@ -543,8 +733,17 @@ Best,
                             <div className="text-[10px] font-mono text-[var(--bz-console-text-muted)] flex items-center gap-1.5 mt-1">
                               <span>{m.flag}</span>
                               <span className="truncate">{m.city}, {m.country}</span>
-                              <span className="w-1 h-1 rounded-full bg-[var(--bz-console-border-active)]"></span>
+                              <span className="w-1.5 h-1.5 rounded-full bg-[var(--bz-console-border-active)]"></span>
                               <span className="truncate text-[9px] text-[var(--bz-console-text-faint)]">{m.category}</span>
+                            </div>
+
+                            {/* 2B. Third metadata line below city/country */}
+                            <div className="text-[9px] font-console text-[var(--bz-console-text-faint)] flex items-center gap-1.5 mt-0.5">
+                              <span>Est. {m.establishedYear}</span>
+                              <span className="w-[3px] h-[3px] rounded-full bg-[var(--bz-console-text-faint)]" />
+                              {m.exportCertified && <span className="text-[var(--bz-console-teal)] opacity-70">Export certified</span>}
+                              <span className="w-[3px] h-[3px] rounded-full bg-[var(--bz-console-text-faint)]" />
+                              <span>{m.responseTime} reply</span>
                             </div>
                           </div>
                         </div>
@@ -566,22 +765,34 @@ Best,
                         </div>
                       </div>
 
-                      {/* Specs stats row */}
-                      <div className="flex items-center gap-4 mt-3 bg-[var(--bz-console-surface)]/30 border border-[var(--bz-console-border)] rounded p-2 text-left justify-between sm:justify-start">
-                        <div>
-                          <div className="text-[8px] uppercase tracking-widest text-[var(--bz-console-text-faint)] font-mono">MOQ</div>
-                          <div className="text-[11px] font-semibold text-[var(--bz-console-text)] font-mono mt-0.5">{m.moq}</div>
-                        </div>
-                        <div className="w-px h-5 bg-[var(--bz-console-border)]"></div>
-                        <div>
-                          <div className="text-[8px] uppercase tracking-widest text-[var(--bz-console-text-faint)] font-mono">Price</div>
-                          <div className="text-[11px] font-semibold text-[var(--bz-console-text)] font-mono mt-0.5">{m.pricePerUnit}</div>
-                        </div>
-                        <div className="w-px h-5 bg-[var(--bz-console-border)]"></div>
-                        <div>
-                          <div className="text-[8px] uppercase tracking-widest text-[var(--bz-console-text-faint)] font-mono">Lead</div>
-                          <div className="text-[11px] font-semibold text-[var(--bz-console-text)] font-mono mt-0.5">{m.leadTime}</div>
-                        </div>
+                      {/* 2C. 5-column specs stats row */}
+                      <div className="flex items-stretch mt-2.5 rounded-[4px] overflow-hidden border border-[var(--bz-console-border)] bg-[var(--bz-console-bg)]">
+                        {[
+                          { label: 'MOQ',      value: m.moq },
+                          { label: 'PRICE',    value: m.pricePerUnit },
+                          { label: 'LEAD',     value: m.leadTime },
+                          { label: 'MIN VALUE', value: m.minOrderValue },
+                          { label: 'AUDIT',    value: `${m.auditScore}/100` },
+                        ].map((spec, i) => (
+                          <div
+                            key={spec.label}
+                            className={`flex-1 px-2 py-1.5 flex flex-col gap-0.5 ${i < 4 ? 'border-r border-[var(--bz-console-border)]' : ''} ${i >= 3 ? 'hidden sm:flex' : 'flex'}`}
+                          >
+                            <span className="text-[7.5px] font-console font-medium uppercase tracking-[0.1em] text-[var(--bz-console-text-faint)] leading-none">
+                              {spec.label}
+                            </span>
+                            <span
+                              className="text-[11px] font-console font-semibold leading-none tabular-nums"
+                              style={{
+                                color: spec.label === 'AUDIT'
+                                  ? (m.auditScore >= 90 ? 'var(--bz-console-audit-pass)' : 'var(--bz-console-audit-mid)')
+                                  : 'var(--bz-console-text)',
+                              }}
+                            >
+                              {spec.value}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </motion.div>
                   );
@@ -607,25 +818,46 @@ Best,
                     </span>
                   </div>
 
-                  {/* Recipient block */}
-                  <div className="px-4 py-2 border-b border-[var(--bz-console-border)] text-xs font-mono bg-[var(--bz-console-surface)]/40 text-left space-y-1">
-                    <div className="flex">
-                      <span className="w-10 text-[var(--bz-console-text-faint)]">To:</span>
-                      <span className="text-[var(--bz-console-text-muted)] truncate">
-                        sourcing@{selectedManufacturer.name.toLowerCase().replace(/\s+/g, '')}.com
-                      </span>
-                    </div>
-                    <div className="flex">
-                      <span className="w-10 text-[var(--bz-console-text-faint)]">Subj:</span>
-                      <span className="text-[var(--bz-console-text)] truncate font-semibold">
-                        {emailDraftData.subject}
-                      </span>
-                    </div>
+                  {/* Full Email Client Header Chrome */}
+                  <div className="px-4 py-2.5 border-b border-[var(--bz-console-border)] bg-[var(--bz-console-surface)]/40 text-left">
+                    {[
+                      { label: 'From',    value: 'sourcing-agent@bazepoint.com', badge: 'AI' },
+                      { label: 'To',      value: `sourcing@${selectedManufacturer.name.toLowerCase().replace(/\s+/g,'')}.com`, badge: null },
+                      { label: 'CC',      value: '—', badge: null },
+                      { label: 'Subject', value: emailDraftData.subject, badge: null },
+                      { label: 'Date',    value: new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }), badge: null },
+                    ].map(row => {
+                      const isSubject = row.label === 'Subject';
+                      return (
+                        <div key={row.label} className="flex items-start gap-2 py-[5px] border-b border-[var(--bz-console-header-border)] last:border-0">
+                          <span className="w-[52px] flex-shrink-0 font-console text-[10px]" style={{ color: 'var(--bz-console-text-faint)' }}>
+                            {row.label}:
+                          </span>
+                          <span 
+                            className="font-console text-[11px] flex items-center gap-1.5 flex-1 min-w-0" 
+                            style={{ 
+                              color: isSubject ? 'var(--bz-console-text)' : 'var(--bz-console-text-muted)',
+                              fontWeight: isSubject ? 600 : 400
+                            }}
+                          >
+                            <span className="truncate">{row.value}</span>
+                            {row.badge && (
+                              <span
+                                className="flex-shrink-0 font-console text-[8px] font-bold px-1 py-[1px] rounded-[3px]"
+                                style={{ background: 'var(--bz-console-teal-dim)', border: '1px solid rgba(0,200,176,0.25)', color: 'var(--bz-console-teal)' }}
+                              >
+                                {row.badge}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Body text area */}
-                  <div className="flex-1 p-4 overflow-y-auto text-left font-mono text-xs text-[var(--bz-console-text-muted)] leading-relaxed bg-[var(--bz-console-bg)]/50">
-                    <div className="whitespace-pre-line font-mono select-text">
+                  <div className="flex-1 p-4 overflow-y-auto text-left bg-[var(--bz-console-bg)]/50 font-sans text-[12px] leading-[1.7] text-[var(--bz-console-text-muted)]">
+                    <div className="whitespace-pre-line font-sans select-text">
                       {emailDraftData.body.slice(0, Math.floor(typingProgress * emailDraftData.body.length))}
                       {typingProgress < 1 && (
                         <span className="w-1 h-3.5 inline-block bg-[#00C8B0] animate-pulse ml-0.5 align-middle"></span>

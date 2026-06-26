@@ -90,7 +90,7 @@ export function Supply() {
           {/* Right: Interactive Map Concept */}
           <motion.div 
             variants={revealVariant}
-            className="col-span-1 lg:col-span-7 bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-2xl p-8 relative overflow-hidden min-h-[500px] flex items-center justify-center"
+            className="col-span-1 lg:col-span-7 bg-[var(--color-bz-surface-2)] logistics-grid border border-[var(--color-bz-border)] rounded-2xl p-8 relative overflow-hidden min-h-[500px] flex items-center justify-center"
           >
             {/* Abstract World Map Base */}
             <svg viewBox="0 0 1000 500" className="absolute inset-0 w-full h-full object-cover opacity-[0.05]" fill="currentColor">
@@ -147,7 +147,7 @@ export function Supply() {
                 <MapPin className="w-5 h-5 text-[var(--color-bz-teal)]" />
               </div>
               <div>
-                <div className="text-sm font-display font-[800] tracking-tight text-[var(--color-bz-text)]">1,200+ Verified Partners</div>
+                <div className="text-sm font-display font-[800] tracking-tight text-[var(--color-bz-text)] tabular-nums">1,200+ Verified Partners</div>
                 <div className="text-xs font-body text-[var(--color-bz-text-muted)]">Continuously audited network</div>
               </div>
             </div>

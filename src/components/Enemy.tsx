@@ -91,17 +91,17 @@ export function Enemy() {
               </p>
               <div className="flex items-center gap-4 pt-6 border-t border-[var(--color-bz-border)]">
                 <div className="flex-1 text-center">
-                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1">0</div>
+                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums">0</div>
                   <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Fake Brokers</div>
                 </div>
                 <div className="w-px h-8 bg-[var(--color-bz-border)]"></div>
                 <div className="flex-1 text-center">
-                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1">&lt;1min</div>
+                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums">&lt;1min</div>
                   <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Brief to First Email</div>
                 </div>
                 <div className="w-px h-8 bg-[var(--color-bz-border)]"></div>
                 <div className="flex-1 text-center">
-                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-teal)] mb-1">100%</div>
+                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-teal)] mb-1 tabular-nums">100%</div>
                   <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Vetted Only</div>
                 </div>
               </div>

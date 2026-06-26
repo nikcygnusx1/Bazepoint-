@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
@@ -50,7 +51,7 @@
 
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
-  --font-mono: var(--font-body);
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', ui-monospace, monospace;
 
   --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
   --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
@@ -103,6 +104,19 @@
   --bz-console-amber: #F5A623;
   --bz-console-amber-dim: rgba(245,166,35,0.12);
   --bz-console-red-dim: rgba(255,80,80,0.08);
+
+  --font-console: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', ui-monospace, monospace;
+
+  /* Phase 4 additions */
+  --bz-console-scan-line: rgba(0, 200, 176, 0.04);    /* alternating row tint for even rows */
+  --bz-console-row-alt: rgba(255, 255, 255, 0.018);   /* subtle odd-row lift */
+  --bz-console-audit-pass: #00C8B0;                   /* audit score ≥ 90 */
+  --bz-console-audit-mid: #F5A623;                    /* audit score 80–89 */
+  --bz-console-audit-fail: rgba(255, 80, 80, 0.9);    /* audit score < 80 — not used in data but define for completeness */
+  --bz-console-session-bg: rgba(255, 255, 255, 0.04); /* session ID pill background */
+  --bz-console-log-dim: rgba(232, 232, 230, 0.45);    /* scan log text */
+  --bz-console-log-complete: #00C8B0;                 /* scan log final line */
+  --bz-console-header-border: rgba(255, 255, 255, 0.05); /* horizontal rule weight inside header blocks */
 }
 
 body {
@@ -499,6 +513,43 @@ body {
 
 body {
   overflow-x: hidden;
+}
+
+.font-console {
+  font-family: var(--font-console);
+}
+
+.logistics-grid {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 31px,
+      var(--bz-console-header-border) 31px,
+      var(--bz-console-header-border) 32px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 31px,
+      var(--bz-console-header-border) 31px,
+      var(--bz-console-header-border) 32px
+    );
+}
+
+.trust-hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0px,
+    transparent 18px,
+    color-mix(in oklch, var(--color-bz-border) 45%, transparent) 18px,
+    color-mix(in oklch, var(--color-bz-border) 45%, transparent) 19px
+  );
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }
 
 
