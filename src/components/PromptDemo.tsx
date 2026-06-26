@@ -45,7 +45,6 @@ export function PromptDemo() {
     setInput('');
     let i = 0;
     if (typingInterval.current) clearInterval(typingInterval.current);
-    
     typingInterval.current = window.setInterval(() => {
       setInput(prev => prev + cleanText.charAt(i));
       i++;
@@ -64,32 +63,27 @@ export function PromptDemo() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isProcessing) return;
-    
     const trimmedBrief = input.trim();
     setLastSearchBrief(trimmedBrief);
     setIsProcessing(true);
     setResults(false);
     setDraftOpenId(null);
-
-    // Dispatch brief content
     window.dispatchEvent(new CustomEvent('demo-brief', { detail: trimmedBrief }));
-    
     setTimeout(() => {
       setIsProcessing(false);
       setResults(true);
-      // Dispatch results loaded
       window.dispatchEvent(new CustomEvent('demo-results', { detail: true }));
     }, 2200);
   };
 
-  const consoleState = isProcessing 
-    ? 'scanning' 
-    : results 
-      ? (draftOpenId !== null ? 'draft_ready' : 'results') 
+  const consoleState = isProcessing
+    ? 'scanning'
+    : results
+      ? (draftOpenId !== null ? 'draft_ready' : 'results')
       : 'idle';
 
   return (
-    <motion.section 
+    <motion.section
       id="demo"
       aria-labelledby="demo-title"
       className="py-24 bg-[var(--color-bz-bg)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
@@ -98,18 +92,18 @@ export function PromptDemo() {
       viewport={{ once: true, margin: "-80px" }}
       variants={staggerContainer}
     >
-      {/* Subtle Noise Overlay */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
 
       <div className="max-w-[900px] mx-auto px-6 relative z-10">
-        
+
+        {/* SECTION HEADING — answers "What happens when I talk to Baze?" */}
         <motion.div variants={sectionHeader} className="text-center mb-12">
           <h2 id="demo-title" className="section-label mb-4">See it work</h2>
           <p className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-3">
-            Describe your product. We find the factory.
+            Type a brief. Get verified factories and a draft email.
           </p>
-          <p className="text-base text-[var(--color-bz-text-muted)] font-body">
-            We’ll search our vetted network, surface manufacturers that fit your brief, and show you what an AI-drafted first email looks like. No sourcing jargon required.
+          <p className="text-base text-[var(--color-bz-text-muted)] font-body max-w-[560px] mx-auto">
+            No factory jargon. No Alibaba hunting. Describe what you want to make — Baze finds the verified match and writes the first email for you.
           </p>
         </motion.div>
 
@@ -133,7 +127,7 @@ export function PromptDemo() {
                   </AnimatePresence>
                 </div>
               )}
-              <input 
+              <input
                 type="text"
                 aria-label="Describe what you want to make"
                 value={input}
@@ -144,10 +138,10 @@ export function PromptDemo() {
                 disabled={isProcessing || results}
               />
             </div>
-            
+
             <AnimatePresence>
               {input.trim() && !results && (
-                <motion.button 
+                <motion.button
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
@@ -171,23 +165,21 @@ export function PromptDemo() {
                 </motion.button>
               )}
             </AnimatePresence>
-
           </form>
-          
           <SearchingState isProcessing={isProcessing} />
         </motion.div>
 
         {/* Suggestion Chips */}
         <AnimatePresence mode="wait">
           {!isProcessing && !results && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               className="mt-6 flex flex-wrap justify-center gap-3"
             >
               {SUGGESTIONS.map((s, i) => (
-                <button 
+                <button
                   key={i}
                   role="button"
                   tabIndex={0}
@@ -202,10 +194,10 @@ export function PromptDemo() {
           )}
         </AnimatePresence>
 
-        {/* Results / Interactive BazeConsole Overlay */}
+        {/* Results / Interactive BazeConsole */}
         <AnimatePresence>
           {(results || isProcessing) && (
-            <motion.div 
+            <motion.div
               layout
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -227,9 +219,8 @@ export function PromptDemo() {
                   }
                 }}
               />
-              
               <div className="mt-8 text-center">
-                <button 
+                <button
                   onClick={() => {
                     setInput('');
                     setLastSearchBrief('');
@@ -239,23 +230,13 @@ export function PromptDemo() {
                   }}
                   className="text-xs text-[var(--color-bz-text-muted)] font-body hover:text-[var(--color-bz-text)] transition-colors cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  ← Try a different product search
+                  ← Try a different product
                 </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
-      <style>{`
-        @keyframes pulse-shadow {
-          0%, 100% { box-shadow: 0 0 0 transparent; }
-          50% { box-shadow: var(--shadow-glow-teal); }
-        }
-        .animate-pulse-shadow {
-          animation: pulse-shadow 2.5s infinite ease-in-out;
-        }
-      `}</style>
     </motion.section>
   );
 }

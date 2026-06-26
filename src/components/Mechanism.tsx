@@ -4,12 +4,14 @@ import { Search, Filter, MessageSquare } from 'lucide-react';
 import { sectionHeader, staggerContainer, fadeUp } from '../lib/motion-variants';
 import { BazeConsole } from './BazeConsole';
 
+// Each step answers: "What exactly happens when I talk to Baze?"
 const STEPS = [
   {
     id: 1,
-    title: "Describe your product",
+    // OUTCOME heading — not a label
+    title: "Your brief becomes a search in seconds",
     icon: Search,
-    description: "Tell Baze what you're making in plain English. No factory jargon required.",
+    description: "Type what you're making in plain English — product type, material, budget, MOQ. No factory jargon. Baze reads it exactly as a founder would say it.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="brief" />
@@ -18,9 +20,9 @@ const STEPS = [
   },
   {
     id: 2,
-    title: "AI filters the verified network",
+    title: "Only verified factories reach your shortlist",
     icon: Filter,
-    description: "Baze scans our private database of verified manufacturers across MENA, SE Asia, and Oceania.",
+    description: "Baze filters a private network of audited manufacturers across Turkey, UAE, Indonesia, and beyond. Every factory passed a compliance, MOQ, and comms check before entering the network.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="list" highlightRow={0} />
@@ -29,9 +31,9 @@ const STEPS = [
   },
   {
     id: 3,
-    title: "Email drafted, ready to send",
+    title: "Your first email is written and ready to send",
     icon: MessageSquare,
-    description: "Get a curated list of top matches, complete with a drafted outreach email designed to get a response.",
+    description: "Baze drafts a personalized outreach email for each matched factory — specific to your product, budget, and MOQ. Copy it, edit it, or send it directly from Baze.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="email" />
@@ -62,7 +64,7 @@ export function Mechanism() {
   });
 
   return (
-    <motion.section 
+    <motion.section
       id="mechanism"
       aria-labelledby="mechanism-title"
       ref={containerRef}
@@ -73,71 +75,47 @@ export function Mechanism() {
       variants={staggerContainer}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-16 relative z-10">
+        {/* HEADING answers "What happens when I talk to Baze?" */}
         <motion.div variants={sectionHeader} className="text-center max-w-2xl mx-auto mb-16">
           <h2 id="mechanism-title" className="section-label justify-center mb-4">How it works</h2>
           <p className="text-3xl md:text-4xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)]">
-            Stop searching Alibaba.<br />Start building.
+            From brief to factory email — in under a minute.
+          </p>
+          <p className="mt-4 text-base text-[var(--color-bz-text-muted)] font-body max-w-[480px] mx-auto">
+            Three steps. No sourcing experience needed. The same console you see in the demo — this is exactly what runs when you submit a brief.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
+
           {/* Left: Steps Navigation */}
           <div className="flex flex-row md:flex-col gap-4 md:gap-2 relative overflow-x-auto md:overflow-visible pb-4 md:pb-0" style={{ scrollbarWidth: 'none' }}>
             <div ref={spineRef} className="absolute left-[23px] top-8 bottom-8 hidden md:block" style={{ width: 1 }}>
-              <svg
-                width="1"
-                height="100%"
-                viewBox="0 0 1 100"
-                preserveAspectRatio="none"
-                className="absolute inset-0 w-full h-full"
-                aria-hidden="true"
-              >
-                {/* Static background line */}
-                <line
-                  x1="0.5" y1="0"
-                  x2="0.5" y2="100"
-                  stroke="var(--color-bz-border)"
-                  strokeWidth="1"
-                  vectorEffect="non-scaling-stroke"
-                />
-                {/* Animated fill line — draws from top as scroll progresses */}
+              <svg width="1" height="100%" viewBox="0 0 1 100" preserveAspectRatio="none" className="absolute inset-0 w-full h-full" aria-hidden="true">
+                <line x1="0.5" y1="0" x2="0.5" y2="100" stroke="var(--color-bz-border)" strokeWidth="1" vectorEffect="non-scaling-stroke" />
                 <motion.line
-                  x1="0.5" y1="0"
-                  x2="0.5" y2="100"
-                  stroke="var(--color-bz-teal-dark)"
-                  strokeWidth="1.5"
-                  vectorEffect="non-scaling-stroke"
-                  style={{
-                    pathLength: scrollYProgress,
-                    opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]),
-                  }}
+                  x1="0.5" y1="0" x2="0.5" y2="100"
+                  stroke="var(--color-bz-teal-dark)" strokeWidth="1.5" vectorEffect="non-scaling-stroke"
+                  style={{ pathLength: scrollYProgress, opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]) }}
                 />
               </svg>
-
-              {/* Waypoint dots — one per step, positioned at even thirds of the spine */}
               {[0, 1, 2].map((i) => {
                 const dotProgress = dotOpacities[i];
                 return (
                   <motion.div
                     key={i}
                     className="absolute left-1/2 -translate-x-1/2 w-[10px] h-[10px] rounded-full border-2 border-[var(--color-bz-teal-dark)] bg-[var(--color-bz-bg)] will-change-transform"
-                    style={{
-                      top: `${(i / 2) * 100}%`,
-                      scale: dotProgress,
-                      opacity: dotProgress,
-                    }}
+                    style={{ top: `${(i / 2) * 100}%`, scale: dotProgress, opacity: dotProgress }}
                   />
                 );
               })}
             </div>
-            
-            {STEPS.map((step, index) => {
+
+            {STEPS.map((step) => {
               const isActive = activeStep === step.id;
               const Icon = step.icon;
-              
               return (
-                <motion.div 
+                <motion.div
                   key={step.id}
                   role="button"
                   tabIndex={0}
@@ -146,25 +124,22 @@ export function Mechanism() {
                   onClick={() => setActiveStep(step.id)}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveStep(step.id); }}
                 >
-                  {/* Indicator Line (Mobile) */}
                   {isActive && (
-                    <motion.div 
+                    <motion.div
                       layoutId="activeStepLine"
                       className="absolute left-0 top-0 bottom-0 w-1 bg-[var(--color-bz-teal-dark)] rounded-l-xl md:hidden"
                     />
                   )}
-
                   <div className={`relative z-10 flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300 ${isActive ? 'bg-[var(--color-bz-teal-dark)] text-white' : 'bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] text-[var(--color-bz-text-muted)] group-hover:text-[var(--color-bz-text)] group-hover:border-[var(--color-bz-border-strong)]'}`}>
                     <Icon className="w-5 h-5" />
                   </div>
-                  
                   <div className="flex flex-col pt-1">
                     <h3 className={`text-xl font-display font-[800] tracking-[-0.5px] mb-2 transition-colors duration-300 ${isActive ? 'text-[var(--color-bz-text)]' : 'text-[var(--color-bz-text-muted)] group-hover:text-[var(--color-bz-text)]'}`}>
                       {step.id}. {step.title}
                     </h3>
                     <AnimatePresence initial={false}>
                       {isActive && (
-                        <motion.p 
+                        <motion.p
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
@@ -181,14 +156,12 @@ export function Mechanism() {
             })}
           </div>
 
-          {/* Right: Dynamic Visual Display */}
-          <motion.div 
+          {/* Right: Dynamic Visual */}
+          <motion.div
             variants={fadeUp}
             className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-2xl h-[440px] flex items-center justify-center p-6 md:p-8 relative overflow-hidden"
           >
-            {/* Subtle Grid Background */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-bz-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-bz-border)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.2]"></div>
-
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStep}
