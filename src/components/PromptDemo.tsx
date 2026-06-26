@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, MapPin } from 'lucide-react';
-import { staggerContainer, sectionHeader, scaleUp, staggerSlow, cardItem } from '../lib/motion-variants';
+import { ArrowRight } from 'lucide-react';
+import { staggerContainer, sectionHeader, scaleUp } from '../lib/motion-variants';
 import { useTypewriterPlaceholder } from '../lib/use-typewriter-placeholder';
 import { SearchingState } from './SearchingState';
+import { BazeConsole } from './BazeConsole';
+import { MANUFACTURERS } from '../lib/console-data';
 
 const SUGGESTIONS = [
   { text: "Premium cotton hoodies · Turkey · MOQ 200", prefix: "🧵" },
-  { text: "Skincare packaging, glass · Indonesia · MOQ 500", prefix: "🧴" },
+  { text: "Skincare packaging, glass · UAE · MOQ 500", prefix: "🧴" },
   { text: "Supplement capsule jars · UAE · halal certified", prefix: "💊" }
 ];
 
@@ -19,62 +21,13 @@ const EXAMPLE_PROMPTS = [
   "Supplement capsules, halal certified, UAE or Malaysia, MOQ 1000, $1.50/unit",
 ];
 
-const MOCK_RESULTS = [
-  {
-    name: "Anatolia Apparel Co.",
-    location: "Istanbul, Turkey",
-    category: "Apparel",
-    price: "$7.20/unit",
-    moq: "100",
-    lead: "18d"
-  },
-  {
-    name: "Pacific Packaging Systems",
-    location: "Jakarta, Indonesia",
-    category: "Packaging",
-    price: "$1.45/unit",
-    moq: "500",
-    lead: "12d"
-  },
-  {
-    name: "Oasis Health Labs",
-    location: "Dubai, UAE",
-    category: "Supplements",
-    price: "$3.50/unit",
-    moq: "1000",
-    lead: "24d"
-  }
-];
-
-function buildEmailBody(manufacturerName: string, brief: string): string {
-  const nameParts = manufacturerName.split(' ');
-  const shortName = (nameParts[0] || manufacturerName) + ' Team';
-  const safeBrief = brief || '[describe your product here]';
-
-  return `Hi ${shortName},
-
-I came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.
-
-Here's what I'm looking to make:
-${safeBrief}
-
-Could you share your current pricing, minimum order quantities, and lead times for this type of product? If you're open to new founder accounts at these volumes, I'd love to schedule a quick call to discuss next steps.
-
-Looking forward to hearing from you.
-
-Best,
-[Your name]`;
-}
-
 export function PromptDemo() {
   const [input, setInput] = useState('');
   const [lastSearchBrief, setLastSearchBrief] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  const [draftOpen, setDraftOpen] = useState<number | null>(null);
-  const [copied, setCopied] = useState(false);
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [draftOpenId, setDraftOpenId] = useState<string | null>(null);
   const typingInterval = useRef<number | null>(null);
 
   const { currentIndex, currentPhrase } = useTypewriterPlaceholder(EXAMPLE_PROMPTS, 3500, isFocused || input.length > 0);
@@ -88,7 +41,6 @@ export function PromptDemo() {
   }, [isProcessing]);
 
   const handleChipClick = (text: string) => {
-    // Strip prefix if any
     const cleanText = text.replace(/^[^\w]+\s/, '');
     setInput('');
     let i = 0;
@@ -117,7 +69,7 @@ export function PromptDemo() {
     setLastSearchBrief(trimmedBrief);
     setIsProcessing(true);
     setResults(false);
-    setDraftOpen(null);
+    setDraftOpenId(null);
 
     // Dispatch brief content
     window.dispatchEvent(new CustomEvent('demo-brief', { detail: trimmedBrief }));
@@ -130,21 +82,11 @@ export function PromptDemo() {
     }, 2200);
   };
 
-  const handleCopy = (manufacturerName: string) => {
-    const body = buildEmailBody(manufacturerName, lastSearchBrief);
-    navigator.clipboard.writeText(body);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
-  const handleCopyLink = (manufacturerName: string) => {
-    const emailTo = 'sourcing@' + manufacturerName.toLowerCase().replace(/\s+/g, '') + '.com';
-    const body = buildEmailBody(manufacturerName, lastSearchBrief);
-    const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailTo}&su=Partnership+Inquiry+—+New+Product+Sourcing+Request&body=${encodeURIComponent(body)}`;
-    navigator.clipboard.writeText(url);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 1500);
-  };
+  const consoleState = isProcessing 
+    ? 'scanning' 
+    : results 
+      ? (draftOpenId !== null ? 'draft_ready' : 'results') 
+      : 'idle';
 
   return (
     <motion.section 
@@ -260,177 +202,31 @@ export function PromptDemo() {
           )}
         </AnimatePresence>
 
-        {/* Results */}
+        {/* Results / Interactive BazeConsole Overlay */}
         <AnimatePresence>
-          {results && (
+          {(results || isProcessing) && (
             <motion.div 
               layout
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               className="mt-8 overflow-hidden"
             >
-              {/* Header */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 mb-4 border-b border-[var(--color-bz-border)] gap-4">
-                <span className="text-sm font-body font-[700] text-[#1A1A18]">3 verified manufacturers found</span>
-                <div className="flex gap-2 text-xs font-body text-[#5C5C57]">
-                  <span className="bg-[rgba(184,226,242,0.2)] text-[#4A9EBF] border border-[rgba(184,226,242,0.4)] rounded-full px-3 py-1">Region</span>
-                  <span className="bg-[#F5F4F0] text-[#5C5C57] border border-[rgba(0,0,0,0.07)] rounded-full px-3 py-1">Category</span>
-                  <span className="bg-[#F5F4F0] text-[#5C5C57] border border-[rgba(0,0,0,0.07)] rounded-full px-3 py-1">MOQ</span>
-                </div>
-              </div>
-              
-              {/* Cards */}
-              <motion.div 
-                initial="hidden"
-                animate="visible"
-                variants={staggerSlow}
-                className="space-y-4"
-              >
-                {MOCK_RESULTS.map((m, index) => (
-                  <motion.div
-                    key={index}
-                    variants={cardItem}
-                    className="manufacturer-card p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 bg-[#FFFFFF] border border-[rgba(0,0,0,0.07)] !rounded-[20px] relative overflow-hidden group cursor-pointer before:absolute before:top-0 before:left-0 before:w-full before:h-1 before:bg-[#B8E2F2]"
-                  >
-                    {/* Rank */}
-                    <div className="text-xl font-display text-[var(--color-bz-text-faint)] w-8 flex-shrink-0">
-                      {index + 1}
-                    </div>
-                    
-                    {/* Info */}
-                    <div className="flex-grow flex flex-col items-start gap-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-base font-body font-[700] text-[#1A1A18]">{m.name}</h4>
-                        <span className="text-[#4A9EBF] bg-[rgba(184,226,242,0.1)] border border-[rgba(184,226,242,0.5)] font-body text-[11px] uppercase tracking-wider font-[600] rounded px-2 py-0.5 inline-flex items-center gap-1"><span className="font-bold text-[#4A9EBF]">✓</span> Verified</span>
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className="text-xs text-[#9C9C96] flex items-center gap-1 font-body">
-                          <MapPin className="w-3 h-3" /> {m.location}
-                        </span>
-                        <span className="bg-[rgba(34,197,94,0.1)] text-[#16A34A] text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-sm font-body">
-                          Active
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Metrics */}
-                    <div className="grid grid-cols-3 gap-6 md:gap-8 flex-shrink-0 w-full md:w-auto mt-4 md:mt-0 p-4 bg-[#F5F4F0] rounded-xl">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] text-[#9C9C96] uppercase font-body tracking-wider mb-1">Price/Unit</span>
-                        <span className="font-body text-sm font-[800] text-[#1A1A18]">{m.price}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] text-[#9C9C96] uppercase font-body tracking-wider mb-1">MOQ</span>
-                        <span className="font-body text-sm font-[800] text-[#1A1A18]">{m.moq}</span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] text-[#9C9C96] uppercase font-body tracking-wider mb-1">Lead Time</span>
-                        <span className="font-body text-sm font-[800] text-[#1A1A18]">{m.lead}</span>
-                      </div>
-                    </div>
-                    
-                    {/* Action */}
-                    <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
-                      <button className="btn-ghost flex-1 md:flex-none !text-xs !py-2 !px-3">View profile</button>
-                      <button 
-                        onClick={() => {
-                          setDraftOpen(index);
-                          window.dispatchEvent(new CustomEvent('demo-draft-open', { detail: { index } }));
-                        }}
-                        className={`btn-primary flex-1 md:flex-none !text-xs !py-2 !px-3 ${index === 0 ? 'animate-pulse-shadow' : ''}`}
-                      >
-                        Draft email →
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              <AnimatePresence>
-                {draftOpen !== null && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 16 }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                    className="mt-6 bg-[#FFFFFF] border border-[rgba(184,226,242,0.5)] rounded-2xl overflow-hidden"
-                  >
-                    {/* Panel header */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(0,0,0,0.07)] bg-[rgba(184,226,242,0.06)]">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#B8E2F2] animate-pulse"></div>
-                        <span className="text-xs font-body font-semibold text-[#4A9EBF] uppercase tracking-wider">
-                          AI Draft — {MOCK_RESULTS[draftOpen].name}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setDraftOpen(null);
-                          window.dispatchEvent(new CustomEvent('demo-draft-close'));
-                        }}
-                        className="text-[#9C9C96] hover:text-[#1A1A18] transition-colors text-lg leading-none"
-                        aria-label="Close draft"
-                      >
-                        ×
-                      </button>
-                    </div>
-
-                    {/* Email meta */}
-                    <div className="px-6 pt-4 pb-2 border-b border-[rgba(0,0,0,0.04)] space-y-1.5">
-                      <div className="flex gap-2 text-xs font-body text-[#9C9C96]">
-                        <span className="w-12 flex-shrink-0 font-medium text-[#5C5C57]">To:</span>
-                        <span>sourcing@{MOCK_RESULTS[draftOpen].name.toLowerCase().replace(/\s+/g, '')}.com</span>
-                      </div>
-                      <div className="flex gap-2 text-xs font-body text-[#9C9C96]">
-                        <span className="w-12 flex-shrink-0 font-medium text-[#5C5C57]">Subject:</span>
-                        <span>Partnership Inquiry — New Product Sourcing Request</span>
-                      </div>
-                    </div>
-
-                    {/* Email body */}
-                    <div className="px-6 py-5 text-sm font-body text-[#5C5C57] leading-relaxed">
-                      <p className="mb-4">Hi {MOCK_RESULTS[draftOpen].name.split(' ')[0]} Team,</p>
-                      <p className="mb-4">I came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.</p>
-                      <p className="mb-2">Here's what I'm looking to make:</p>
-                      <div className="mb-4 p-3.5 bg-[rgba(184,226,242,0.12)] border border-[rgba(184,226,242,0.3)] rounded-xl text-[#1A1A18] font-medium italic">
-                        {lastSearchBrief || '[describe your product here]'}
-                      </div>
-                      <p className="mb-4">Could you share your current pricing, minimum order quantities, and lead times for this type of product? If you're open to new founder accounts at these volumes, I'd love to schedule a quick call to discuss next steps.</p>
-                      <p className="mb-4">Looking forward to hearing from you.</p>
-                      <p className="mb-1">Best,</p>
-                      <p>[Your name]</p>
-                    </div>
-
-                    {/* Footer actions */}
-                    <div className="px-6 pb-5 flex flex-col sm:flex-row gap-3">
-                      <button 
-                        onClick={() => handleCopy(MOCK_RESULTS[draftOpen].name)}
-                        className="btn-primary flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
-                      >
-                        {copied ? 'Copied ✓' : 'Copy email'}
-                      </button>
-                      <button 
-                        onClick={() => handleCopyLink(MOCK_RESULTS[draftOpen].name)}
-                        className="btn-ghost flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
-                      >
-                        {copiedLink ? 'Link Copied ✓' : 'Copy Gmail Draft link'}
-                      </button>
-                      <button 
-                        onClick={() => {
-                          const emailTo = 'sourcing@' + MOCK_RESULTS[draftOpen].name.toLowerCase().replace(/\s+/g, '') + '.com';
-                          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emailTo}&su=Partnership+Inquiry+—+New+Product+Sourcing+Request&body=${encodeURIComponent(buildEmailBody(MOCK_RESULTS[draftOpen].name, lastSearchBrief))}`, '_blank');
-                        }}
-                        className="btn-ghost flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
-                      >
-                        Edit in Gmail
-                      </button>
-                      <p className="text-xs text-[#9C9C96] font-body self-center sm:ml-auto">
-                        Personalised by Baze AI · Ready to send
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <BazeConsole
+                mode="interactive"
+                state={consoleState}
+                brief={lastSearchBrief}
+                manufacturers={MANUFACTURERS}
+                activeManufacturerId={draftOpenId}
+                onSelectManufacturer={(id) => {
+                  setDraftOpenId(id);
+                  if (id) {
+                    const idx = MANUFACTURERS.findIndex(m => m.id === id);
+                    window.dispatchEvent(new CustomEvent('demo-draft-open', { detail: { index: idx, manufacturerId: id } }));
+                  } else {
+                    window.dispatchEvent(new CustomEvent('demo-draft-close'));
+                  }
+                }}
+              />
               
               <div className="mt-8 text-center">
                 <button 
@@ -438,12 +234,12 @@ export function PromptDemo() {
                     setInput('');
                     setLastSearchBrief('');
                     setResults(false);
-                    setDraftOpen(null);
+                    setDraftOpenId(null);
                     window.dispatchEvent(new CustomEvent('demo-reset'));
                   }}
-                  className="text-xs text-[var(--color-bz-text-muted)] font-body hover:text-[var(--color-bz-text)] transition-colors"
+                  className="text-xs text-[var(--color-bz-text-muted)] font-body hover:text-[var(--color-bz-text)] transition-colors cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  ← Try a different product
+                  ← Try a different product search
                 </button>
               </div>
             </motion.div>

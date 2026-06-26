@@ -88,6 +88,21 @@
   --transition-ui: var(--duration-fast) var(--ease-out-expo);
   --transition-reveal: var(--duration-slow) var(--ease-out-expo);
   --transition-spring: var(--duration-normal) var(--ease-spring);
+
+  /* Baze Console variables */
+  --bz-console-bg: #0E0E10;
+  --bz-console-surface: #141416;
+  --bz-console-raised: #1C1C1F;
+  --bz-console-border: rgba(255,255,255,0.07);
+  --bz-console-border-active: rgba(255,255,255,0.14);
+  --bz-console-text: #E8E8E6;
+  --bz-console-text-muted: #888885;
+  --bz-console-text-faint: #4A4A48;
+  --bz-console-teal: #00C8B0;
+  --bz-console-teal-dim: rgba(0,200,176,0.12);
+  --bz-console-amber: #F5A623;
+  --bz-console-amber-dim: rgba(245,166,35,0.12);
+  --bz-console-red-dim: rgba(255,80,80,0.08);
 }
 
 body {
@@ -454,4 +469,36 @@ body {
     0 0 20px rgba(184,226,242,0.3);
   transition: box-shadow 0.25s ease;
 }
+
+/* Microinteractions and mobile polish rules for Phase 3 */
+.btn-primary:hover {
+  transform: scale(1.02);
+  filter: brightness(1.05);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+.btn-ghost:hover {
+  transform: scale(1.02);
+}
+.btn-ghost:active {
+  transform: scale(0.97);
+}
+
+.manufacturer-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--bz-console-teal);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 
