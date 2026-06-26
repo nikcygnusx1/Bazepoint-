@@ -1,232 +1,160 @@
-import { motion, useReducedMotion } from 'motion/react';
-import { MapPin, TrendingUp, CheckCircle } from 'lucide-react';
+import { motion } from 'motion/react';
+import { MapPin, Shield, CheckCircle2, Factory } from 'lucide-react';
+import { staggerContainer, sectionHeader, staggerFast, fadeUpFast } from '../lib/motion-variants';
 
-const FACTORIES = [
+const REGIONS = [
   {
-    name: "Anatolia Apparel Co.",
-    location: "Istanbul, Turkey",
-    category: "Apparel",
-    price: "$7.20",
-    moq: "100",
-    lead: "18 days",
-    score: 96,
-    orders: 43,
-    speciality: "Heavyweight cotton, knitwear, denim"
+    name: "Turkey",
+    description: "Premium apparel, leather goods, and textiles. Fast lead times to Europe.",
+    specialty: "Apparel & Textiles",
+    coords: { top: '35%', left: '52%' }
   },
   {
-    name: "Pacific Packaging Systems",
-    location: "Guangzhou, China",
-    category: "Packaging",
-    price: "$1.45",
-    moq: "2,000",
-    lead: "12 days",
-    score: 99,
-    orders: 127,
-    speciality: "Glass bottles, kraft boxes, rigid packaging"
+    name: "Vietnam",
+    description: "High-quality footwear, outerwear, and electronics assembly.",
+    specialty: "Footwear & Tech",
+    coords: { top: '55%', left: '78%' }
   },
   {
-    name: "Atlas Ceramics Workshop",
-    location: "Hanoi, Vietnam",
-    category: "Ceramics",
-    price: "$4.80",
-    moq: "500",
-    lead: "24 days",
-    score: 94,
-    orders: 31,
-    speciality: "Ceramic mugs, home décor, tableware"
+    name: "Indonesia",
+    description: "Sustainable packaging, woodwork, and ceramics.",
+    specialty: "Packaging & Home",
+    coords: { top: '70%', left: '75%' }
   },
   {
-    name: "Vertex Tech Manufacturing",
-    location: "Penang, Malaysia",
-    category: "Electronics",
-    price: "$12.00",
-    moq: "250",
-    lead: "30 days",
-    score: 98,
-    orders: 56,
-    speciality: "PCB assembly, consumer electronics, IoT hardware"
-  },
-  {
-    name: "Gulf Cosmetics Factory",
-    location: "Dubai, UAE",
-    category: "Cosmetics",
-    price: "$3.20",
-    moq: "500",
-    lead: "21 days",
-    score: 97,
-    orders: 38,
-    speciality: "Halal-certified serums, lotions, fragrances"
-  },
-  {
-    name: "Nusantara Naturals",
-    location: "Surabaya, Indonesia",
-    category: "Supplements",
-    price: "$2.60",
-    moq: "1,000",
-    lead: "16 days",
-    score: 95,
-    orders: 29,
-    speciality: "Capsules, powders, halal + organic certified"
+    name: "UAE",
+    description: "Supplements, cosmetics, and halal-certified production.",
+    specialty: "Health & Beauty",
+    coords: { top: '48%', left: '60%' }
   }
 ];
 
+const CRITERIA = [
+  "Verified business licenses",
+  "English-speaking reps",
+  "Export compliance",
+  "Sample production verified",
+  "Accepts MOQs under 500"
+];
+
 export function Supply() {
-  const shouldReduceMotion = useReducedMotion();
-
-  const gridVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.07,
-        delayChildren: 0.15
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
-    }
-  };
-
   return (
-    <section className="bg-bz-bg pt-24 md:pt-32" id="supply" aria-label="Verified Manufacturer Network">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 pb-24">
+    <motion.section 
+      id="supply"
+      className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)]"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={staggerContainer}
+    >
+      <div className="max-w-[1440px] mx-auto px-6 md:px-16">
         
-        <div className="mb-16">
-          <span className="section-label block mb-4">Verified network</span>
-          <h2 className="text-3xl md:text-5xl font-serif font-normal text-bz-text mb-4">
-            Real manufacturers. Real scores.
-          </h2>
-          <p className="max-w-[560px] text-base font-body text-bz-text-muted mb-12 leading-relaxed">
-            Every manufacturer in the Bazepoint network has completed at least one successful, verified production run. Their score reflects real orders, real samples, real delivery — not marketing claims.
-          </p>
-
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-12">
-            <div className="flex flex-col gap-1">
-              <span aria-label="200 plus" className="text-3xl md:text-4xl font-serif text-bz-teal leading-none">200+</span>
-              <span className="font-body text-xs text-bz-text-muted uppercase tracking-wider">Verified Manufacturers</span>
-            </div>
-            <div className="hidden md:block w-px h-12 bg-bz-border"></div>
-            <div className="flex flex-col gap-1">
-              <span className="text-3xl md:text-4xl font-serif text-bz-teal leading-none">12</span>
-              <span className="font-body text-xs text-bz-text-muted uppercase tracking-wider">Countries</span>
-            </div>
-            <div className="hidden md:block w-px h-12 bg-bz-border"></div>
-            <div className="flex flex-col gap-1">
-              <span aria-label="94 percent" className="text-3xl md:text-4xl font-serif text-bz-teal leading-none">94%</span>
-              <span className="font-body text-xs text-bz-text-muted uppercase tracking-wider">On-time Delivery Rate</span>
-            </div>
-          </div>
-        </div>
-
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={shouldReduceMotion ? {} : gridVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-        >
-          {FACTORIES.map((f, i) => (
-            <motion.div 
-              key={i}
-              variants={shouldReduceMotion ? {} : cardVariants}
-              whileHover={shouldReduceMotion ? {} : { y: -2 }}
-              className="manufacturer-card flex flex-col hover:border-[var(--color-bz-teal)] bg-bz-surface overflow-hidden group"
-            >
-              <div className="p-5 md:p-6 flex-grow flex flex-col">
-                
-                {/* Header Row */}
-                <div className="flex justify-between items-start mb-4 gap-4">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-body text-base font-semibold text-bz-text mb-1 truncate" title={f.name}>{f.name}</h4>
-                    <span className="font-body text-xs text-bz-text-muted flex items-center gap-1.5 truncate">
-                      <MapPin className="w-3 h-3 text-bz-text-faint flex-shrink-0" aria-hidden="true" /> 
-                      <span className="sr-only">Location: </span>{f.location}
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                    <span className="verified-chip">✓ Verified</span>
-                    <span className="font-data text-xs font-bold text-bz-teal flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3 text-bz-verified" aria-hidden="true" />
-                      <span className="sr-only">Score: </span>{f.score}%
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Category Tag */}
-                <div className="mb-3">
-                  <span className="bg-bz-amber-light text-bz-amber border border-[color-mix(in_srgb,var(--color-bz-amber)_25%,transparent)] text-[11px] font-body font-medium px-2.5 py-1 rounded-full">
-                    {f.category}
-                  </span>
-                </div>
-                
-                {/* Speciality */}
-                <div className="mb-6 flex-grow">
-                  <p className="font-body text-xs text-bz-text-muted italic line-clamp-2">
-                    {f.speciality}
-                  </p>
-                </div>
-                
-                {/* Metrics Row */}
-                <div className="border-t border-bz-border-soft pt-4 mb-5">
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-data text-sm font-bold text-bz-text">{f.price}</span>
-                      <span className="font-body text-[10px] text-bz-text-faint uppercase tracking-wider">Price/Unit</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="font-data text-sm font-bold text-bz-text">{f.moq}</span>
-                      <span className="font-body text-[10px] text-bz-text-faint uppercase tracking-wider">MOQ</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <span className="font-data text-sm font-bold text-bz-text">{f.lead}</span>
-                      <span className="font-body text-[10px] text-bz-text-faint uppercase tracking-wider">Lead Time</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Orders Social Proof */}
-                <div className="mt-auto">
-                  <span className="font-body text-xs text-bz-text-muted flex items-center gap-1.5">
-                    <CheckCircle className="w-3.5 h-3.5 text-bz-verified" aria-hidden="true" />
-                    <span className="sr-only">Completed orders: </span>{f.orders} completed orders
-                  </span>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          
+          {/* Left: Copy */}
+          <div className="col-span-1 lg:col-span-5">
+            <motion.div variants={sectionHeader}>
+              <h2 className="section-label mb-4">The Supply Network</h2>
+              <p className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)] mb-6 leading-tight">
+                Quality production outside of China.
+              </p>
+              <p className="text-lg text-[var(--color-bz-text-muted)] font-body font-light leading-relaxed mb-8">
+                We've spent years auditing factories across emerging manufacturing hubs. We only list partners who communicate clearly, accept reasonable MOQs, and deliver on time.
+              </p>
+            </motion.div>
+            
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-[var(--color-bz-border)] pb-4">
+                <Shield className="w-5 h-5 text-[var(--color-bz-teal)] flex-shrink-0" />
+                <h3 className="font-serif text-lg text-[var(--color-bz-text)]">Vetted for founders</h3>
               </div>
               
-              {/* Card Footer CTA */}
-              <div className="border-t border-bz-border-soft p-4 bg-bz-surface flex items-center justify-between">
-                <a href="#" className="font-body text-xs text-bz-text-muted hover:underline transition-all">View profile</a>
-                <button className="btn-primary !px-3.5 !py-1.5 !text-xs !rounded">
-                  Request sample →
-                </button>
+              <motion.ul variants={staggerFast} className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
+                {CRITERIA.map((criterion, i) => (
+                  <motion.li key={i} variants={fadeUpFast} className="flex items-start gap-2 text-sm text-[var(--color-bz-text-muted)] font-body">
+                    <CheckCircle2 className="w-4 h-4 text-[var(--color-bz-teal)] flex-shrink-0 mt-0.5" />
+                    {criterion}
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </div>
+          </div>
+
+          {/* Right: Interactive Map Concept */}
+          <div className="col-span-1 lg:col-span-7 bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-2xl p-8 relative overflow-hidden min-h-[500px] flex items-center justify-center">
+            
+            {/* Abstract World Map Base */}
+            <svg viewBox="0 0 1000 500" className="absolute inset-0 w-full h-full object-cover opacity-[0.05]" fill="currentColor">
+              <path d="M100 100 Q 200 50, 300 150 T 500 100 T 700 200 T 900 150 L 900 400 L 100 400 Z" stroke="var(--color-bz-text)" strokeWidth="2" fill="none" />
+              <circle cx="200" cy="200" r="2" />
+              <circle cx="350" cy="180" r="2" />
+              <circle cx="600" cy="250" r="2" />
+              <circle cx="800" cy="120" r="2" />
+            </svg>
+            
+            {/* Grid Pattern */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-bz-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-bz-border)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.3]"></div>
+
+            {/* Region Pins & Cards */}
+            {REGIONS.map((region, i) => (
+              <motion.div 
+                key={region.name}
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 + (i * 0.15), type: "spring", stiffness: 200, damping: 20 }}
+                className="absolute group z-10"
+                style={{ top: region.coords.top, left: region.coords.left }}
+              >
+                {/* Pin marker */}
+                <div className="relative">
+                  <div className="w-4 h-4 bg-[var(--color-bz-teal)] rounded-full flex items-center justify-center cursor-pointer relative z-10 shadow-sm border border-[var(--color-bz-bg)] group-hover:scale-125 transition-transform duration-300">
+                    <div className="w-1.5 h-1.5 bg-[var(--color-bz-bg)] rounded-full"></div>
+                  </div>
+                  {/* Pulse effect */}
+                  <div className="absolute inset-0 bg-[var(--color-bz-teal)] rounded-full animate-ping opacity-20"></div>
+                </div>
+                
+                {/* Info Card (Visible on hover) */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[220px] bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-lg shadow-lg p-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 pointer-events-none z-20">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-serif text-[var(--color-bz-text)] font-semibold">{region.name}</span>
+                    <Factory className="w-3.5 h-3.5 text-[var(--color-bz-teal)]" />
+                  </div>
+                  <div className="text-[10px] uppercase font-bold tracking-wider text-[var(--color-bz-amber)] mb-2">
+                    {region.specialty}
+                  </div>
+                  <p className="text-xs font-body text-[var(--color-bz-text-muted)] leading-snug">
+                    {region.description}
+                  </p>
+                  
+                  {/* Triangle Arrow */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[var(--color-bz-border)]"></div>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[var(--color-bz-bg)]"></div>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Central Badge */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1, duration: 0.6, ease: "easeOut" }}
+              className="absolute bottom-6 left-6 right-6 md:right-auto bg-[var(--color-bz-bg)]/90 backdrop-blur border border-[var(--color-bz-border)] rounded-lg p-4 shadow-sm flex items-center gap-4"
+            >
+              <div className="w-10 h-10 rounded-full bg-[var(--color-bz-teal-light)] flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-5 h-5 text-[var(--color-bz-teal)]" />
+              </div>
+              <div>
+                <div className="text-sm font-serif text-[var(--color-bz-text)] font-medium">1,200+ Verified Partners</div>
+                <div className="text-xs font-body text-[var(--color-bz-text-muted)]">Continuously audited network</div>
               </div>
             </motion.div>
-          ))}
-        </motion.div>
-
-      </div>
-
-      {/* Manufacturer CTA Band */}
-      <div className="bg-bz-surface-2 border-y border-bz-border py-12">
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="font-body text-base font-medium text-bz-text mb-1">
-              Are you a manufacturer? Join the Bazepoint verified network.
-            </h3>
-            <p className="font-body text-sm text-bz-text-muted">
-              We onboard factories across Southeast Asia, MENA & Oceania.
-            </p>
           </div>
-          <button className="btn-ghost whitespace-nowrap w-full md:w-auto">
-            Apply to join →
-          </button>
+
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

@@ -1,84 +1,72 @@
-import { motion, useReducedMotion } from 'motion/react';
+import { useRef, useState, useEffect } from 'react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
+import { staggerContainer, sectionHeader, scaleUp } from '../lib/motion-variants';
 
 export function FinalPush() {
-  const shouldReduceMotion = useReducedMotion();
+  const buttonRef = useRef<HTMLAnchorElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const [isTouch, setIsTouch] = useState(false);
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.1
-      }
-    }
-  };
+  useEffect(() => {
+    setIsTouch(window.matchMedia('(hover: none)').matches);
+  }, []);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
-    }
-  };
+  function handleMouseMove(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (isTouch) return;
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set((e.clientX - centerX) * 0.3);
+    y.set((e.clientY - centerY) * 0.3);
+  }
+
+  function handleMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  const springX = useSpring(x, { stiffness: 300, damping: 20 });
+  const springY = useSpring(y, { stiffness: 300, damping: 20 });
 
   return (
-    <section className="py-32 md:py-48 bg-bz-teal relative overflow-hidden flex items-center justify-center">
-      {/* Decorative subtle ring */}
-      <div 
-        className="absolute top-[-150px] right-[-150px] w-[600px] h-[600px] rounded-full border border-white opacity-10 pointer-events-none" 
-        aria-hidden="true"
-      ></div>
-
-      <motion.div 
-        className="max-w-[680px] mx-auto px-6 text-center relative z-10 flex flex-col items-center"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        variants={shouldReduceMotion ? {} : containerVariants}
-      >
-        <motion.div variants={itemVariants} className="mb-6">
-          <span className="bg-white/10 border border-white/25 rounded-full px-4 py-1.5 font-body text-xs font-medium text-white inline-block">
-            Free to start
-          </span>
-        </motion.div>
-
-        <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-serif font-normal text-white mb-6 leading-[1.1]">
-          Your first manufacturer is one prompt away.
-        </motion.h2>
-
-        <motion.p variants={itemVariants} className="font-body text-base text-white/75 max-w-[520px] mb-10 leading-[1.65]">
-          Describe your product in plain language. Baze finds your manufacturers, filters by your constraints, and drafts your first email — free, in under 3 minutes.
-        </motion.p>
-        
-        <motion.div variants={itemVariants} className="w-full sm:w-auto">
-          <motion.a 
-            href="#demo"
-            whileHover={{ scale: 1.02, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', backgroundColor: 'var(--color-bz-surface)' }}
-            whileTap={{ scale: 0.97 }}
-            className="w-full sm:w-auto bg-white text-bz-teal font-body text-sm font-bold py-4 px-9 rounded-lg inline-flex justify-center items-center group transition-colors"
-          >
-            Describe your product
-            <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" aria-hidden="true" />
-          </motion.a>
-        </motion.div>
-
-        <motion.div variants={itemVariants} className="mt-4">
-          <p className="font-body text-xs text-white/50">
-            No credit card. No sourcing experience needed. Start with any product idea.
+    <motion.section 
+      className="py-32 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
+      variants={staggerContainer}
+    >
+      {/* Abstract background shapes */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-[var(--color-bz-teal-light)] to-transparent opacity-20 blur-3xl pointer-events-none rounded-full"></div>
+      
+      <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
+        <motion.div variants={sectionHeader}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[var(--color-bz-text)] mb-6 leading-tight">
+            Stop searching.<br />Start manufacturing.
+          </h2>
+          <p className="text-lg text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-10 max-w-xl mx-auto">
+            Join the founders using Bazepoint to bypass the noise and connect directly with vetted production partners.
           </p>
         </motion.div>
-
-        <motion.div variants={itemVariants} className="mt-12 flex flex-wrap justify-center items-center gap-3 font-body text-xs text-white/65">
-          <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="text-white/90" aria-hidden="true">✓</span> Verified manufacturers only</span>
-          <span className="hidden sm:inline" aria-hidden="true">·</span>
-          <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="text-white/90" aria-hidden="true">✓</span> AI-drafted first email included</span>
-          <span className="hidden sm:inline" aria-hidden="true">·</span>
-          <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="text-white/90" aria-hidden="true">✓</span> Southeast Asia, MENA & Oceania</span>
-        </motion.div>
         
-      </motion.div>
-    </section>
+        <motion.div variants={scaleUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <motion.a 
+            ref={buttonRef}
+            href="#demo"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={isTouch ? {} : { x: springX, y: springY }}
+            className="btn-primary !px-8 !py-4 text-base group w-full sm:w-auto text-center block"
+          >
+            Find your manufacturer
+            <ArrowRight className="w-4 h-4 inline-block ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
+          </motion.a>
+          <span className="text-sm text-[var(--color-bz-text-faint)] font-body">Free to search. No credit card required.</span>
+        </motion.div>
+      </div>
+    </motion.section>
   );
 }

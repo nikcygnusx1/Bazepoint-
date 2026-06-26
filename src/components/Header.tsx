@@ -1,16 +1,51 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useMotionValue, useTransform, useSpring, useMotionTemplate } from 'motion/react';
 import { Menu, X, ArrowRight } from 'lucide-react';
+import { navContainer, navItem } from '../lib/motion-variants';
 
 export function Header() {
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { scrollY } = useScroll();
+
+  const headerPy    = useTransform(scrollY, [0, 80], [24, 16]);  // padding-y (py-6 is 24px, py-4 is 16px)
+  const headerBlur  = useTransform(scrollY, [0, 80], [0, 16]);   // backdrop blur
+  const headerBg    = useTransform(
+    scrollY,
+    [0, 80],
+    ["rgba(253,252,249,0)", "rgba(253,252,249,0.92)"]
+  );
+  const headerBorder = useTransform(
+    scrollY,
+    [0, 80],
+    ["rgba(224,219,211,0)", "rgba(224,219,211,1)"]
+  );
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    setIsTouch(window.matchMedia('(hover: none)').matches);
   }, []);
+
+  function handleMouseMove(e: React.MouseEvent<HTMLButtonElement>) {
+    if (isTouch) return;
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    x.set((e.clientX - centerX) * 0.3);
+    y.set((e.clientY - centerY) * 0.3);
+  }
+
+  function handleMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  const springX = useSpring(x, { stiffness: 300, damping: 20 });
+  const springY = useSpring(y, { stiffness: 300, damping: 20 });
 
   const navLinks = [
     { name: 'How it works', href: '#mechanism' },
@@ -20,61 +55,73 @@ export function Header() {
 
   return (
     <motion.header
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-bz-surface/90 backdrop-blur-sm border-b border-bz-border py-4' : 'bg-transparent py-6'
-      }`}
+      initial="hidden"
+      animate="visible"
+      variants={navContainer}
+      className="fixed top-0 left-0 right-0 z-50 border-b will-change-transform"
+      style={{
+        paddingTop: headerPy,
+        paddingBottom: headerPy,
+        backgroundColor: headerBg,
+        backdropFilter: useMotionTemplate`blur(${headerBlur}px)`,
+        borderBottomColor: headerBorder,
+      }}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 flex items-center justify-between">
         
         {/* Logo */}
         <motion.div 
-          initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          variants={navItem}
           className="flex items-center gap-3"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <circle cx="10" cy="10" r="9" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
             <path d="M10 1 L10 19" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
           </svg>
-          <a href="#" className="font-serif text-[22px] text-bz-text leading-none mt-1 hover:opacity-80 transition-opacity">
+          <a href="#" className="font-serif text-[22px] text-[var(--color-bz-text)] leading-none mt-1 hover:opacity-80 transition-opacity">
             Bazepoint
           </a>
         </motion.div>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link, i) => (
-            <motion.a
-              key={link.name}
-              href={link.href}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: scrolled ? 1 : 0.7 }}
-              transition={{ duration: 0.3, delay: 0.2 + (i * 0.06) }}
-              className="font-body text-sm font-medium text-bz-text-muted hover:text-bz-text transition-colors"
-            >
-              {link.name}
-            </motion.a>
+          {navLinks.map((link) => (
+            <motion.li key={link.name} variants={navItem} className="list-none">
+              <motion.a
+                className="relative text-[var(--color-bz-text-muted)] hover:text-[var(--color-bz-text)] transition-colors duration-200 text-sm font-medium py-1 inline-block"
+                href={link.href}
+                whileHover="hover"
+              >
+                {link.name}
+                <motion.span
+                  className="absolute bottom-0 left-0 h-[1.5px] w-full bg-[var(--color-bz-teal)] origin-left"
+                  variants={{
+                    initial: { scaleX: 0 },
+                    hover:   { scaleX: 1, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } },
+                  }}
+                  initial="initial"
+                />
+              </motion.a>
+            </motion.li>
           ))}
         </nav>
 
         {/* Desktop CTA */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.5, ease: "easeOut" }}
+          variants={navItem}
           className="hidden md:block"
         >
-          <button 
+          <motion.button 
+            ref={buttonRef}
             className="btn-primary group"
             onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={isTouch ? {} : { x: springX, y: springY }}
           >
             Describe your product 
             <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
-          </button>
+          </motion.button>
         </motion.div>
 
         {/* Mobile Hamburger */}
@@ -96,7 +143,7 @@ export function Header() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden overflow-hidden bg-bz-surface-2 border-b border-bz-border absolute top-full left-0 right-0 shadow-md"
+            className="md:hidden overflow-hidden bg-[var(--color-bz-surface-2)] border-b border-[var(--color-bz-border)] absolute top-full left-0 right-0 shadow-md"
           >
             <div className="px-6 py-4 flex flex-col gap-2">
               {navLinks.map((link) => (
@@ -104,7 +151,7 @@ export function Header() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="font-body text-base font-medium text-bz-text-muted py-3 border-b border-bz-border-soft hover:text-bz-text transition-colors block"
+                  className="font-body text-base font-medium text-[var(--color-bz-text-muted)] py-3 border-b border-[var(--color-bz-border-soft)] hover:text-[var(--color-bz-text)] transition-colors block"
                 >
                   {link.name}
                 </a>
