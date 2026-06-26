@@ -46,8 +46,29 @@ const MOCK_RESULTS = [
   }
 ];
 
+function buildEmailBody(manufacturerName: string, brief: string): string {
+  const nameParts = manufacturerName.split(' ');
+  const shortName = (nameParts[0] || manufacturerName) + ' Team';
+  const safeBrief = brief || '[describe your product here]';
+
+  return `Hi ${shortName},
+
+I came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.
+
+Here's what I'm looking to make:
+${safeBrief}
+
+Could you share your current pricing, minimum order quantities, and lead times for this type of product? If you're open to new founder accounts at these volumes, I'd love to schedule a quick call to discuss next steps.
+
+Looking forward to hearing from you.
+
+Best,
+[Your name]`;
+}
+
 export function PromptDemo() {
   const [input, setInput] = useState('');
+  const [lastSearchBrief, setLastSearchBrief] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -91,18 +112,26 @@ export function PromptDemo() {
     e.preventDefault();
     if (!input.trim() || isProcessing) return;
     
+    const trimmedBrief = input.trim();
+    setLastSearchBrief(trimmedBrief);
     setIsProcessing(true);
     setResults(false);
     setDraftOpen(null);
+
+    // Dispatch brief content
+    window.dispatchEvent(new CustomEvent('demo-brief', { detail: trimmedBrief }));
     
     setTimeout(() => {
       setIsProcessing(false);
       setResults(true);
+      // Dispatch results loaded
+      window.dispatchEvent(new CustomEvent('demo-results', { detail: true }));
     }, 2200);
   };
 
-  const handleCopy = (bodyText: string) => {
-    navigator.clipboard.writeText(bodyText);
+  const handleCopy = (manufacturerName: string) => {
+    const body = buildEmailBody(manufacturerName, lastSearchBrief);
+    navigator.clipboard.writeText(body);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
@@ -294,7 +323,10 @@ export function PromptDemo() {
                     <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
                       <button className="btn-ghost flex-1 md:flex-none !text-xs !py-2 !px-3">View profile</button>
                       <button 
-                        onClick={() => setDraftOpen(index)}
+                        onClick={() => {
+                          setDraftOpen(index);
+                          window.dispatchEvent(new CustomEvent('demo-draft-open', { detail: { index } }));
+                        }}
                         className={`btn-primary flex-1 md:flex-none !text-xs !py-2 !px-3 ${index === 0 ? 'animate-pulse-shadow' : ''}`}
                       >
                         Draft email →
@@ -322,7 +354,10 @@ export function PromptDemo() {
                         </span>
                       </div>
                       <button
-                        onClick={() => setDraftOpen(null)}
+                        onClick={() => {
+                          setDraftOpen(null);
+                          window.dispatchEvent(new CustomEvent('demo-draft-close'));
+                        }}
                         className="text-[#9C9C96] hover:text-[#1A1A18] transition-colors text-lg leading-none"
                         aria-label="Close draft"
                       >
@@ -343,34 +378,29 @@ export function PromptDemo() {
                     </div>
 
                     {/* Email body */}
-                    <div className="px-6 py-5 text-sm font-body text-[#5C5C57] leading-relaxed whitespace-pre-line">
-                      {`Hi ${MOCK_RESULTS[draftOpen].name.split(' ')[0]} Team,
-
-I came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.
-
-I'm looking to produce [product type] with the following requirements:
-• Target price: [your budget per unit]
-• Quantity: [your MOQ]
-• Timeline: [your target delivery]
-
-Could you confirm your current capacity and whether you accept new founder accounts at these volumes? I'd love to schedule a quick call to discuss further.
-
-Looking forward to hearing from you.
-
-Best,
-[Your name]`}
+                    <div className="px-6 py-5 text-sm font-body text-[#5C5C57] leading-relaxed">
+                      <p className="mb-4">Hi {MOCK_RESULTS[draftOpen].name.split(' ')[0]} Team,</p>
+                      <p className="mb-4">I came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.</p>
+                      <p className="mb-2">Here's what I'm looking to make:</p>
+                      <div className="mb-4 p-3.5 bg-[rgba(184,226,242,0.12)] border border-[rgba(184,226,242,0.3)] rounded-xl text-[#1A1A18] font-medium italic">
+                        {lastSearchBrief || '[describe your product here]'}
+                      </div>
+                      <p className="mb-4">Could you share your current pricing, minimum order quantities, and lead times for this type of product? If you're open to new founder accounts at these volumes, I'd love to schedule a quick call to discuss next steps.</p>
+                      <p className="mb-4">Looking forward to hearing from you.</p>
+                      <p className="mb-1">Best,</p>
+                      <p>[Your name]</p>
                     </div>
 
                     {/* Footer actions */}
                     <div className="px-6 pb-5 flex flex-col sm:flex-row gap-3">
                       <button 
-                        onClick={() => handleCopy(`Hi ${MOCK_RESULTS[draftOpen].name.split(' ')[0]} Team,\n\nI came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.\n\nI'm looking to produce [product type] with the following requirements:\n• Target price: [your budget per unit]\n• Quantity: [your MOQ]\n• Timeline: [your target delivery]\n\nCould you confirm your current capacity and whether you accept new founder accounts at these volumes? I'd love to schedule a quick call to discuss further.\n\nLooking forward to hearing from you.\n\nBest,\n[Your name]`)}
+                        onClick={() => handleCopy(MOCK_RESULTS[draftOpen].name)}
                         className="btn-primary flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
                       >
                         {copied ? 'Copied ✓' : 'Copy email ↗'}
                       </button>
                       <button 
-                        onClick={() => window.open('https://mail.google.com/mail/?view=cm&fs=1&su=Partnership+Inquiry+—+New+Product+Sourcing+Request', '_blank')}
+                        onClick={() => window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=Partnership+Inquiry+—+New+Product+Sourcing+Request&body=${encodeURIComponent(buildEmailBody(MOCK_RESULTS[draftOpen].name, lastSearchBrief))}`, '_blank')}
                         className="btn-ghost flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
                       >
                         Edit in Gmail
@@ -385,7 +415,13 @@ Best,
               
               <div className="mt-8 text-center">
                 <button 
-                  onClick={() => { setInput(''); setResults(false); setDraftOpen(null); }}
+                  onClick={() => {
+                    setInput('');
+                    setLastSearchBrief('');
+                    setResults(false);
+                    setDraftOpen(null);
+                    window.dispatchEvent(new CustomEvent('demo-reset'));
+                  }}
                   className="text-xs text-[var(--color-bz-text-muted)] font-body hover:text-[var(--color-bz-text)] transition-colors"
                 >
                   ← Try a different product
