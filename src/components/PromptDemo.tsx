@@ -102,7 +102,7 @@ export function PromptDemo() {
     <motion.section 
       id="demo"
       aria-labelledby="demo-title"
-      className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
+      className="py-24 bg-[var(--color-bz-bg)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-80px" }}
@@ -115,7 +115,7 @@ export function PromptDemo() {
         
         <motion.div variants={sectionHeader} className="text-center mb-12">
           <h2 id="demo-title" className="section-label mb-4">See it work</h2>
-          <p className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)] mb-3">
+          <p className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-3">
             Describe what you want to make.
           </p>
           <p className="text-base text-[var(--color-bz-text-muted)] font-body">
@@ -124,7 +124,7 @@ export function PromptDemo() {
         </motion.div>
 
         {/* Input Terminal */}
-        <motion.div variants={scaleUp} className={`group bg-[var(--color-bz-bg)] border-[1.5px] border-[var(--color-bz-border)] rounded-xl shadow-md transition-all duration-150 ease-out overflow-hidden ${isFocused ? 'prompt-input-focused' : ''}`}>
+        <motion.div variants={scaleUp} className={`group bg-[#FFFFFF] border-[1.5px] border-[rgba(184,226,242,0.5)] rounded-xl transition-all duration-150 ease-out overflow-hidden ${isFocused ? 'border-[#B8E2F2] shadow-[0_4px_24px_rgba(184,226,242,0.25)]' : 'shadow-sm'}`}>
           <form onSubmit={handleSubmit} className="relative flex items-center p-2">
             <div className="relative w-full">
               {!input && (
@@ -136,7 +136,7 @@ export function PromptDemo() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      className="text-[var(--color-bz-text-muted)] whitespace-nowrap overflow-hidden text-ellipsis w-full"
+                      className="text-[#9C9C96] whitespace-nowrap overflow-hidden text-ellipsis w-full"
                     >
                       e.g. {currentPhrase}
                     </motion.span>
@@ -150,7 +150,7 @@ export function PromptDemo() {
                 onChange={(e) => setInput(e.target.value)}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                className="w-full bg-transparent border-none outline-none text-[var(--color-bz-text)] font-body text-base px-5 py-4 relative z-10"
+                className="w-full bg-transparent border-none outline-none text-[#1A1A18] font-body text-base px-5 py-4 relative z-10 placeholder:text-[#9C9C96]"
                 disabled={isProcessing || results}
               />
             </div>
@@ -202,7 +202,7 @@ export function PromptDemo() {
                   role="button"
                   tabIndex={0}
                   onClick={() => handleChipClick(s.text)}
-                  className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-full py-2.5 px-[18px] text-xs font-serif text-[var(--color-bz-text)] hover:border-[var(--color-bz-teal)] hover:bg-[var(--color-bz-teal-light)] transition-colors flex items-center group cursor-pointer"
+                  className="bg-[#F5F4F0] border border-[rgba(0,0,0,0.07)] rounded-full py-2.5 px-[18px] text-xs font-body text-[#5C5C57] hover:border-[#B8E2F2] transition-colors flex items-center group cursor-pointer"
                 >
                   <span className="mr-2 text-sm">{s.prefix}</span>
                   <span>{s.text}</span>
@@ -223,11 +223,11 @@ export function PromptDemo() {
             >
               {/* Header */}
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 mb-4 border-b border-[var(--color-bz-border)] gap-4">
-                <span className="text-sm font-body font-semibold text-[var(--color-bz-text)]">3 verified manufacturers found</span>
-                <div className="flex gap-2 text-xs font-body text-[var(--color-bz-text-muted)]">
-                  <span className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-full px-3 py-1">Region</span>
-                  <span className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-full px-3 py-1">Category</span>
-                  <span className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-full px-3 py-1">MOQ</span>
+                <span className="text-sm font-body font-[700] text-[#1A1A18]">3 verified manufacturers found</span>
+                <div className="flex gap-2 text-xs font-body text-[#5C5C57]">
+                  <span className="bg-[rgba(184,226,242,0.2)] text-[#4A9EBF] border border-[rgba(184,226,242,0.4)] rounded-full px-3 py-1">Region</span>
+                  <span className="bg-[#F5F4F0] text-[#5C5C57] border border-[rgba(0,0,0,0.07)] rounded-full px-3 py-1">Category</span>
+                  <span className="bg-[#F5F4F0] text-[#5C5C57] border border-[rgba(0,0,0,0.07)] rounded-full px-3 py-1">MOQ</span>
                 </div>
               </div>
               
@@ -242,42 +242,42 @@ export function PromptDemo() {
                   <motion.div
                     key={index}
                     variants={cardItem}
-                    className="manufacturer-card p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 bg-[var(--color-bz-surface)] group cursor-pointer"
+                    className="manufacturer-card p-4 sm:p-6 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 bg-[#FFFFFF] border border-[rgba(0,0,0,0.07)] !rounded-[20px] relative overflow-hidden group cursor-pointer before:absolute before:top-0 before:left-0 before:w-full before:h-1 before:bg-[#B8E2F2]"
                   >
                     {/* Rank */}
-                    <div className="text-xl font-serif text-[var(--color-bz-text-faint)] w-8 flex-shrink-0">
+                    <div className="text-xl font-display text-[var(--color-bz-text-faint)] w-8 flex-shrink-0">
                       {index + 1}
                     </div>
                     
                     {/* Info */}
                     <div className="flex-grow flex flex-col items-start gap-1">
                       <div className="flex items-center gap-2">
-                        <h4 className="text-base font-body font-semibold text-[var(--color-bz-text)]">{m.name}</h4>
-                        <span className="verified-chip">✓ Verified</span>
+                        <h4 className="text-base font-body font-[700] text-[#1A1A18]">{m.name}</h4>
+                        <span className="text-[#4A9EBF] bg-[rgba(184,226,242,0.1)] border border-[rgba(184,226,242,0.5)] font-body text-[11px] uppercase tracking-wider font-[600] rounded px-2 py-0.5 inline-flex items-center gap-1"><span className="font-bold text-[#4A9EBF]">✓</span> Verified</span>
                       </div>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-xs text-[var(--color-bz-text-muted)] flex items-center gap-1 font-body">
+                        <span className="text-xs text-[#9C9C96] flex items-center gap-1 font-body">
                           <MapPin className="w-3 h-3" /> {m.location}
                         </span>
-                        <span className="bg-[var(--color-bz-amber-light)] text-[var(--color-bz-amber)] text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-sm font-body">
-                          {m.category}
+                        <span className="bg-[rgba(34,197,94,0.1)] text-[#16A34A] text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-sm font-body">
+                          Active
                         </span>
                       </div>
                     </div>
                     
                     {/* Metrics */}
-                    <div className="grid grid-cols-3 gap-6 md:gap-8 flex-shrink-0 w-full md:w-auto mt-4 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-[var(--color-bz-border)]">
+                    <div className="grid grid-cols-3 gap-6 md:gap-8 flex-shrink-0 w-full md:w-auto mt-4 md:mt-0 p-4 bg-[#F5F4F0] rounded-xl">
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-[var(--color-bz-text-faint)] uppercase font-body tracking-wider mb-1">Price/Unit</span>
-                        <span className="font-mono text-sm font-bold text-[var(--color-bz-text)]">{m.price}</span>
+                        <span className="text-[10px] text-[#9C9C96] uppercase font-body tracking-wider mb-1">Price/Unit</span>
+                        <span className="font-body text-sm font-[800] text-[#1A1A18]">{m.price}</span>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-[var(--color-bz-text-faint)] uppercase font-body tracking-wider mb-1">MOQ</span>
-                        <span className="font-mono text-sm font-bold text-[var(--color-bz-text)]">{m.moq}</span>
+                        <span className="text-[10px] text-[#9C9C96] uppercase font-body tracking-wider mb-1">MOQ</span>
+                        <span className="font-body text-sm font-[800] text-[#1A1A18]">{m.moq}</span>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-[var(--color-bz-text-faint)] uppercase font-body tracking-wider mb-1">Lead Time</span>
-                        <span className="font-mono text-sm font-bold text-[var(--color-bz-text)]">{m.lead}</span>
+                        <span className="text-[10px] text-[#9C9C96] uppercase font-body tracking-wider mb-1">Lead Time</span>
+                        <span className="font-body text-sm font-[800] text-[#1A1A18]">{m.lead}</span>
                       </div>
                     </div>
                     

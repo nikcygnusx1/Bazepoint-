@@ -91,7 +91,7 @@ export function Supply() {
           <div className="col-span-1 lg:col-span-5">
             <motion.div variants={sectionHeader} style={{ y: headerY, opacity: headerOpacity }} className="will-change-transform">
               <h2 className="section-label mb-4">The Supply Network</h2>
-              <p id="supply-title" className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)] mb-6 leading-tight">
+              <p id="supply-title" className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-6 leading-tight">
                 Quality production outside of China.
               </p>
               <p className="text-lg text-[var(--color-bz-text-muted)] font-body font-light leading-relaxed mb-8">
@@ -102,7 +102,7 @@ export function Supply() {
             <div className="space-y-6">
               <div className="flex items-center gap-3 border-b border-[var(--color-bz-border)] pb-4">
                 <Shield className="w-5 h-5 text-[var(--color-bz-teal)] flex-shrink-0" />
-                <h3 className="font-serif text-lg text-[var(--color-bz-text)]">Vetted for founders</h3>
+                <h3 className="font-display font-[800] tracking-[-0.5px] text-lg text-[var(--color-bz-text)]">Vetted for founders</h3>
               </div>
               
               <motion.ul variants={staggerFast} className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
@@ -154,7 +154,7 @@ export function Supply() {
                 {/* Info Card (Visible on hover) */}
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[220px] bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-lg shadow-lg p-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 pointer-events-none z-20">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-serif text-[var(--color-bz-text)] font-semibold">{region.name}</span>
+                    <span className="font-display font-[800] tracking-tight text-[var(--color-bz-text)]">{region.name}</span>
                     <Factory className="w-3.5 h-3.5 text-[var(--color-bz-teal)]" />
                   </div>
                   <div className="text-[10px] uppercase font-bold tracking-wider text-[var(--color-bz-amber)] mb-2">
@@ -183,7 +183,7 @@ export function Supply() {
                 <MapPin className="w-5 h-5 text-[var(--color-bz-teal)]" />
               </div>
               <div>
-                <div className="text-sm font-serif text-[var(--color-bz-text)] font-medium">1,200+ Verified Partners</div>
+                <div className="text-sm font-display font-[800] tracking-tight text-[var(--color-bz-text)]">1,200+ Verified Partners</div>
                 <div className="text-xs font-body text-[var(--color-bz-text-muted)]">Continuously audited network</div>
               </div>
             </motion.div>

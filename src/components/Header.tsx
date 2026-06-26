@@ -8,11 +8,11 @@ export function Header() {
   const { scrollY } = useScroll();
 
   const headerPy    = useTransform(scrollY, [0, 80], [24, 16]);  // padding-y (py-6 is 24px, py-4 is 16px)
-  const headerBlur  = useTransform(scrollY, [0, 80], [0, 16]);   // backdrop blur
+  const headerBlur  = useTransform(scrollY, [0, 80], [0, 12]);   // backdrop blur
   const headerBg    = useTransform(
     scrollY,
     [0, 80],
-    ["rgba(253,252,249,0)", "rgba(253,252,249,0.92)"]
+    ["rgba(245,244,240,0)", "rgba(245,244,240,0.85)"]
   );
   const headerBorder = useTransform(
     scrollY,
@@ -74,11 +74,13 @@ export function Header() {
           variants={navItem}
           className="flex items-center gap-3"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="10" cy="10" r="9" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
-            <path d="M10 1 L10 19" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
-          </svg>
-          <a href="#" className="font-serif text-[22px] text-[var(--color-bz-text)] leading-none mt-1 hover:opacity-80 transition-opacity">
+          <div className="bg-[#B8E2F2] rounded-[10px] w-8 h-8 flex items-center justify-center">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <circle cx="10" cy="10" r="9" stroke="#4A9EBF" strokeWidth="1.5" />
+              <path d="M10 1 L10 19" stroke="#4A9EBF" strokeWidth="1.5" />
+            </svg>
+          </div>
+          <a href="#" className="font-body text-[22px] text-[var(--color-bz-text)] font-semibold leading-none hover:opacity-80 transition-opacity">
             Bazepoint
           </a>
         </motion.div>
@@ -143,7 +145,7 @@ export function Header() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden overflow-hidden bg-[var(--color-bz-surface-2)] border-b border-[var(--color-bz-border)] absolute top-full left-0 right-0 shadow-md"
+            className="md:hidden overflow-hidden bg-[#F5F4F0] border-b border-[var(--color-bz-border)] absolute top-full left-0 right-0 shadow-md"
           >
             <div className="px-6 py-4 flex flex-col gap-2">
               {navLinks.map((link) => (

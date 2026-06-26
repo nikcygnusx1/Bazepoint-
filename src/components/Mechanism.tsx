@@ -14,7 +14,7 @@ const STEPS = [
         <div className="absolute top-0 left-0 w-full h-1 bg-[var(--color-bz-teal)]"></div>
         <div className="flex items-start gap-4">
           <div className="w-8 h-8 rounded-full bg-[var(--color-bz-surface-2)] flex items-center justify-center flex-shrink-0">
-            <span className="text-sm font-serif">You</span>
+            <span className="text-sm font-display font-[800]">You</span>
           </div>
           <div className="bg-[var(--color-bz-surface-2)] rounded-lg p-4 text-sm font-body text-[var(--color-bz-text)] leading-relaxed">
             "I need a factory in Turkey or Portugal for heavyweight cotton hoodies. Blank, no logo. MOQ under 300. Target price is $12/unit."
@@ -115,7 +115,7 @@ export function Mechanism() {
       <div className="max-w-[1440px] mx-auto px-6 md:px-16 relative z-10">
         <motion.div variants={sectionHeader} className="text-center max-w-2xl mx-auto mb-16">
           <h2 id="mechanism-title" className="section-label justify-center mb-4">How it works</h2>
-          <p className="text-3xl md:text-4xl font-serif font-normal text-[var(--color-bz-text)]">
+          <p className="text-3xl md:text-4xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)]">
             Stop searching Alibaba.<br />Start building.
           </p>
         </motion.div>
@@ -199,7 +199,7 @@ export function Mechanism() {
                   </div>
                   
                   <div className="flex flex-col pt-1">
-                    <h3 className={`text-xl font-serif mb-2 transition-colors duration-300 ${isActive ? 'text-[var(--color-bz-text)]' : 'text-[var(--color-bz-text-muted)] group-hover:text-[var(--color-bz-text)]'}`}>
+                    <h3 className={`text-xl font-display font-[800] tracking-[-0.5px] mb-2 transition-colors duration-300 ${isActive ? 'text-[var(--color-bz-text)]' : 'text-[var(--color-bz-text-muted)] group-hover:text-[var(--color-bz-text)]'}`}>
                       {step.id}. {step.title}
                     </h3>
                     <AnimatePresence initial={false}>

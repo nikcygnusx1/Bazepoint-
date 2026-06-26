@@ -1,32 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap');
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-bz-bg: #F7F5F1;
-  --color-bz-surface: #FDFCF9;
-  --color-bz-surface-2: #F2EFE9;
-  --color-bz-surface-3: #EAE6DF;
-  --color-bz-border: #E0DBD3;
-  --color-bz-border-soft: #EDEAE4;
-  --color-bz-text: #1C1A17;
-  --color-bz-text-muted: #7A7570;
-  --color-bz-text-faint: #B5B2AE;
-  --color-bz-teal: #0A5C61;
-  --color-bz-teal-hover: #074347;
-  --color-bz-teal-light: #EBF4F5;
-  --color-bz-amber: #C96B2A;
-  --color-bz-amber-light: #FDF1EA;
-  --color-bz-verified: #2E7D52;
-  --color-bz-verified-light: #E8F4EC;
+  /* ── Core palette ─────────────────────── */
+  --color-bz-bg:              #F5F4F0;
+  --color-bz-surface:         #FFFFFF;
+  --color-bz-surface-2:       #FFFFFF;
+  --color-bz-surface-offset:  #F5F4F0;
+  --color-bz-surface-offset-2:#EDECE8;
+  --color-bz-surface-dynamic: #E8E7E3;
+  --color-bz-divider:         rgba(0,0,0,0.06);
+  --color-bz-border:          rgba(0,0,0,0.07);
 
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-body: "Satoshi", "Inter", system-ui, sans-serif;
-  --font-data: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  /* ── Text ─────────────────────────────── */
+  --color-bz-text:            #1A1A18;
+  --color-bz-text-muted:      #5C5C57;
+  --color-bz-text-faint:      #9C9C96;
+  --color-bz-text-inverse:    #FFFFFF;
+
+  /* ── Primary accent (baby blue family) ── */
+  --color-bz-teal:            #B8E2F2;
+  --color-bz-teal-dark:       #4A9EBF;
+  --color-bz-teal-mid:        #7DC4DF;
+  --color-bz-teal-hover:      #4A9EBF;
+  --color-bz-teal-active:     #3A8EAF;
+  --color-bz-teal-highlight:  rgba(184,226,242,0.25);
+  --color-bz-teal-subtle:     rgba(184,226,242,0.2);
+  --color-bz-teal-border:     rgba(184,226,242,0.5);
+
+  /* ── Semantic ─────────────────────────── */
+  --color-bz-success:         #22C55E;
+  --color-bz-success-bg:      rgba(34,197,94,0.1);
+  --color-bz-error:           #EF4444;
+  --color-bz-amber:           #4A9EBF;   /* remap amber → blue-dark for this palette */
+
+  /* ── Nav ──────────────────────────────── */
+  --color-bz-nav-bg:          rgba(245,244,240,0.85);
+
+  /* ── Shadows ──────────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.06);
+  --shadow-teal: 0 4px 24px rgba(184,226,242,0.25);
+  --shadow-teal-lg: 0 0 20px rgba(184,226,242,0.22);
+
+  /* ── Fonts (Inter only) ───────────────── */
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
-  --font-mono: var(--font-data);
+  --font-mono: var(--font-body);
 
   --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
   --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
@@ -136,30 +160,28 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--color-bz-teal);
+  background-color: var(--color-bz-text);
   color: white;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 600;
   padding: 14px 28px;
-  border-radius: 6px;
+  border-radius: 100px;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--transition-ui), transform var(--transition-ui), box-shadow var(--transition-ui);
+  transition: opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-bz-teal-hover);
+  opacity: 0.8;
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
 }
 
 .btn-primary:active {
   transform: translateY(0);
-  box-shadow: var(--shadow-sm);
 }
 
 .btn-ghost {
@@ -232,9 +254,9 @@ body {
 .fp-ambient {
   background: conic-gradient(
     from var(--fp-angle) at 30% 60%,
-    color-mix(in oklch, var(--color-bz-teal) 8%, transparent) 0deg,
+    rgba(184, 226, 242, 0.12) 0deg,
     transparent 60deg,
-    color-mix(in oklch, var(--color-bz-amber) 5%, transparent) 200deg,
+    rgba(74, 158, 191, 0.08) 200deg,
     transparent 280deg
   );
   animation: fp-rotate 20s linear infinite;
@@ -273,11 +295,7 @@ body {
 }
 
 .hero-ambient-bg {
-  background: radial-gradient(
-    ellipse 80% 60% at var(--ambient-x, 50%) var(--ambient-y, 45%),
-    color-mix(in oklch, var(--color-bz-teal) 5%, transparent) 0%,
-    transparent 65%
-  );
+  background: radial-gradient(ellipse at 60% 40%, rgba(184,226,242,0.18) 0%, transparent 65%);
   background-size: 150% 150%;
   animation: hero-ambient 12s ease-in-out infinite;
   pointer-events: none;
@@ -304,35 +322,6 @@ body {
 }
 
 /* ─── MICROINTERACTION LAYER ─────────────────────────────────────────────── */
-
-/* Primary button — rich hover & active states */
-.btn-primary {
-  position: relative;
-  overflow: hidden;
-  transition:
-    background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow       180ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform        180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.12) 0%,
-    transparent 50%
-  );
-  opacity: 0;
-  transition: opacity 200ms ease;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.btn-primary:hover::before   { opacity: 1; }
-.btn-primary:hover           { box-shadow: 0 4px 20px color-mix(in oklch, var(--color-bz-teal) 35%, transparent); }
-.btn-primary:active          { transform: scale(0.975); }
 
 /* Ghost button */
 .btn-ghost {
@@ -450,9 +439,9 @@ body {
 
 /* Score badge shimmer pulse — for manufacturer score display */
 @keyframes score-pulse {
-  0%   { box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-bz-teal) 40%, transparent); }
-  70%  { box-shadow: 0 0 0 6px color-mix(in oklch, var(--color-bz-teal) 0%, transparent); }
-  100% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-bz-teal) 0%, transparent); }
+  0%   { box-shadow: 0 0 0 0 rgba(184, 226, 242, 0.4); }
+  70%  { box-shadow: 0 0 0 6px rgba(184, 226, 242, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(184, 226, 242, 0); }
 }
 
 .score-badge-pulse {
@@ -461,8 +450,8 @@ body {
 
 .prompt-input-focused {
   box-shadow:
-    0 0 0 2px var(--color-bz-teal),
-    0 0 20px color-mix(in oklch, var(--color-bz-teal) 20%, transparent);
+    0 0 0 1px #B8E2F2,
+    0 0 20px rgba(184,226,242,0.3);
   transition: box-shadow 0.25s ease;
 }
 

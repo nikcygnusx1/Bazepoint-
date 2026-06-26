@@ -48,7 +48,7 @@ export function Trust() {
         
         <motion.div variants={sectionHeader} className="text-center mb-16 max-w-2xl mx-auto">
           <h2 id="trust-title" className="section-label justify-center mb-4">Built on Trust</h2>
-          <p className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)]">
+          <p className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)]">
             A network you can rely on.
           </p>
         </motion.div>
@@ -71,7 +71,7 @@ export function Trust() {
         <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-12 lg:gap-24 max-w-4xl mx-auto border-t border-[var(--color-bz-border)] pt-12">
           {stats.map((stat, i) => (
             <div key={i} className="text-center min-w-[120px]">
-              <div className="text-4xl md:text-5xl font-serif text-[var(--color-bz-text)] mb-2">
+              <div className="text-4xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-2">
                 {stat.prefix}{counters[i].count}{stat.suffix}
               </div>
               <div className="text-sm font-body text-[var(--color-bz-text-muted)] uppercase tracking-wider font-semibold">

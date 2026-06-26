@@ -22,7 +22,7 @@ export function FinalPush() {
     <motion.section 
       aria-labelledby="final-title"
       ref={fpRef}
-      className="py-32 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
+      className="py-32 bg-[#B8E2F2] border-y border-[var(--color-bz-border)] relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
@@ -36,10 +36,10 @@ export function FinalPush() {
       
       <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
         <motion.div style={{ y: fpHeadlineY, opacity: fpHeadlineOpacity }} className="will-change-transform">
-          <h2 id="final-title" className="text-4xl md:text-5xl lg:text-6xl font-serif text-[var(--color-bz-text)] mb-6 leading-tight">
+          <h2 id="final-title" className="text-4xl md:text-5xl lg:text-6xl font-display font-[800] text-[#1A1A18] mb-6 leading-tight tracking-[-1px]">
             Stop searching.<br />Start manufacturing.
           </h2>
-          <p className="text-lg text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-10 max-w-xl mx-auto">
+          <p className="text-lg text-[#5C5C57] font-body leading-relaxed mb-10 max-w-xl mx-auto">
             Join the founders using Bazepoint to bypass the noise and connect directly with vetted production partners.
           </p>
         </motion.div>

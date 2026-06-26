@@ -8,10 +8,10 @@ interface HeroCanvasProps {
 
 // Color constants — must match design system tokens exactly
 const COLORS = {
-  teal:           '#0A5C61',
-  tealRgb:        '10, 92, 97',
-  nodeMuted:      '#A09890',
-  textMuted:      '#7A7570',
+  teal:           '#B8E2F2',
+  tealRgb:        '184, 226, 242',
+  nodeMuted:      '#9C9C96',
+  textMuted:      '#9C9C96',
   background:     'transparent',
 } as const;
 

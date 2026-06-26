@@ -70,13 +70,13 @@ export function Hero() {
         <div className="col-span-1 lg:col-span-7 flex flex-col justify-center">
           <motion.div 
             variants={heroLabel}
-            className="mb-8 flex items-center gap-2"
+            className="mb-8 inline-flex items-center gap-2 bg-[rgba(184,226,242,0.3)] text-[#4A9EBF] border border-[rgba(184,226,242,0.4)] px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider"
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-bz-teal)]"></div>
-            <span className="section-label">AI Sourcing Agent</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-[#4A9EBF]"></div>
+            <span>AI Sourcing Agent</span>
           </motion.div>
           
-          <h1 id="hero-title" className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-serif font-normal text-[var(--color-bz-text)] mb-6">
+          <h1 id="hero-title" className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-display font-[800] text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] mb-6">
             <div className="flex flex-wrap">
               {headlineWords.map((word, i) => (
                 <motion.span
@@ -90,7 +90,7 @@ export function Hero() {
             </div>
             <div className="flex flex-wrap mt-2">
               <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>In</motion.span>
-              <motion.span className="inline-block mr-[0.25em] text-[var(--color-bz-teal)]" variants={heroHeadline}>minutes,</motion.span>
+              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>minutes,</motion.span>
               <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>not</motion.span>
               <motion.span className="inline-block line-through opacity-50" variants={heroHeadline}>months.</motion.span>
             </div>
@@ -98,7 +98,7 @@ export function Hero() {
           
           <motion.p 
             variants={heroSubtext}
-            className="max-w-[480px] text-base md:text-lg text-[var(--color-bz-text-muted)] leading-[1.7] font-body font-light mb-10"
+            className="max-w-[480px] text-base md:text-lg text-[var(--color-bz-text-muted)] leading-[1.7] font-body font-normal mb-10"
           >
             Tell Baze what you want to make. We find verified manufacturers across Southeast Asia, MENA and Oceania, filter by your budget and MOQ, and draft your first outreach email — ready to send.
           </motion.p>
@@ -142,10 +142,11 @@ export function Hero() {
                   onClick={() => handleChipClick(text)}
                   animate={{ y: [0, -3, 0] }}
                   transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-full py-3 px-5 text-sm font-body font-medium text-[var(--color-bz-text)] hover:border-[var(--color-bz-teal)] hover:bg-[var(--color-bz-teal-light)] transition-colors flex items-center gap-2 group relative overflow-hidden"
+                  className="bg-[#FFFFFF] border-[1.5px] border-[rgba(184,226,242,0.5)] rounded-full py-3 px-5 text-sm font-body font-medium text-[var(--color-bz-text-muted)] hover:border-[#B8E2F2] hover:shadow-[0_2px_12px_rgba(184,226,242,0.3)] transition-all flex items-center gap-2 group relative overflow-hidden"
                 >
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#B8E2F2] relative z-10"></div>
                   <span className="relative z-10">{text}</span>
-                  <span className="text-[var(--color-bz-text-faint)] group-hover:text-[var(--color-bz-teal)] transition-colors relative z-10">↗</span>
+                  <span className="text-[var(--color-bz-text-faint)] group-hover:text-[var(--color-bz-teal-dark)] transition-colors relative z-10">↗</span>
                 </motion.button>
               </motion.span>
             ))}

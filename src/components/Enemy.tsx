@@ -55,7 +55,7 @@ export function Enemy() {
                   <AlertCircle className="w-5 h-5" />
                   <span className="text-sm font-body font-bold uppercase tracking-wider">The Status Quo</span>
                 </div>
-                <h2 id="trap-title" className="text-3xl font-serif text-[var(--color-bz-text)] mb-4 leading-snug">
+                <h2 id="trap-title" className="text-3xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-4 leading-snug">
                   Sourcing platforms are designed for traders, not founders.
                 </h2>
                 <p className="text-base text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-6">
@@ -75,7 +75,7 @@ export function Enemy() {
             
             {/* Right: The Solution Contrast */}
             <motion.div variants={fadeUp} style={{ opacity: solutionOpacity, scale: solutionScale }} className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8 will-change-transform">
-              <h3 className="text-xl font-serif text-[var(--color-bz-text)] mb-4">
+              <h3 className="text-xl font-display font-[800] tracking-[-0.5px] text-[var(--color-bz-text)] mb-4">
                 Bazepoint changes the equation.
               </h3>
               <p className="text-sm font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-6">
@@ -83,12 +83,12 @@ export function Enemy() {
               </p>
               <div className="flex items-center gap-4 pt-6 border-t border-[var(--color-bz-border)]">
                 <div className="flex-1 text-center">
-                  <div className="text-2xl font-serif text-[var(--color-bz-text)] mb-1">0</div>
+                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1">0</div>
                   <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Fake Brokers</div>
                 </div>
                 <div className="w-px h-8 bg-[var(--color-bz-border)]"></div>
                 <div className="flex-1 text-center">
-                  <div className="text-2xl font-serif text-[var(--color-bz-teal)] mb-1">100%</div>
+                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-teal)] mb-1">100%</div>
                   <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Verified Capacity</div>
                 </div>
               </div>

@@ -10,11 +10,13 @@ export function Footer() {
           {/* Brand Col */}
           <div className="lg:col-span-2 flex flex-col items-start sm:col-span-2 lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <svg width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <circle cx="10" cy="10" r="9" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
-                <path d="M10 1 L10 19" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
-              </svg>
-              <span className="font-serif text-2xl text-bz-text leading-none mt-1">
+              <div className="bg-[#B8E2F2] rounded-[10px] w-8 h-8 flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <circle cx="10" cy="10" r="9" stroke="#4A9EBF" strokeWidth="1.5" />
+                  <path d="M10 1 L10 19" stroke="#4A9EBF" strokeWidth="1.5" />
+                </svg>
+              </div>
+              <span className="font-display font-[800] tracking-tight text-2xl text-bz-text leading-none">
                 Bazepoint
               </span>
             </div>
