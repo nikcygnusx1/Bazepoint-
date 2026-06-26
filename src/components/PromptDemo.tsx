@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import { staggerContainer, sectionHeader, scaleUp } from '../lib/motion-variants';
+import { revealVariant, buttonHoverProps } from '../lib/motion-variants';
 import { useTypewriterPlaceholder } from '../lib/use-typewriter-placeholder';
 import { SearchingState } from './SearchingState';
 import { BazeConsole } from './BazeConsole';
@@ -37,7 +37,9 @@ export function PromptDemo() {
   }, [isFocused]);
 
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent('demo-searching', { detail: isProcessing }));
+    if (isProcessing) {
+      window.dispatchEvent(new CustomEvent('demo-searching', { detail: true }));
+    }
   }, [isProcessing]);
 
   const handleChipClick = (text: string) => {
@@ -45,6 +47,7 @@ export function PromptDemo() {
     setInput('');
     let i = 0;
     if (typingInterval.current) clearInterval(typingInterval.current);
+    
     typingInterval.current = window.setInterval(() => {
       setInput(prev => prev + cleanText.charAt(i));
       i++;
@@ -63,52 +66,57 @@ export function PromptDemo() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isProcessing) return;
+    
     const trimmedBrief = input.trim();
     setLastSearchBrief(trimmedBrief);
     setIsProcessing(true);
     setResults(false);
     setDraftOpenId(null);
+
+    // Dispatch brief content
     window.dispatchEvent(new CustomEvent('demo-brief', { detail: trimmedBrief }));
+    
     setTimeout(() => {
       setIsProcessing(false);
       setResults(true);
+      // Dispatch results loaded
       window.dispatchEvent(new CustomEvent('demo-results', { detail: true }));
     }, 2200);
   };
 
-  const consoleState = isProcessing
-    ? 'scanning'
-    : results
-      ? (draftOpenId !== null ? 'draft_ready' : 'results')
+  const consoleState = isProcessing 
+    ? 'scanning' 
+    : results 
+      ? (draftOpenId !== null ? 'draft_ready' : 'results') 
       : 'idle';
 
   return (
-    <motion.section
+    <motion.section 
       id="demo"
       aria-labelledby="demo-title"
       className="py-24 bg-[var(--color-bz-bg)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
-      variants={staggerContainer}
+      viewport={{ once: true, amount: 0.15 }}
+      variants={revealVariant}
     >
+      {/* Subtle Noise Overlay */}
       <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
 
       <div className="max-w-[900px] mx-auto px-6 relative z-10">
-
-        {/* SECTION HEADING — answers "What happens when I talk to Baze?" */}
-        <motion.div variants={sectionHeader} className="text-center mb-12">
+        
+        <motion.div variants={revealVariant} className="text-center mb-12">
           <h2 id="demo-title" className="section-label mb-4">See it work</h2>
           <p className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-3">
-            Type a brief. Get verified factories and a draft email.
+            Describe your product. We find the factory.
           </p>
-          <p className="text-base text-[var(--color-bz-text-muted)] font-body max-w-[560px] mx-auto">
-            No factory jargon. No Alibaba hunting. Describe what you want to make — Baze finds the verified match and writes the first email for you.
+          <p className="text-base text-[var(--color-bz-text-muted)] font-body">
+            We’ll search our vetted network, surface manufacturers that fit your brief, and show you what an AI-drafted first email looks like. No sourcing jargon required.
           </p>
         </motion.div>
 
         {/* Input Terminal */}
-        <motion.div variants={scaleUp} className={`group bg-[#FFFFFF] border-[1.5px] border-[rgba(184,226,242,0.5)] rounded-xl transition-all duration-150 ease-out overflow-hidden ${isFocused ? 'border-[#B8E2F2] shadow-[0_4px_24px_rgba(184,226,242,0.25)]' : 'shadow-sm'}`}>
+        <motion.div variants={revealVariant} className={`group bg-[#FFFFFF] border-[1.5px] border-[rgba(184,226,242,0.5)] rounded-xl transition-all duration-150 ease-out overflow-hidden ${isFocused ? 'border-[#B8E2F2] shadow-[0_4px_24px_rgba(184,226,242,0.25)]' : 'shadow-sm'}`}>
           <form onSubmit={handleSubmit} className="relative flex items-center p-2">
             <div className="relative w-full">
               {!input && (
@@ -127,7 +135,7 @@ export function PromptDemo() {
                   </AnimatePresence>
                 </div>
               )}
-              <input
+              <input 
                 type="text"
                 aria-label="Describe what you want to make"
                 value={input}
@@ -138,15 +146,14 @@ export function PromptDemo() {
                 disabled={isProcessing || results}
               />
             </div>
-
+            
             <AnimatePresence>
               {input.trim() && !results && (
-                <motion.button
+                <motion.button 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  whileHover={{ scale: 1.03, transition: { duration: 0.2, ease: [0.34, 1.56, 0.64, 1] } }}
-                  whileTap={{ scale: 0.97, transition: { duration: 0.1 } }}
+                  {...buttonHoverProps}
                   type="submit"
                   disabled={isProcessing}
                   className={`btn-primary !py-3 !px-5 whitespace-nowrap group/btn flex-shrink-0 mr-1 ${isProcessing ? 'opacity-80 cursor-default' : ''}`}
@@ -165,21 +172,23 @@ export function PromptDemo() {
                 </motion.button>
               )}
             </AnimatePresence>
+
           </form>
+          
           <SearchingState isProcessing={isProcessing} />
         </motion.div>
 
         {/* Suggestion Chips */}
         <AnimatePresence mode="wait">
           {!isProcessing && !results && (
-            <motion.div
+            <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               className="mt-6 flex flex-wrap justify-center gap-3"
             >
               {SUGGESTIONS.map((s, i) => (
-                <button
+                <button 
                   key={i}
                   role="button"
                   tabIndex={0}
@@ -194,10 +203,10 @@ export function PromptDemo() {
           )}
         </AnimatePresence>
 
-        {/* Results / Interactive BazeConsole */}
+        {/* Results / Interactive BazeConsole Overlay */}
         <AnimatePresence>
           {(results || isProcessing) && (
-            <motion.div
+            <motion.div 
               layout
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -213,14 +222,22 @@ export function PromptDemo() {
                   setDraftOpenId(id);
                   if (id) {
                     const idx = MANUFACTURERS.findIndex(m => m.id === id);
-                    window.dispatchEvent(new CustomEvent('demo-draft-open', { detail: { index: idx, manufacturerId: id } }));
+                    const selectedManufacturer = MANUFACTURERS.find(m => m.id === id);
+                    window.dispatchEvent(new CustomEvent('demo-draft-open', { 
+                      detail: { 
+                        index: idx, 
+                        manufacturerId: id, 
+                        factoryName: selectedManufacturer?.name 
+                      } 
+                    }));
                   } else {
                     window.dispatchEvent(new CustomEvent('demo-draft-close'));
                   }
                 }}
               />
+              
               <div className="mt-8 text-center">
-                <button
+                <button 
                   onClick={() => {
                     setInput('');
                     setLastSearchBrief('');
@@ -230,13 +247,23 @@ export function PromptDemo() {
                   }}
                   className="text-xs text-[var(--color-bz-text-muted)] font-body hover:text-[var(--color-bz-text)] transition-colors cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  ← Try a different product
+                  ← Try a different product search
                 </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      <style>{`
+        @keyframes pulse-shadow {
+          0%, 100% { box-shadow: 0 0 0 transparent; }
+          50% { box-shadow: var(--shadow-glow-teal); }
+        }
+        .animate-pulse-shadow {
+          animation: pulse-shadow 2.5s infinite ease-in-out;
+        }
+      `}</style>
     </motion.section>
   );
 }

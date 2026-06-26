@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { motion, useInView } from 'motion/react';
 import { CheckCircle2, Shield, Factory, Globe } from 'lucide-react';
-import { staggerContainer, sectionHeader, fadeUp } from '../lib/motion-variants';
+import { revealVariant } from '../lib/motion-variants';
 import { useCountUp } from '../lib/use-count-up';
 
 const PILLARS = [
@@ -41,34 +41,34 @@ export function Trust() {
       className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)]"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={staggerContainer}
+      viewport={{ once: true, amount: 0.15 }}
+      variants={revealVariant}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-16">
         
-        <motion.div variants={sectionHeader} className="text-center mb-16 max-w-2xl mx-auto">
+        <div className="text-center mb-16 max-w-2xl mx-auto">
           <h2 id="trust-title" className="section-label justify-center mb-4">Built on Trust</h2>
           <p className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)]">
             A network you can rely on.
           </p>
-        </motion.div>
+        </div>
 
         {/* 2x2 Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-20 max-w-4xl mx-auto">
           {PILLARS.map((pillar, i) => {
             const Icon = pillar.icon;
             return (
-              <motion.div key={i} variants={fadeUp} className="bg-[var(--color-bz-bg)] p-8 rounded-xl border border-[var(--color-bz-border)] shadow-sm">
+              <div key={i} className="bg-[var(--color-bz-bg)] p-8 rounded-xl border border-[var(--color-bz-border)] shadow-sm">
                 <Icon className="w-6 h-6 text-[var(--color-bz-teal)] mb-4" />
                 <h3 className="text-xl font-body font-bold text-[var(--color-bz-text)] mb-2">{pillar.title}</h3>
                 <p className="text-base text-[var(--color-bz-text-muted)] leading-relaxed">{pillar.desc}</p>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
         {/* Counters Row */}
-        <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-12 lg:gap-24 max-w-4xl mx-auto border-t border-[var(--color-bz-border)] pt-12">
+        <div className="flex flex-wrap justify-center gap-12 lg:gap-24 max-w-4xl mx-auto border-t border-[var(--color-bz-border)] pt-12">
           {stats.map((stat, i) => (
             <div key={i} className="text-center min-w-[120px]">
               <div className="text-4xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-2">
@@ -79,7 +79,7 @@ export function Trust() {
               </div>
             </div>
           ))}
-        </motion.div>
+        </div>
 
       </div>
     </motion.section>

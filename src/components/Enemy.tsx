@@ -1,16 +1,14 @@
 /*
-  PHASE 2 — NARRATIVE SPINE REWRITE
-  Section answers: "How is this better than doing it myself?"
-  Every line echoes the thesis: brief → verified factories → first email written.
-  Headings are outcomes, not labels.
+═══════════════════════════════════════════════════════════════
+  BAZEPOINT — PHASE 3 PRODUCTION AUDIT CONCLUSIONS
+═══════════════════════════════════════════════════════════════
 */
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { AlertCircle, XCircle } from 'lucide-react';
-import { staggerContainer, fadeUp, sectionHeader, staggerFast, fadeUpFast } from '../lib/motion-variants';
+import { revealVariant, cardHoverProps } from '../lib/motion-variants';
 
-// Each pain point is visceral and specific — the antithesis of what Baze does
 const PAIN_POINTS = [
   "Factories ghost you after 3 weeks of emails",
   "Samples look great; production batch looks nothing like it",
@@ -26,72 +24,70 @@ export function Enemy() {
     offset: ["start 0.7", "end 0.4"],
   });
 
+  // Problem side: starts full, dims as you scroll (opacity/scale transition, no filter for cross-browser stability)
   const problemOpacity  = useTransform(enemyScroll, [0, 0.5, 1], [1, 0.85, 0.6]);
   const problemScale    = useTransform(enemyScroll, [0, 1], [1, 0.98]);
+
+  // Solution side: starts dimmer, comes to full as you scroll
   const solutionOpacity = useTransform(enemyScroll, [0, 0.4, 1], [0.7, 0.85, 1]);
   const solutionScale   = useTransform(enemyScroll, [0, 1], [0.97, 1]);
 
   return (
-    <motion.section
+    <motion.section 
       id="trap"
       aria-labelledby="trap-title"
       ref={enemyRef}
       className="py-24 bg-[var(--color-bz-bg)] relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={staggerContainer}
+      viewport={{ once: true, amount: 0.15 }}
+      variants={revealVariant}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-16">
-
-        {/* SECTION LABEL */}
-        <motion.p variants={sectionHeader} className="section-label text-center mb-8">
+        
+        <p className="section-label text-center mb-8">
           Why Bazepoint
-        </motion.p>
-
+        </p>
+        
         <div className="max-w-4xl mx-auto bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-8 md:p-12 shadow-sm relative overflow-hidden">
+          
+          {/* Subtle Warning Accent */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-bz-amber)] to-transparent opacity-50"></div>
-
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-
-            {/* Left: The Problem — specific, visceral */}
+            
+            {/* Left: The Problem */}
             <motion.div style={{ opacity: problemOpacity, scale: problemScale }} className="will-change-transform">
-              <motion.div variants={sectionHeader}>
+              <div>
                 <div className="flex items-center gap-2 text-[var(--color-bz-amber)] mb-4">
                   <AlertCircle className="w-5 h-5" />
-                  <span className="text-sm font-body font-bold uppercase tracking-wider">DIY sourcing</span>
+                  <span className="text-sm font-body font-bold uppercase tracking-wider">The Reality</span>
                 </div>
-                {/* OUTCOME HEADING — the problem stated as a fact, not a label */}
                 <h2 id="trap-title" className="text-3xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-4 leading-snug">
-                  Most first batches cost weeks and still go wrong.
+                  This is what sourcing actually looks like.
                 </h2>
                 <p className="text-base text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-6">
-                  First-time founders spend 4–8 weeks chasing factories on Alibaba, WhatsApp groups, and Fiverr agents. Most still end up with a ghosted inbox, a bad sample, or an MOQ they can't afford. You didn't start a company to become a supply chain expert.
+                  Most first-time founders spend 4–8 weeks chasing factories on Alibaba, random WhatsApp groups, and Fiverr agents — and still end up with a bad sample or a ghosted inbox. You didn't start a company to become a supply chain expert.
                 </p>
-              </motion.div>
-
-              <motion.ul variants={staggerFast} className="space-y-3">
+              </div>
+              
+              <motion.ul variants={revealVariant} className="space-y-3">
                 {PAIN_POINTS.map((point, i) => (
-                  <motion.li key={i} variants={fadeUpFast} className="flex items-start gap-3">
+                  <li key={i} className="flex items-start gap-3">
                     <XCircle className="w-4 h-4 text-[var(--color-bz-border-strong)] flex-shrink-0 mt-0.5" />
                     <span className="text-sm font-body text-[var(--color-bz-text-muted)]">{point}</span>
-                  </motion.li>
+                  </li>
                 ))}
               </motion.ul>
             </motion.div>
-
-            {/* Right: Baze contrast — thesis echo */}
-            <motion.div
-              variants={fadeUp}
-              style={{ opacity: solutionOpacity, scale: solutionScale }}
-              className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8 will-change-transform"
-            >
-              {/* OUTCOME HEADING — the direct contrast */}
+            
+            {/* Right: The Solution Contrast */}
+            <motion.div style={{ opacity: solutionOpacity, scale: solutionScale }} className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8 will-change-transform">
               <h3 className="text-xl font-display font-[800] tracking-[-0.5px] text-[var(--color-bz-text)] mb-4">
-                Brief in. Verified factory and draft email out.
+                Baze does the hard part for you.
               </h3>
               <p className="text-sm font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-6">
-                Describe your product in plain language. Baze searches a private network of audited manufacturers, filters by your budget and MOQ, and writes your first outreach email — personalized and ready to send. No broker fees. No discovery waste.
+                Describe what you want to make in plain language. Baze finds verified factories, filters by your MOQ and budget, and writes your first outreach email. From brief to factory inbox in under a minute.
               </p>
               <div className="flex items-center gap-4 pt-6 border-t border-[var(--color-bz-border)]">
                 <div className="flex-1 text-center">
@@ -114,20 +110,20 @@ export function Enemy() {
           </div>
         </div>
 
-        {/* Social Proof — echoes "How do I know this is real?" */}
+        {/* Double-stacked Social Proof Cards */}
         <div className="max-w-2xl mx-auto mt-10 flex flex-col gap-4">
           <motion.div
-            variants={fadeUp}
-            className="bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-6 md:p-8 shadow-sm"
+            variants={revealVariant}
+            {...cardHoverProps}
+            className="bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-6 md:p-8 shadow-sm cursor-pointer"
           >
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-full bg-[rgba(184,226,242,0.3)] flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#4A9EBF] font-body">
                 R
               </div>
               <div className="flex-grow min-w-0">
-                {/* Quote echoes thesis: brief → verified factories → email written → shipped */}
                 <p className="text-base font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-4">
-                  "Three weeks on Alibaba. Six ghostings. One Baze brief. Two verified factories in my inbox the same day, email already written. We shipped our first 200 units in 45 days."
+                  "I spent 3 weeks trying to find a reliable hoodie manufacturer through Alibaba — got ghosted 6 times. Tried Bazepoint, had 2 verified factories in my inbox the same day and my first email was already written. We shipped our first 200 units within 45 days."
                 </p>
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div>
@@ -143,17 +139,17 @@ export function Enemy() {
           </motion.div>
 
           <motion.div
-            variants={fadeUp}
-            className="bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-6 md:p-8 shadow-sm"
+            variants={revealVariant}
+            {...cardHoverProps}
+            className="bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-6 md:p-8 shadow-sm cursor-pointer"
           >
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-full bg-[rgba(184,226,242,0.3)] flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#4A9EBF] font-body">
                 M
               </div>
               <div className="flex-grow min-w-0">
-                {/* Quote echoes thesis: brief → halal-certified UAE lab → email → 48hr reply */}
                 <p className="text-base font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-4">
-                  "Zero factory connections. I typed a brief — halal-certified UAE supplement lab, MOQ under 500. Baze found one same day, wrote the email. Got a reply in 48 hours. Couldn't have done it without it."
+                  "We were launching a private label supplement line and had zero factory connections. Bazepoint found us a halal-certified UAE lab in the same day. The draft email they wrote got a reply within 48 hours. Couldn't have done it without it."
                 </p>
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div>

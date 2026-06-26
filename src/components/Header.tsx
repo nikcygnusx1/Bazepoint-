@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValue, useTransform, useSpring, useMotionTemplate } from 'motion/react';
 import { Menu, X, ArrowRight } from 'lucide-react';
-import { navContainer, navItem } from '../lib/motion-variants';
+import { navContainer, navItem, buttonHoverProps } from '../lib/motion-variants';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -120,6 +120,7 @@ export function Header() {
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={isTouch ? {} : { x: springX, y: springY }}
+            {...buttonHoverProps}
           >
             Describe your product 
             <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
