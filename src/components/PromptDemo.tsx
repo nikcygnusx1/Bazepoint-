@@ -165,7 +165,7 @@ export function PromptDemo() {
                     </span>
                   ) : (
                     <span className="flex items-center">
-                      Find manufacturers
+                      Find verified factories
                       <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 group-hover/btn:translate-x-1" />
                     </span>
                   )}
@@ -193,7 +193,7 @@ export function PromptDemo() {
                   role="button"
                   tabIndex={0}
                   onClick={() => handleChipClick(s.text)}
-                  className="bg-[#F5F4F0] border border-[rgba(0,0,0,0.07)] rounded-full py-2.5 px-[18px] text-xs font-body text-[#5C5C57] hover:border-[#B8E2F2] transition-colors flex items-center group cursor-pointer"
+                  className="bg-[#F5F4F0] border border-[rgba(0,0,0,0.07)] rounded-full h-8 flex items-center px-[18px] text-xs font-body text-[#5C5C57] hover:border-[#B8E2F2] transition-colors group cursor-pointer"
                 >
                   <span className="mr-2 text-sm">{s.prefix}</span>
                   <span>{s.text}</span>
@@ -247,7 +247,7 @@ export function PromptDemo() {
                   }}
                   className="text-xs text-[var(--color-bz-text-muted)] font-body hover:text-[var(--color-bz-text)] transition-colors cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  ← Try a different product search
+                  ← Change brief
                 </button>
               </div>
             </motion.div>

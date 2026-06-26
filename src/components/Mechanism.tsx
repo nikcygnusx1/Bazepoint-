@@ -9,7 +9,7 @@ const STEPS = [
     id: 1,
     title: "Describe your product",
     icon: Search,
-    description: "Tell Baze what you're making in plain English. No factory jargon required.",
+    description: "Type what you need in plain language. Baze maps it to 847 verified suppliers in under 60 seconds.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="brief" />
@@ -20,7 +20,7 @@ const STEPS = [
     id: 2,
     title: "AI filters the verified network",
     icon: Filter,
-    description: "Baze scans our private database of verified manufacturers across MENA, SE Asia, and Oceania.",
+    description: "Baze searches verified MENA and SEA manufacturing networks — filtered by your exact MOQ, budget, and category.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="list" highlightRow={0} />
@@ -31,7 +31,7 @@ const STEPS = [
     id: 3,
     title: "Email drafted, ready to send",
     icon: MessageSquare,
-    description: "Get a curated list of top matches, complete with a drafted outreach email designed to get a response.",
+    description: "Your first factory intro email is personalized to each supplier's specs and ready to send in one click.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="email" />

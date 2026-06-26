@@ -759,7 +759,7 @@ Best,
                               aria-label={`Draft outreach email to ${m.name}`}
                               className="text-[10px] font-mono text-[var(--bz-console-text-muted)] hover:text-[#00C8B0] border border-[var(--bz-console-border)] bg-[var(--bz-console-surface)] hover:bg-[#00C8B0]/10 rounded px-2.5 py-1 transition-colors"
                             >
-                              Draft →
+                              Draft outreach email
                             </button>
                           )}
                         </div>
@@ -879,7 +879,7 @@ Best,
                       ) : (
                         <>
                           <Copy className="w-3.5 h-3.5 text-[var(--bz-console-text-muted)]" />
-                          <span>Copy Email</span>
+                          <span>Copy email</span>
                         </>
                       )}
                     </button>
@@ -888,7 +888,7 @@ Best,
                       className="flex-1 btn-primary !text-[11px] !py-2 !px-3 justify-center flex items-center gap-1.5 bg-[#00C8B0] text-black hover:bg-[#00C8B0]/90 transition-colors font-bold font-mono"
                     >
                       <ExternalLink className="w-3.5 h-3.5 text-black" />
-                      <span>Send in Gmail</span>
+                      <span>Send via Gmail</span>
                     </button>
                   </div>
                 </div>

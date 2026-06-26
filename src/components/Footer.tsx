@@ -62,7 +62,7 @@ export function Footer() {
               Describe your first product. Get matched with verified manufacturers in minutes.
             </p>
             <a href="#demo" className="btn-primary !py-2.5 !px-5 !text-xs inline-flex">
-              Try Bazepoint free →
+              Start sourcing
             </a>
           </div>
 

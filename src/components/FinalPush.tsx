@@ -24,15 +24,12 @@ export function FinalPush() {
       
       <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
         <motion.div variants={revealVariant} className="will-change-transform">
-          <h2 id="final-title" className="text-4xl md:text-5xl lg:text-6xl font-display font-[800] text-[#1A1A18] mb-6 leading-tight tracking-[-1px]">
-            Stop searching.<br />Start manufacturing.
-          </h2>
-          <p className="text-base md:text-lg font-body text-[var(--color-bz-text-muted)] mt-4 mb-8 max-w-[400px] mx-auto leading-relaxed">
-            Join founders already building with Bazepoint. Free to join, no sourcing experience needed.
+          <p className="text-3xl md:text-5xl font-display font-bold text-[#1A1A18] mb-10 leading-tight tracking-[-1px] max-w-[65ch] mx-auto">
+            Your next factory relationship is one description away.
           </p>
         </motion.div>
         
-        <motion.div variants={revealVariant} className="flex flex-col sm:flex-row items-center justify-center gap-4 will-change-transform">
+        <motion.div variants={revealVariant} className="flex flex-col items-center justify-center will-change-transform">
           <motion.a 
             ref={ctaMagnetic.ref as React.Ref<HTMLAnchorElement>}
             href="#demo"
@@ -42,10 +39,12 @@ export function FinalPush() {
             {...buttonHoverProps}
             className="btn-primary !px-8 !py-4 text-base group w-full sm:w-auto text-center block"
           >
-            Find your manufacturer
+            Describe your first product
             <ArrowRight className="w-4 h-4 inline-block ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
           </motion.a>
-          <span className="text-sm text-[var(--color-bz-text-faint)] font-body">Free to search. No credit card required.</span>
+          <p className="text-xs font-console text-[var(--color-bz-text-faint)] mt-4 text-center tracking-wide">
+            No account needed · Verified factories only · Free to describe
+          </p>
         </motion.div>
       </div>
     </motion.section>

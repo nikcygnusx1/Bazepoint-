@@ -6,7 +6,7 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { AlertCircle, XCircle } from 'lucide-react';
+import { AlertCircle, XCircle, Shield, CheckCircle2 } from 'lucide-react';
 import { revealVariant, cardHoverProps } from '../lib/motion-variants';
 
 const PAIN_POINTS = [
@@ -82,27 +82,29 @@ export function Enemy() {
             </motion.div>
             
             {/* Right: The Solution Contrast */}
-            <motion.div style={{ opacity: solutionOpacity, scale: solutionScale }} className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8 will-change-transform">
-              <h3 className="text-xl font-display font-[800] tracking-[-0.5px] text-[var(--color-bz-text)] mb-4">
-                Baze does the hard part for you.
-              </h3>
-              <p className="text-sm font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-6">
-                Describe what you want to make in plain language. Baze finds verified factories, filters by your MOQ and budget, and writes your first outreach email. From brief to factory inbox in under a minute.
-              </p>
-              <div className="flex items-center gap-4 pt-6 border-t border-[var(--color-bz-border)]">
-                <div className="flex-1 text-center">
-                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums">0</div>
-                  <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Fake Brokers</div>
+            <motion.div style={{ opacity: solutionOpacity, scale: solutionScale }} className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8 will-change-transform flex flex-col justify-between">
+              <div>
+                <h3 className="text-xl font-display font-[800] tracking-[-0.5px] text-[var(--color-bz-text)] mb-4">
+                  Baze does the hard part for you.
+                </h3>
+                <p className="text-sm font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-6">
+                  Describe what you want to make in plain language. Baze finds verified factories, filters by your MOQ and budget, and writes your first outreach email. From brief to factory inbox in under a minute.
+                </p>
+              </div>
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 sm:gap-4 pt-6 border-t border-[var(--color-bz-border)] w-full">
+                <div className="flex-1 min-w-[70px] text-center">
+                  <div className="text-xl sm:text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums whitespace-nowrap">0</div>
+                  <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Fake Brokers</div>
                 </div>
-                <div className="w-px h-8 bg-[var(--color-bz-border)]"></div>
-                <div className="flex-1 text-center">
-                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums">&lt;1min</div>
-                  <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Brief to First Email</div>
+                <div className="hidden sm:block w-px h-8 bg-[var(--color-bz-border)] flex-shrink-0"></div>
+                <div className="flex-1 min-w-[90px] text-center">
+                  <div className="text-xl sm:text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums whitespace-nowrap">&lt;1min</div>
+                  <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Brief to First Email</div>
                 </div>
-                <div className="w-px h-8 bg-[var(--color-bz-border)]"></div>
-                <div className="flex-1 text-center">
-                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-teal)] mb-1 tabular-nums">100%</div>
-                  <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Vetted Only</div>
+                <div className="hidden sm:block w-px h-8 bg-[var(--color-bz-border)] flex-shrink-0"></div>
+                <div className="flex-1 min-w-[70px] text-center">
+                  <div className="text-xl sm:text-2xl font-display font-[800] text-[var(--color-bz-teal)] mb-1 tabular-nums whitespace-nowrap">100%</div>
+                  <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Vetted Only</div>
                 </div>
               </div>
             </motion.div>
@@ -110,8 +112,42 @@ export function Enemy() {
           </div>
         </div>
 
+        {/* Safeguards Horizontal 3-column Grid */}
+        <div className="max-w-4xl mx-auto mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <motion.div 
+            variants={revealVariant}
+            className="bg-[var(--color-bz-surface)] p-6 rounded-xl border border-[var(--color-bz-border)] shadow-sm"
+          >
+            <Shield className="w-5 h-5 text-[var(--color-bz-teal-dark)] mb-3" />
+            <h3 className="text-base font-body font-bold text-[var(--color-bz-text)] mb-2">Verified Identity</h3>
+            <p className="text-xs text-[var(--color-bz-text-muted)] leading-relaxed">
+              Every factory undergoes strict business license and identity verification before joining our network.
+            </p>
+          </motion.div>
+          <motion.div 
+            variants={revealVariant}
+            className="bg-[var(--color-bz-surface)] p-6 rounded-xl border border-[var(--color-bz-border)] shadow-sm"
+          >
+            <CheckCircle2 className="w-5 h-5 text-[var(--color-bz-teal-dark)] mb-3" />
+            <h3 className="text-base font-body font-bold text-[var(--color-bz-text)] mb-2">Facility Audits</h3>
+            <p className="text-xs text-[var(--color-bz-text-muted)] leading-relaxed">
+              We review on-site facility photos, capacity claims, and ISO certifications to ensure reality matches spec.
+            </p>
+          </motion.div>
+          <motion.div 
+            variants={revealVariant}
+            className="bg-[var(--color-bz-surface)] p-6 rounded-xl border border-[var(--color-bz-border)] shadow-sm"
+          >
+            <AlertCircle className="w-5 h-5 text-[var(--color-bz-teal-dark)] mb-3" />
+            <h3 className="text-base font-body font-bold text-[var(--color-bz-text)] mb-2">Quality & Escrow</h3>
+            <p className="text-xs text-[var(--color-bz-text-muted)] leading-relaxed">
+              Past performance, response rates, and production defect history are tracked. Only vetted factories stay in the network.
+            </p>
+          </motion.div>
+        </div>
+
         {/* Double-stacked Social Proof Cards */}
-        <div className="max-w-2xl mx-auto mt-10 flex flex-col gap-4">
+        <div className="max-w-2xl mx-auto mt-16 flex flex-col gap-4">
           <motion.div
             variants={revealVariant}
             {...cardHoverProps}
