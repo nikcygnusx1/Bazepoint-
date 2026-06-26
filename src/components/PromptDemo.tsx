@@ -74,6 +74,7 @@ export function PromptDemo() {
   const [isFocused, setIsFocused] = useState(false);
   const [draftOpen, setDraftOpen] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const typingInterval = useRef<number | null>(null);
 
   const { currentIndex, currentPhrase } = useTypewriterPlaceholder(EXAMPLE_PROMPTS, 3500, isFocused || input.length > 0);
@@ -134,6 +135,15 @@ export function PromptDemo() {
     navigator.clipboard.writeText(body);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+  };
+
+  const handleCopyLink = (manufacturerName: string) => {
+    const emailTo = 'sourcing@' + manufacturerName.toLowerCase().replace(/\s+/g, '') + '.com';
+    const body = buildEmailBody(manufacturerName, lastSearchBrief);
+    const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailTo}&su=Partnership+Inquiry+—+New+Product+Sourcing+Request&body=${encodeURIComponent(body)}`;
+    navigator.clipboard.writeText(url);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 1500);
   };
 
   return (
@@ -397,10 +407,19 @@ export function PromptDemo() {
                         onClick={() => handleCopy(MOCK_RESULTS[draftOpen].name)}
                         className="btn-primary flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
                       >
-                        {copied ? 'Copied ✓' : 'Copy email ↗'}
+                        {copied ? 'Copied ✓' : 'Copy email'}
                       </button>
                       <button 
-                        onClick={() => window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=Partnership+Inquiry+—+New+Product+Sourcing+Request&body=${encodeURIComponent(buildEmailBody(MOCK_RESULTS[draftOpen].name, lastSearchBrief))}`, '_blank')}
+                        onClick={() => handleCopyLink(MOCK_RESULTS[draftOpen].name)}
+                        className="btn-ghost flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
+                      >
+                        {copiedLink ? 'Link Copied ✓' : 'Copy Gmail Draft link'}
+                      </button>
+                      <button 
+                        onClick={() => {
+                          const emailTo = 'sourcing@' + MOCK_RESULTS[draftOpen].name.toLowerCase().replace(/\s+/g, '') + '.com';
+                          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emailTo}&su=Partnership+Inquiry+—+New+Product+Sourcing+Request&body=${encodeURIComponent(buildEmailBody(MOCK_RESULTS[draftOpen].name, lastSearchBrief))}`, '_blank');
+                        }}
                         className="btn-ghost flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
                       >
                         Edit in Gmail

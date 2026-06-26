@@ -6,20 +6,20 @@ import { staggerContainer, sectionHeader, staggerFast, fadeUpFast } from '../lib
 const REGIONS = [
   {
     name: "Turkey",
-    description: "Premium apparel, leather goods, and textiles. Fast lead times to Europe.",
-    specialty: "Apparel & Textiles",
+    description: "Highly advanced, vertically integrated apparel hubs. Exceptional leather goods, textiles, and packaging. Direct land/sea routes to Europe and standard air channels to North America with zero tariff overhead.",
+    specialty: "Vertically Integrated Apparel & Textiles",
     coords: { top: '35%', left: '52%' }
   },
   {
     name: "Indonesia",
-    description: "Sustainable packaging, woodwork, and ceramics.",
-    specialty: "Packaging & Home",
+    description: "High-volume wood, bamboo, and sustainable pulp molding. High-spec ceramics and custom furniture. Zero-tariff access to North American and Oceania markets.",
+    specialty: "Sustainable Packaging & Custom Homeware",
     coords: { top: '70%', left: '75%' }
   },
   {
     name: "UAE",
-    description: "Supplements, cosmetics, and halal-certified production.",
-    specialty: "Health & Beauty",
+    description: "World-class pharmaceutical, supplement, and cosmetics labs. Halal-certified facility lines. Optimal global air-freight positioning with robust trade compliance frameworks.",
+    specialty: "Premium Formulations & Halal Beauty",
     coords: { top: '48%', left: '60%' }
   }
 ];
@@ -78,7 +78,7 @@ export function Supply() {
             <motion.div variants={sectionHeader} style={{ y: headerY, opacity: headerOpacity }} className="will-change-transform">
               <h2 className="section-label mb-4">The Supply Network</h2>
               <p id="supply-title" className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-6 leading-tight">
-                Quality production outside of China.
+                Quality production outside the trade war zone.
               </p>
               <p className="text-lg text-[var(--color-bz-text-muted)] font-body font-light leading-relaxed mb-8">
                 We've spent years auditing factories across emerging manufacturing hubs. We only list partners who communicate clearly, accept reasonable MOQs, and deliver on time.

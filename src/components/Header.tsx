@@ -158,7 +158,7 @@ export function Header() {
                   {link.name}
                 </a>
               ))}
-              <div className="pt-4 pb-2">
+              <div className="pt-4 pb-2 flex flex-col gap-3">
                 <button 
                   className="btn-primary w-full justify-center group"
                   onClick={() => {
@@ -168,6 +168,15 @@ export function Header() {
                 >
                   Describe your product 
                   <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
+                </button>
+                <button 
+                  className="btn-ghost w-full justify-center"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  See it work
                 </button>
               </div>
             </div>
