@@ -1,35 +1,84 @@
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 
 export function FinalPush() {
+  const shouldReduceMotion = useReducedMotion();
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+    }
+  };
+
   return (
-    <section className="py-32 md:py-48 bg-bz-black relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
-        backgroundImage: 'radial-gradient(circle at center, #fff 1px, transparent 1px)',
-        backgroundSize: '2rem 2rem'
-      }}></div>
+    <section className="py-32 md:py-48 bg-bz-teal relative overflow-hidden flex items-center justify-center">
+      {/* Decorative subtle ring */}
+      <div 
+        className="absolute top-[-150px] right-[-150px] w-[600px] h-[600px] rounded-full border border-white opacity-10 pointer-events-none" 
+        aria-hidden="true"
+      ></div>
 
-      <div className="max-w-4xl mx-auto px-6 text-center relative z-10 flex flex-col items-center">
-        <h2 className="text-5xl md:text-7xl font-serif font-black uppercase tracking-tighter text-bz-white mb-12 leading-[0.9]">
-          FORTUNE 500 LEVERAGE,<br/>
-          <span className="text-transparent stroke-white" style={{ WebkitTextStroke: '1.5px var(--color-bz-white)' }}>FOR THE SOLO FOUNDER.</span>
-        </h2>
-        
-        <button className="group relative px-10 py-5 bg-bz-white text-bz-black font-black uppercase text-sm tracking-widest overflow-hidden hover:bg-bz-orange transition-colors duration-0 mb-20">
-          <span className="relative z-10 flex items-center gap-3 group-hover:text-bz-white group-hover:font-mono">
-            DEPLOY ESCROW <ArrowRight className="w-5 h-5" />
+      <motion.div 
+        className="max-w-[680px] mx-auto px-6 text-center relative z-10 flex flex-col items-center"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={shouldReduceMotion ? {} : containerVariants}
+      >
+        <motion.div variants={itemVariants} className="mb-6">
+          <span className="bg-white/10 border border-white/25 rounded-full px-4 py-1.5 font-body text-xs font-medium text-white inline-block">
+            Free to start
           </span>
-        </button>
+        </motion.div>
 
-        <div className="flex flex-col items-center border-t border-bz-border pt-12 w-full max-w-lg">
-          <span className="text-[10px] uppercase tracking-[0.3em] text-bz-gray font-mono mb-8">Backed By</span>
-          <div className="flex flex-wrap justify-center gap-12 opacity-60 grayscale brightness-200">
-            {/* Using text logos as placeholders for actual SVGs to maintain the aesthetic */}
-            <span className="font-bold text-lg tracking-tighter uppercase italic font-serif">FOUNDERS FUND</span>
-            <span className="font-bold text-lg tracking-tighter uppercase font-sans">KLEINER PERKINS</span>
-          </div>
-        </div>
-      </div>
+        <motion.h2 variants={itemVariants} className="text-4xl md:text-5xl font-serif font-normal text-white mb-6 leading-[1.1]">
+          Your first manufacturer is one prompt away.
+        </motion.h2>
+
+        <motion.p variants={itemVariants} className="font-body text-base text-white/75 max-w-[520px] mb-10 leading-[1.65]">
+          Describe your product in plain language. Baze finds your manufacturers, filters by your constraints, and drafts your first email — free, in under 3 minutes.
+        </motion.p>
+        
+        <motion.div variants={itemVariants} className="w-full sm:w-auto">
+          <motion.a 
+            href="#demo"
+            whileHover={{ scale: 1.02, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', backgroundColor: 'var(--color-bz-surface)' }}
+            whileTap={{ scale: 0.97 }}
+            className="w-full sm:w-auto bg-white text-bz-teal font-body text-sm font-bold py-4 px-9 rounded-lg inline-flex justify-center items-center group transition-colors"
+          >
+            Describe your product
+            <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" aria-hidden="true" />
+          </motion.a>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="mt-4">
+          <p className="font-body text-xs text-white/50">
+            No credit card. No sourcing experience needed. Start with any product idea.
+          </p>
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="mt-12 flex flex-wrap justify-center items-center gap-3 font-body text-xs text-white/65">
+          <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="text-white/90" aria-hidden="true">✓</span> Verified manufacturers only</span>
+          <span className="hidden sm:inline" aria-hidden="true">·</span>
+          <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="text-white/90" aria-hidden="true">✓</span> AI-drafted first email included</span>
+          <span className="hidden sm:inline" aria-hidden="true">·</span>
+          <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="text-white/90" aria-hidden="true">✓</span> Southeast Asia, MENA & Oceania</span>
+        </motion.div>
+        
+      </motion.div>
     </section>
   );
 }

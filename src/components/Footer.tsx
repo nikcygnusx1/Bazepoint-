@@ -1,43 +1,78 @@
+import { Twitter, Linkedin } from 'lucide-react';
+
 export function Footer() {
   return (
-    <footer className="bg-bz-charcoal border-t border-bz-border py-12 md:py-16">
+    <footer className="bg-bz-surface-2 border-t border-bz-border pt-16" aria-label="Site footer">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16">
-          <div className="col-span-1 md:col-span-2">
-            <a href="#" className="text-xl font-bold tracking-tighter italic font-serif text-bz-white mb-4 block">
-              BAZEPOINT.
-            </a>
-            <p className="text-sm text-bz-gray font-light max-w-xs">
-              The trust and payment rail for global SME sourcing. From idea to doorstep, settled with proof.
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 pb-12">
+          
+          {/* Brand Col */}
+          <div className="lg:col-span-2 flex flex-col items-start">
+            <div className="flex items-center gap-3 mb-4">
+              <svg width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="10" cy="10" r="9" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
+                <path d="M10 1 L10 19" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
+              </svg>
+              <span className="font-serif text-2xl text-bz-text leading-none mt-1">
+                Bazepoint
+              </span>
+            </div>
+            <p className="font-body text-sm text-bz-text-muted max-w-[260px] leading-relaxed mb-6">
+              AI sourcing agent for founders building their first physical product.
             </p>
+            <div className="flex gap-4">
+              <a href="#" aria-label="Follow on Twitter" className="w-9 h-9 rounded-full bg-bz-surface-3 border border-bz-border flex items-center justify-center hover:bg-bz-border transition-colors text-bz-text-muted hover:text-bz-text">
+                <Twitter className="w-4 h-4" />
+              </a>
+              <a href="#" aria-label="Follow on LinkedIn" className="w-9 h-9 rounded-full bg-bz-surface-3 border border-bz-border flex items-center justify-center hover:bg-bz-border transition-colors text-bz-text-muted hover:text-bz-text">
+                <Linkedin className="w-4 h-4" />
+              </a>
+            </div>
           </div>
           
+          {/* Product Nav Col */}
           <div>
-            <h4 className="text-[10px] uppercase tracking-[0.2em] text-bz-white font-mono mb-6">Protocol</h4>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-xs text-bz-gray hover:text-bz-white transition-colors">Verification Framework</a></li>
-              <li><a href="#" className="text-xs text-bz-gray hover:text-bz-white transition-colors">Escrow Logic</a></li>
-              <li><a href="#" className="text-xs text-bz-gray hover:text-bz-white transition-colors">Trust Scoring</a></li>
+            <h4 className="font-body text-sm font-semibold text-bz-text mb-5">Platform</h4>
+            <ul className="space-y-4">
+              <li><a href="#mechanism" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">How it works</a></li>
+              <li><a href="#supply" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">Verified network</a></li>
+              <li><a href="#demo" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">See a demo</a></li>
+              <li><a href="#supply" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">For manufacturers</a></li>
             </ul>
           </div>
           
+          {/* Company Nav Col */}
           <div>
-            <h4 className="text-[10px] uppercase tracking-[0.2em] text-bz-white font-mono mb-6">Company</h4>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-xs text-bz-gray hover:text-bz-white transition-colors">About</a></li>
-              <li><a href="#" className="text-xs text-bz-gray hover:text-bz-white transition-colors">Contact</a></li>
-              <li><a href="#" className="text-xs text-bz-gray hover:text-bz-white transition-colors">Terms of Service</a></li>
+            <h4 className="font-body text-sm font-semibold text-bz-text mb-5">Company</h4>
+            <ul className="space-y-4">
+              <li><a href="#" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">About Bazepoint</a></li>
+              <li><a href="#" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">Contact us</a></li>
+              <li><a href="#" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">Privacy policy</a></li>
+              <li><a href="#" className="font-body text-sm text-bz-text-muted hover:text-bz-text transition-colors">Terms of service</a></li>
             </ul>
           </div>
+          
+          {/* CTA Col */}
+          <div>
+            <h4 className="font-body text-sm font-semibold text-bz-text mb-3">Get started</h4>
+            <p className="font-body text-sm text-bz-text-muted mb-4 max-w-[280px]">
+              Describe your first product. Get matched with verified manufacturers in minutes.
+            </p>
+            <a href="#demo" className="btn-primary !py-2.5 !px-5 !text-xs inline-flex">
+              Try Bazepoint free →
+            </a>
+          </div>
+
         </div>
-        
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between pt-8 border-t border-bz-border gap-4">
-          <div className="text-[10px] font-mono opacity-50 uppercase tracking-[0.2em] text-bz-gray">
-            Protocol v1.42 // © 2026 Bazepoint
+
+        {/* Bottom Bar */}
+        <div className="border-t border-bz-border py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="font-body text-xs text-bz-text-faint">
+            © 2026 Bazepoint. All rights reserved.
           </div>
-          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-bz-orange border border-bz-orange/30 px-3 py-1 bg-bz-orange/5">
-            System Operational
+          <div className="font-body text-xs text-bz-text-faint italic">
+            Built for founders. Backed by verified factories.
           </div>
         </div>
         
