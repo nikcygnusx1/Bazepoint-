@@ -13,13 +13,13 @@ export function Hero() {
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    const handleFocus = (e: any) => setIsInputFocused(e.detail);
-    const handleSearch = (e: any) => setIsSearching(e.detail);
-    window.addEventListener('demo-focus', handleFocus);
-    window.addEventListener('demo-searching', handleSearch);
+    const handleFocus = (e: CustomEvent) => setIsInputFocused(e.detail);
+    const handleSearch = (e: CustomEvent) => setIsSearching(e.detail);
+    window.addEventListener('demo-focus', handleFocus as EventListener);
+    window.addEventListener('demo-searching', handleSearch as EventListener);
     return () => {
-      window.removeEventListener('demo-focus', handleFocus);
-      window.removeEventListener('demo-searching', handleSearch);
+      window.removeEventListener('demo-focus', handleFocus as EventListener);
+      window.removeEventListener('demo-searching', handleSearch as EventListener);
     };
   }, []);
 
@@ -37,6 +37,7 @@ export function Hero() {
 
   return (
     <motion.section 
+      aria-labelledby="hero-title"
       variants={heroContainer}
       initial="hidden"
       animate="visible"
@@ -75,7 +76,7 @@ export function Hero() {
             <span className="section-label">AI Sourcing Agent</span>
           </motion.div>
           
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-hero leading-[1.05] font-serif font-normal text-[var(--color-bz-text)] mb-6">
+          <h1 id="hero-title" className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-serif font-normal text-[var(--color-bz-text)] mb-6">
             <div className="flex flex-wrap">
               {headlineWords.map((word, i) => (
                 <motion.span
@@ -141,7 +142,7 @@ export function Hero() {
                   onClick={() => handleChipClick(text)}
                   animate={{ y: [0, -3, 0] }}
                   transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-full py-2 px-4 text-xs font-body font-medium text-[var(--color-bz-text)] hover:border-[var(--color-bz-teal)] hover:bg-[var(--color-bz-teal-light)] transition-colors flex items-center gap-2 group relative overflow-hidden"
+                  className="bg-[var(--color-bz-surface-2)] border border-[var(--color-bz-border)] rounded-full py-3 px-5 text-sm font-body font-medium text-[var(--color-bz-text)] hover:border-[var(--color-bz-teal)] hover:bg-[var(--color-bz-teal-light)] transition-colors flex items-center gap-2 group relative overflow-hidden"
                 >
                   <span className="relative z-10">{text}</span>
                   <span className="text-[var(--color-bz-text-faint)] group-hover:text-[var(--color-bz-teal)] transition-colors relative z-10">↗</span>

@@ -31,6 +31,7 @@ export function Enemy() {
   return (
     <motion.section 
       id="trap"
+      aria-labelledby="trap-title"
       ref={enemyRef}
       className="py-24 bg-[var(--color-bz-bg)] relative overflow-hidden"
       initial="hidden"
@@ -54,7 +55,7 @@ export function Enemy() {
                   <AlertCircle className="w-5 h-5" />
                   <span className="text-sm font-body font-bold uppercase tracking-wider">The Status Quo</span>
                 </div>
-                <h2 className="text-3xl font-serif text-[var(--color-bz-text)] mb-4 leading-snug">
+                <h2 id="trap-title" className="text-3xl font-serif text-[var(--color-bz-text)] mb-4 leading-snug">
                   Sourcing platforms are designed for traders, not founders.
                 </h2>
                 <p className="text-base text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-6">

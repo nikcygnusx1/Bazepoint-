@@ -104,6 +104,7 @@ export function Mechanism() {
   return (
     <motion.section 
       id="mechanism"
+      aria-labelledby="mechanism-title"
       ref={containerRef}
       className="py-24 bg-[var(--color-bz-bg)] relative overflow-hidden"
       initial="hidden"
@@ -113,7 +114,7 @@ export function Mechanism() {
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-16 relative z-10">
         <motion.div variants={sectionHeader} className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="section-label justify-center mb-4">How it works</h2>
+          <h2 id="mechanism-title" className="section-label justify-center mb-4">How it works</h2>
           <p className="text-3xl md:text-4xl font-serif font-normal text-[var(--color-bz-text)]">
             Stop searching Alibaba.<br />Start building.
           </p>
@@ -122,7 +123,7 @@ export function Mechanism() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
           {/* Left: Steps Navigation */}
-          <div className="flex flex-col gap-2 relative">
+          <div className="flex flex-row md:flex-col gap-4 md:gap-2 relative overflow-x-auto md:overflow-visible pb-4 md:pb-0" style={{ scrollbarWidth: 'none' }}>
             <div ref={spineRef} className="absolute left-[23px] top-8 bottom-8 hidden md:block" style={{ width: 1 }}>
               <svg
                 width="1"
@@ -178,9 +179,12 @@ export function Mechanism() {
               return (
                 <motion.div 
                   key={step.id}
+                  role="button"
+                  tabIndex={0}
                   variants={fadeUp}
-                  className={`group relative flex items-start gap-6 p-6 rounded-xl cursor-pointer transition-all duration-300 ${isActive ? 'bg-[var(--color-bz-surface-2)] shadow-sm border border-[var(--color-bz-border)]' : 'hover:bg-[var(--color-bz-surface)] border border-transparent'}`}
+                  className={`group relative flex flex-col md:flex-row items-start gap-4 md:gap-6 p-5 md:p-6 rounded-xl cursor-pointer transition-all duration-300 min-w-[260px] md:min-w-0 flex-shrink-0 ${isActive ? 'bg-[var(--color-bz-surface-2)] shadow-sm border border-[var(--color-bz-border)]' : 'hover:bg-[var(--color-bz-surface)] border border-transparent'}`}
                   onClick={() => setActiveStep(step.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveStep(step.id); }}
                 >
                   {/* Indicator Line (Mobile) */}
                   {isActive && (

@@ -20,6 +20,7 @@ export function FinalPush() {
 
   return (
     <motion.section 
+      aria-labelledby="final-title"
       ref={fpRef}
       className="py-32 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
       initial="hidden"
@@ -35,7 +36,7 @@ export function FinalPush() {
       
       <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
         <motion.div style={{ y: fpHeadlineY, opacity: fpHeadlineOpacity }} className="will-change-transform">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[var(--color-bz-text)] mb-6 leading-tight">
+          <h2 id="final-title" className="text-4xl md:text-5xl lg:text-6xl font-serif text-[var(--color-bz-text)] mb-6 leading-tight">
             Stop searching.<br />Start manufacturing.
           </h2>
           <p className="text-lg text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-10 max-w-xl mx-auto">

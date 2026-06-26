@@ -243,6 +243,35 @@ body {
   inset: 0;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:       0.01ms !important;
+    animation-iteration-count: 1     !important;
+    transition-duration:      0.01ms !important;
+    scroll-behavior:          auto   !important;
+  }
+
+  /* HeroCanvas: stop RAF loop when reduced motion */
+  /* (handled in HeroCanvas.tsx useEffect via matchMedia) */
+
+  /* Ticker: pause */
+  .ticker-track {
+    animation-play-state: paused !important;
+  }
+
+  /* FinalPush ambient */
+  .fp-ambient {
+    animation: none !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-bz-teal);
+  outline-offset: 3px;
+}
+
 .hero-ambient-bg {
   background: radial-gradient(
     ellipse 80% 60% at var(--ambient-x, 50%) var(--ambient-y, 45%),

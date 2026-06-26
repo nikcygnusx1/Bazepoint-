@@ -6,6 +6,7 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { PromptDemo } from './components/PromptDemo';
 import { Mechanism } from './components/Mechanism';
+import { Trust } from './components/Trust';
 import { Supply } from './components/Supply';
 import { Enemy } from './components/Enemy';
 import { FinalPush } from './components/FinalPush';
@@ -35,6 +36,7 @@ export default function App() {
           <Mechanism />
           <Supply />
           <Enemy />
+          <Trust />
           <FinalPush />
         </main>
         <Footer />

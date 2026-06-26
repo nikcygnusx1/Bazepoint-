@@ -5,10 +5,10 @@ export function Footer() {
     <footer className="bg-bz-surface-2 border-t border-bz-border pt-16" aria-label="Site footer">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8 pb-12">
           
           {/* Brand Col */}
-          <div className="lg:col-span-2 flex flex-col items-start">
+          <div className="lg:col-span-2 flex flex-col items-start sm:col-span-2 lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
               <svg width="24" height="24" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                 <circle cx="10" cy="10" r="9" stroke="var(--color-bz-teal)" strokeWidth="1.5" />
@@ -67,7 +67,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-bz-border py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-bz-border py-6 flex flex-col md:flex-row justify-between items-center gap-1 md:gap-4">
           <div className="font-body text-xs text-bz-text-faint">
             © 2026 Bazepoint. All rights reserved.
           </div>

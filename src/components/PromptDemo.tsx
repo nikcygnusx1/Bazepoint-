@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { staggerContainer, sectionHeader, scaleUp, staggerSlow, cardItem } from '../lib/motion-variants';
+import { useTypewriterPlaceholder } from '../lib/use-typewriter-placeholder';
+import { SearchingState } from './SearchingState';
 
 const SUGGESTIONS = [
   { text: "Premium cotton hoodies · Turkey · MOQ 200", prefix: "🧵" },
@@ -48,11 +50,10 @@ export function PromptDemo() {
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(false);
-  const [processMsg, setProcessMsg] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
-  const cycleInterval = useRef<number | null>(null);
   const typingInterval = useRef<number | null>(null);
+
+  const { currentIndex, currentPhrase } = useTypewriterPlaceholder(EXAMPLE_PROMPTS, 3500, isFocused || input.length > 0);
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('demo-focus', { detail: isFocused }));
@@ -61,19 +62,6 @@ export function PromptDemo() {
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('demo-searching', { detail: isProcessing }));
   }, [isProcessing]);
-
-  useEffect(() => {
-    if (!isFocused && !input) {
-      cycleInterval.current = window.setInterval(() => {
-        setCurrentIndex(prev => (prev + 1) % EXAMPLE_PROMPTS.length);
-      }, 3500);
-    } else {
-      if (cycleInterval.current) clearInterval(cycleInterval.current);
-    }
-    return () => {
-      if (cycleInterval.current) clearInterval(cycleInterval.current);
-    };
-  }, [isFocused, input]);
 
   const handleChipClick = (text: string) => {
     // Strip prefix if any
@@ -92,9 +80,9 @@ export function PromptDemo() {
   };
 
   useEffect(() => {
-    const handler = (e: any) => handleChipClick(e.detail);
-    window.addEventListener('populate-demo', handler);
-    return () => window.removeEventListener('populate-demo', handler);
+    const handler = (e: CustomEvent) => handleChipClick(e.detail);
+    window.addEventListener('populate-demo', handler as EventListener);
+    return () => window.removeEventListener('populate-demo', handler as EventListener);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -110,26 +98,10 @@ export function PromptDemo() {
     }, 2200);
   };
 
-  useEffect(() => {
-    if (isProcessing) {
-      const msgs = [
-        "Searching verified manufacturer network...",
-        "Applying filters: budget, MOQ, lead time, region...",
-        "Ranking by trust score and past performance..."
-      ];
-      setProcessMsg(msgs[0]);
-      let i = 0;
-      const interval = setInterval(() => {
-        i = (i + 1) % msgs.length;
-        setProcessMsg(msgs[i]);
-      }, 600);
-      return () => clearInterval(interval);
-    }
-  }, [isProcessing]);
-
   return (
     <motion.section 
       id="demo"
+      aria-labelledby="demo-title"
       className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
@@ -142,7 +114,7 @@ export function PromptDemo() {
       <div className="max-w-[900px] mx-auto px-6 relative z-10">
         
         <motion.div variants={sectionHeader} className="text-center mb-12">
-          <h2 className="section-label mb-4">See it work</h2>
+          <h2 id="demo-title" className="section-label mb-4">See it work</h2>
           <p className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)] mb-3">
             Describe what you want to make.
           </p>
@@ -166,13 +138,14 @@ export function PromptDemo() {
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                       className="text-[var(--color-bz-text-muted)] whitespace-nowrap overflow-hidden text-ellipsis w-full"
                     >
-                      e.g. {EXAMPLE_PROMPTS[currentIndex]}
+                      e.g. {currentPhrase}
                     </motion.span>
                   </AnimatePresence>
                 </div>
               )}
               <input 
                 type="text"
+                aria-label="Describe what you want to make"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onFocus={() => setIsFocused(true)}
@@ -211,25 +184,7 @@ export function PromptDemo() {
 
           </form>
           
-          <AnimatePresence mode="wait">
-            {isProcessing && (
-              <motion.div 
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 48, opacity: 1 }}
-                exit={{ height: 0, opacity: 0, transition: { duration: 0.2 } }}
-                className="bg-[var(--color-bz-teal-light)] flex items-center px-6 overflow-hidden rounded-b-xl"
-              >
-                <span className="text-xs text-[var(--color-bz-teal)] italic font-body flex items-center">
-                  {processMsg}
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 1, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >...</motion.span>
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <SearchingState isProcessing={isProcessing} />
         </motion.div>
 
         {/* Suggestion Chips */}

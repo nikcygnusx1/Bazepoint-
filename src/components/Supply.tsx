@@ -61,6 +61,7 @@ export function Supply() {
   return (
     <motion.section 
       id="supply"
+      aria-labelledby="supply-title"
       ref={supplyRef}
       className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)]"
       initial="hidden"
@@ -69,7 +70,7 @@ export function Supply() {
       variants={staggerContainer}
     >
       {/* Live Ticker */}
-      <div className="w-full bg-[var(--color-bz-surface)] border-b border-[var(--color-bz-border)] h-9 overflow-hidden absolute top-0 left-0 flex items-center relative z-20">
+      <div className="w-full bg-[var(--color-bz-surface)] border-b border-[var(--color-bz-border)] h-9 overflow-hidden absolute top-0 left-0 flex items-center relative z-20" aria-hidden="true">
         <div className="absolute inset-y-0 left-0 w-8 md:w-16 bg-gradient-to-r from-[var(--color-bz-surface)] to-transparent z-10 pointer-events-none"></div>
         <div className="ticker-track">
           {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
@@ -90,7 +91,7 @@ export function Supply() {
           <div className="col-span-1 lg:col-span-5">
             <motion.div variants={sectionHeader} style={{ y: headerY, opacity: headerOpacity }} className="will-change-transform">
               <h2 className="section-label mb-4">The Supply Network</h2>
-              <p className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)] mb-6 leading-tight">
+              <p id="supply-title" className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)] mb-6 leading-tight">
                 Quality production outside of China.
               </p>
               <p className="text-lg text-[var(--color-bz-text-muted)] font-body font-light leading-relaxed mb-8">
