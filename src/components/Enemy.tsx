@@ -91,20 +91,18 @@ export function Enemy() {
                   Describe what you want to make in plain language. Baze finds verified factories, filters by your MOQ and budget, and writes your first outreach email. From brief to factory inbox in under a minute.
                 </p>
               </div>
-              <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 sm:gap-4 pt-6 border-t border-[var(--color-bz-border)] w-full">
-                <div className="flex-1 min-w-[70px] text-center">
-                  <div className="text-xl sm:text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums whitespace-nowrap">0</div>
-                  <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Fake Brokers</div>
+              <div className="grid grid-cols-3 divide-x divide-[var(--color-bz-border)] pt-6 border-t border-[var(--color-bz-border)] w-full">
+                <div className="text-center px-1">
+                  <div className="text-[20px] sm:text-[24px] md:text-[28px] font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums leading-none">0</div>
+                  <div className="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Fake Brokers</div>
                 </div>
-                <div className="hidden sm:block w-px h-8 bg-[var(--color-bz-border)] flex-shrink-0"></div>
-                <div className="flex-1 min-w-[90px] text-center">
-                  <div className="text-xl sm:text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums whitespace-nowrap">&lt;1min</div>
-                  <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Brief to First Email</div>
+                <div className="text-center px-1">
+                  <div className="text-[20px] sm:text-[24px] md:text-[28px] font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums leading-none">&lt;1min</div>
+                  <div className="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Brief to Email</div>
                 </div>
-                <div className="hidden sm:block w-px h-8 bg-[var(--color-bz-border)] flex-shrink-0"></div>
-                <div className="flex-1 min-w-[70px] text-center">
-                  <div className="text-xl sm:text-2xl font-display font-[800] text-[var(--color-bz-teal)] mb-1 tabular-nums whitespace-nowrap">100%</div>
-                  <div className="text-[9px] sm:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Vetted Only</div>
+                <div className="text-center px-1">
+                  <div className="text-[20px] sm:text-[24px] md:text-[28px] font-display font-[800] text-[var(--color-bz-teal-dark)] mb-1 tabular-nums leading-none">100%</div>
+                  <div className="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Vetted Only</div>
                 </div>
               </div>
             </motion.div>
