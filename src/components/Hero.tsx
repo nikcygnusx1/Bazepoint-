@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight, Shield, ChevronDown } from 'lucide-react';
-import { HeroVisual } from './HeroVisual';
 import HeroCanvas from './HeroCanvas';
 import { heroContainer, heroLabel, heroHeadline, heroSubtext, heroCta, heroStats, staggerFast, fadeUpFast } from '../lib/motion-variants';
 
@@ -64,99 +63,91 @@ export function Hero() {
       {/* Decorative Circular Outline */}
       <div className="absolute top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full border border-[var(--color-bz-border)] opacity-40 pointer-events-none z-0"></div>
 
-      <div className="max-w-[1440px] mx-auto px-6 md:px-16 w-full relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      <div className="max-w-[680px] mx-auto px-6 md:px-16 w-full relative z-10 flex flex-col items-center text-center">
         
-        {/* Left: Copy & CTA */}
-        <div className="col-span-1 lg:col-span-7 flex flex-col justify-center">
-          <motion.div 
-            variants={heroLabel}
-            className="mb-8 inline-flex items-center gap-2 bg-[rgba(184,226,242,0.3)] text-[#4A9EBF] border border-[rgba(184,226,242,0.4)] px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider"
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-[#4A9EBF]"></div>
-            <span>AI Sourcing Agent</span>
-          </motion.div>
-          
-          <h1 id="hero-title" className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-display font-[800] text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] mb-6">
-            <div className="flex flex-wrap">
-              {headlineWords.map((word, i) => (
-                <motion.span
-                  key={i}
-                  className="inline-block mr-[0.25em]"
-                  variants={heroHeadline}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </div>
-            <div className="flex flex-wrap mt-2">
-              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>In</motion.span>
-              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>minutes,</motion.span>
-              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>not</motion.span>
-              <motion.span className="inline-block line-through opacity-50" variants={heroHeadline}>months.</motion.span>
-            </div>
-          </h1>
-          
-          <motion.p 
-            variants={heroSubtext}
-            className="max-w-[480px] text-base md:text-lg text-[var(--color-bz-text-muted)] leading-[1.7] font-body font-normal mb-10"
-          >
-            Tell Baze what you want to make. We find verified manufacturers across Southeast Asia, MENA and Oceania, filter by your budget and MOQ, and draft your first outreach email — ready to send.
-          </motion.p>
-          
-          <motion.div 
-            variants={heroCta}
-            className="flex flex-col gap-4 mb-12"
-          >
-            <div className="flex">
-              <button 
-                onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
-                className="btn-primary group"
-              >
-                Describe your product
-                <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
-              </button>
-            </div>
-            <motion.div variants={heroStats} className="flex items-center gap-2">
-              <Shield className="w-3 h-3 text-[var(--color-bz-teal)]" />
-              <span className="text-xs text-[var(--color-bz-text-faint)] font-body">
-                Verified manufacturers across Turkey, Vietnam, Indonesia, Malaysia & UAE
-              </span>
-            </motion.div>
-          </motion.div>
-
-          {/* Example Prompt Chips */}
-          <motion.div 
-            variants={staggerFast}
-            className="flex flex-wrap gap-3"
-          >
-            {[
-              "Premium skincare packaging · MOQ 500 · Indonesia",
-              "Heavyweight cotton hoodie · Turkey · under $9/unit",
-              "Custom supplement jars · 30 day lead · halal certified"
-            ].map((text, i) => (
+        <motion.div 
+          variants={heroLabel}
+          className="mb-8 inline-flex items-center justify-center gap-2 bg-[rgba(184,226,242,0.3)] text-[#4A9EBF] border border-[rgba(184,226,242,0.4)] px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mx-auto"
+        >
+          <div className="w-1.5 h-1.5 rounded-full bg-[#4A9EBF]"></div>
+          <span>AI Sourcing Agent</span>
+        </motion.div>
+        
+        <h1 id="hero-title" className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-display font-[800] text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] mb-6 text-center">
+          <div className="flex flex-wrap justify-center">
+            {headlineWords.map((word, i) => (
               <motion.span
                 key={i}
-                variants={fadeUpFast}
+                className="inline-block mr-[0.25em]"
+                variants={heroHeadline}
               >
-                <motion.button 
-                  onClick={() => handleChipClick(text)}
-                  animate={{ y: [0, -3, 0] }}
-                  transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
-                  className="bg-[#FFFFFF] border-[1.5px] border-[rgba(184,226,242,0.5)] rounded-full py-3 px-5 text-sm font-body font-medium text-[var(--color-bz-text-muted)] hover:border-[#B8E2F2] hover:shadow-[0_2px_12px_rgba(184,226,242,0.3)] transition-all flex items-center gap-2 group relative overflow-hidden"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#B8E2F2] relative z-10"></div>
-                  <span className="relative z-10">{text}</span>
-                  <span className="text-[var(--color-bz-text-faint)] group-hover:text-[var(--color-bz-teal-dark)] transition-colors relative z-10">↗</span>
-                </motion.button>
+                {word}
               </motion.span>
             ))}
+          </div>
+          <div className="flex flex-wrap mt-2 justify-center">
+            <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>In</motion.span>
+            <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>minutes,</motion.span>
+            <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>not</motion.span>
+            <motion.span className="inline-block line-through opacity-50" variants={heroHeadline}>months.</motion.span>
+          </div>
+        </h1>
+        
+        <motion.p 
+          variants={heroSubtext}
+          className="max-w-[480px] mx-auto text-base md:text-lg text-[var(--color-bz-text-muted)] leading-[1.7] font-body font-normal mb-10 text-center"
+        >
+          Tell Baze what you want to make. We find verified manufacturers across Southeast Asia, MENA and Oceania, filter by your budget and MOQ, and draft your first outreach email — ready to send.
+        </motion.p>
+        
+        <motion.div 
+          variants={heroCta}
+          className="flex flex-col gap-4 mb-12 items-center"
+        >
+          <div className="flex justify-center">
+            <button 
+              onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+              className="btn-primary group"
+            >
+              See it work
+              <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
+            </button>
+          </div>
+          <motion.div variants={heroStats} className="flex items-center justify-center gap-2">
+            <Shield className="w-3 h-3 text-[var(--color-bz-teal)]" />
+            <span className="text-xs text-[var(--color-bz-text-faint)] font-body text-center">
+              Verified manufacturers across Turkey, Vietnam, Indonesia, Malaysia & UAE
+            </span>
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* Right: Interactive Visual */}
-        <div className="col-span-1 lg:col-span-5 w-full h-[300px] lg:h-[560px]">
-          <HeroVisual />
-        </div>
+        {/* Example Prompt Chips */}
+        <motion.div 
+          variants={staggerFast}
+          className="flex flex-wrap gap-3 justify-center"
+        >
+          {[
+            "Premium skincare packaging · MOQ 500 · Indonesia",
+            "Heavyweight cotton hoodie · Turkey · under $9/unit",
+            "Custom supplement jars · 30 day lead · halal certified"
+          ].map((text, i) => (
+            <motion.span
+              key={i}
+              variants={fadeUpFast}
+            >
+              <motion.button 
+                onClick={() => handleChipClick(text)}
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
+                className="bg-[#FFFFFF] border-[1.5px] border-[rgba(184,226,242,0.5)] rounded-full py-3 px-5 text-sm font-body font-medium text-[var(--color-bz-text-muted)] hover:border-[#B8E2F2] hover:shadow-[0_2px_12px_rgba(184,226,242,0.3)] transition-all flex items-center gap-2 group relative overflow-hidden text-left"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-[#B8E2F2] relative z-10 flex-shrink-0"></div>
+                <span className="relative z-10">{text}</span>
+                <span className="text-[var(--color-bz-text-faint)] group-hover:text-[var(--color-bz-teal-dark)] transition-colors relative z-10 ml-1">↗</span>
+              </motion.button>
+            </motion.span>
+          ))}
+        </motion.div>
 
       </div>
 

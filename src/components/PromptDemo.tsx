@@ -51,6 +51,8 @@ export function PromptDemo() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [draftOpen, setDraftOpen] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
   const typingInterval = useRef<number | null>(null);
 
   const { currentIndex, currentPhrase } = useTypewriterPlaceholder(EXAMPLE_PROMPTS, 3500, isFocused || input.length > 0);
@@ -91,11 +93,18 @@ export function PromptDemo() {
     
     setIsProcessing(true);
     setResults(false);
+    setDraftOpen(null);
     
     setTimeout(() => {
       setIsProcessing(false);
       setResults(true);
     }, 2200);
+  };
+
+  const handleCopy = (bodyText: string) => {
+    navigator.clipboard.writeText(bodyText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   };
 
   return (
@@ -116,7 +125,7 @@ export function PromptDemo() {
         <motion.div variants={sectionHeader} className="text-center mb-12">
           <h2 id="demo-title" className="section-label mb-4">See it work</h2>
           <p className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-3">
-            Describe what you want to make.
+            Describe your product. We find the factory.
           </p>
           <p className="text-base text-[var(--color-bz-text-muted)] font-body">
             We'll find your manufacturers and draft your first email. No jargon required.
@@ -285,6 +294,7 @@ export function PromptDemo() {
                     <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
                       <button className="btn-ghost flex-1 md:flex-none !text-xs !py-2 !px-3">View profile</button>
                       <button 
+                        onClick={() => setDraftOpen(index)}
                         className={`btn-primary flex-1 md:flex-none !text-xs !py-2 !px-3 ${index === 0 ? 'animate-pulse-shadow' : ''}`}
                       >
                         Draft email →
@@ -293,10 +303,89 @@ export function PromptDemo() {
                   </motion.div>
                 ))}
               </motion.div>
+
+              <AnimatePresence>
+                {draftOpen !== null && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 16 }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-6 bg-[#FFFFFF] border border-[rgba(184,226,242,0.5)] rounded-2xl overflow-hidden"
+                  >
+                    {/* Panel header */}
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(0,0,0,0.07)] bg-[rgba(184,226,242,0.06)]">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#B8E2F2] animate-pulse"></div>
+                        <span className="text-xs font-body font-semibold text-[#4A9EBF] uppercase tracking-wider">
+                          AI Draft — {MOCK_RESULTS[draftOpen].name}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setDraftOpen(null)}
+                        className="text-[#9C9C96] hover:text-[#1A1A18] transition-colors text-lg leading-none"
+                        aria-label="Close draft"
+                      >
+                        ×
+                      </button>
+                    </div>
+
+                    {/* Email meta */}
+                    <div className="px-6 pt-4 pb-2 border-b border-[rgba(0,0,0,0.04)] space-y-1.5">
+                      <div className="flex gap-2 text-xs font-body text-[#9C9C96]">
+                        <span className="w-12 flex-shrink-0 font-medium text-[#5C5C57]">To:</span>
+                        <span>sourcing@{MOCK_RESULTS[draftOpen].name.toLowerCase().replace(/\s+/g, '')}.com</span>
+                      </div>
+                      <div className="flex gap-2 text-xs font-body text-[#9C9C96]">
+                        <span className="w-12 flex-shrink-0 font-medium text-[#5C5C57]">Subject:</span>
+                        <span>Partnership Inquiry — New Product Sourcing Request</span>
+                      </div>
+                    </div>
+
+                    {/* Email body */}
+                    <div className="px-6 py-5 text-sm font-body text-[#5C5C57] leading-relaxed whitespace-pre-line">
+                      {`Hi ${MOCK_RESULTS[draftOpen].name.split(' ')[0]} Team,
+
+I came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.
+
+I'm looking to produce [product type] with the following requirements:
+• Target price: [your budget per unit]
+• Quantity: [your MOQ]
+• Timeline: [your target delivery]
+
+Could you confirm your current capacity and whether you accept new founder accounts at these volumes? I'd love to schedule a quick call to discuss further.
+
+Looking forward to hearing from you.
+
+Best,
+[Your name]`}
+                    </div>
+
+                    {/* Footer actions */}
+                    <div className="px-6 pb-5 flex flex-col sm:flex-row gap-3">
+                      <button 
+                        onClick={() => handleCopy(`Hi ${MOCK_RESULTS[draftOpen].name.split(' ')[0]} Team,\n\nI came across your factory profile on Bazepoint and I'm interested in exploring a manufacturing partnership.\n\nI'm looking to produce [product type] with the following requirements:\n• Target price: [your budget per unit]\n• Quantity: [your MOQ]\n• Timeline: [your target delivery]\n\nCould you confirm your current capacity and whether you accept new founder accounts at these volumes? I'd love to schedule a quick call to discuss further.\n\nLooking forward to hearing from you.\n\nBest,\n[Your name]`)}
+                        className="btn-primary flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
+                      >
+                        {copied ? 'Copied ✓' : 'Copy email ↗'}
+                      </button>
+                      <button 
+                        onClick={() => window.open('https://mail.google.com/mail/?view=cm&fs=1&su=Partnership+Inquiry+—+New+Product+Sourcing+Request', '_blank')}
+                        className="btn-ghost flex-1 sm:flex-none !text-sm !py-2.5 !px-5"
+                      >
+                        Edit in Gmail
+                      </button>
+                      <p className="text-xs text-[#9C9C96] font-body self-center sm:ml-auto">
+                        Personalised by Baze AI · Ready to send
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               
               <div className="mt-8 text-center">
                 <button 
-                  onClick={() => { setInput(''); setResults(false); }}
+                  onClick={() => { setInput(''); setResults(false); setDraftOpen(null); }}
                   className="text-xs text-[var(--color-bz-text-muted)] font-body hover:text-[var(--color-bz-text)] transition-colors"
                 >
                   ← Try a different product

@@ -33,9 +33,9 @@ export default function App() {
         <main>
           <Hero />
           <PromptDemo />
+          <Enemy />
           <Mechanism />
           <Supply />
-          <Enemy />
           <Trust />
           <FinalPush />
         </main>

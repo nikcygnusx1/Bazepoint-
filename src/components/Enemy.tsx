@@ -41,6 +41,10 @@ export function Enemy() {
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-16">
         
+        <motion.p variants={sectionHeader} className="section-label text-center mb-8">
+          Why Bazepoint
+        </motion.p>
+        
         <div className="max-w-4xl mx-auto bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-8 md:p-12 shadow-sm relative overflow-hidden">
           
           {/* Subtle Warning Accent */}
@@ -53,13 +57,13 @@ export function Enemy() {
               <motion.div variants={sectionHeader}>
                 <div className="flex items-center gap-2 text-[var(--color-bz-amber)] mb-4">
                   <AlertCircle className="w-5 h-5" />
-                  <span className="text-sm font-body font-bold uppercase tracking-wider">The Status Quo</span>
+                  <span className="text-sm font-body font-bold uppercase tracking-wider">The Reality</span>
                 </div>
                 <h2 id="trap-title" className="text-3xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-4 leading-snug">
-                  Sourcing platforms are designed for traders, not founders.
+                  The reality of unassisted sourcing.
                 </h2>
                 <p className="text-base text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-6">
-                  Legacy directories are flooded with brokers pretending to be factories. You waste weeks filtering through noise, only to end up with unverified suppliers and poor quality control.
+                  Most founders spend 4–8 weeks on Alibaba, WhatsApp groups, and cold emails before getting a single real quote. Half never get a quality sample. You didn't start a business to become a sourcing expert.
                 </p>
               </motion.div>
               
@@ -76,15 +80,20 @@ export function Enemy() {
             {/* Right: The Solution Contrast */}
             <motion.div variants={fadeUp} style={{ opacity: solutionOpacity, scale: solutionScale }} className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8 will-change-transform">
               <h3 className="text-xl font-display font-[800] tracking-[-0.5px] text-[var(--color-bz-text)] mb-4">
-                Bazepoint changes the equation.
+                Founders move faster with Baze.
               </h3>
               <p className="text-sm font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-6">
-                We replace the directory with an intelligent agent. You describe your product, and our AI matches you exclusively with audited, founder-friendly manufacturers.
+                Describe what you want to make in plain language. Baze searches a network of audited factories, filters by your MOQ and budget, and hands you a pre-written first email — ready to send in under a minute.
               </p>
               <div className="flex items-center gap-4 pt-6 border-t border-[var(--color-bz-border)]">
                 <div className="flex-1 text-center">
                   <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1">0</div>
                   <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">Fake Brokers</div>
+                </div>
+                <div className="w-px h-8 bg-[var(--color-bz-border)]"></div>
+                <div className="flex-1 text-center">
+                  <div className="text-2xl font-display font-[800] text-[var(--color-bz-text)] mb-1">&lt;1min</div>
+                  <div className="text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body">To First Email</div>
                 </div>
                 <div className="w-px h-8 bg-[var(--color-bz-border)]"></div>
                 <div className="flex-1 text-center">
@@ -96,6 +105,31 @@ export function Enemy() {
 
           </div>
         </div>
+
+        <motion.div
+          variants={fadeUp}
+          className="max-w-2xl mx-auto mt-10 bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-6 md:p-8"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-[rgba(184,226,242,0.3)] flex items-center justify-center flex-shrink-0 text-sm font-bold text-[#4A9EBF] font-body">
+              R
+            </div>
+            <div>
+              <p className="text-base font-body text-[var(--color-bz-text-muted)] leading-relaxed mb-4">
+                "I spent 3 weeks trying to find a reliable hoodie manufacturer through Alibaba — got ghosted 6 times. Tried Bazepoint, had 2 verified factories in my inbox the same day and my first email was already written. We shipped our first 200 units within 45 days."
+              </p>
+              <div className="flex items-center gap-3">
+                <div>
+                  <p className="text-sm font-body font-semibold text-[var(--color-bz-text)]">Riya S.</p>
+                  <p className="text-xs font-body text-[var(--color-bz-text-faint)]">DTC Apparel Brand, Bangalore</p>
+                </div>
+                <div className="ml-auto bg-[rgba(184,226,242,0.2)] text-[#4A9EBF] border border-[rgba(184,226,242,0.4)] rounded-full px-3 py-1 text-[11px] font-body font-semibold uppercase tracking-wider">
+                  Early Access
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
       </div>
     </motion.section>

@@ -11,12 +11,6 @@ const REGIONS = [
     coords: { top: '35%', left: '52%' }
   },
   {
-    name: "Vietnam",
-    description: "High-quality footwear, outerwear, and electronics assembly.",
-    specialty: "Footwear & Tech",
-    coords: { top: '55%', left: '78%' }
-  },
-  {
     name: "Indonesia",
     description: "Sustainable packaging, woodwork, and ceramics.",
     specialty: "Packaging & Home",
@@ -28,14 +22,6 @@ const REGIONS = [
     specialty: "Health & Beauty",
     coords: { top: '48%', left: '60%' }
   }
-];
-
-const CRITERIA = [
-  "Verified business licenses",
-  "English-speaking reps",
-  "Export compliance",
-  "Sample production verified",
-  "Accepts MOQs under 500"
 ];
 
 const TICKER_ITEMS = [
@@ -105,14 +91,9 @@ export function Supply() {
                 <h3 className="font-display font-[800] tracking-[-0.5px] text-lg text-[var(--color-bz-text)]">Vetted for founders</h3>
               </div>
               
-              <motion.ul variants={staggerFast} className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">
-                {CRITERIA.map((criterion, i) => (
-                  <motion.li key={i} variants={fadeUpFast} className="flex items-start gap-2 text-sm text-[var(--color-bz-text-muted)] font-body">
-                    <CheckCircle2 className="w-4 h-4 text-[var(--color-bz-teal)] flex-shrink-0 mt-0.5" />
-                    {criterion}
-                  </motion.li>
-                ))}
-              </motion.ul>
+              <p className="text-sm font-body text-[var(--color-bz-text-faint)] mt-6">
+                Every factory passes business license verification, English comms check, export compliance review, and sample production audit before listing.
+              </p>
             </div>
           </div>
 

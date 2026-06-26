@@ -39,8 +39,8 @@ export function FinalPush() {
           <h2 id="final-title" className="text-4xl md:text-5xl lg:text-6xl font-display font-[800] text-[#1A1A18] mb-6 leading-tight tracking-[-1px]">
             Stop searching.<br />Start manufacturing.
           </h2>
-          <p className="text-lg text-[#5C5C57] font-body leading-relaxed mb-10 max-w-xl mx-auto">
-            Join the founders using Bazepoint to bypass the noise and connect directly with vetted production partners.
+          <p className="text-base md:text-lg font-body text-[var(--color-bz-text-muted)] mt-4 mb-8 max-w-[400px] mx-auto leading-relaxed">
+            Join founders already building with Bazepoint. Free to join, no sourcing experience needed.
           </p>
         </motion.div>
         
