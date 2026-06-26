@@ -128,7 +128,7 @@ export function PromptDemo() {
             Describe your product. We find the factory.
           </p>
           <p className="text-base text-[var(--color-bz-text-muted)] font-body">
-            We'll find your manufacturers and draft your first email. No jargon required.
+            We’ll search our vetted network, surface manufacturers that fit your brief, and show you what an AI-drafted first email looks like. No sourcing jargon required.
           </p>
         </motion.div>
 
