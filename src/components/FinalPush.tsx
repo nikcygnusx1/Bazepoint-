@@ -1,49 +1,40 @@
-import { useRef, useState, useEffect } from 'react';
-import { motion, useMotionValue, useSpring } from 'motion/react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
-import { staggerContainer, sectionHeader, scaleUp } from '../lib/motion-variants';
+import { staggerContainer, scaleUp } from '../lib/motion-variants';
+import { useMagnetic } from '../lib/use-magnetic';
 
 export function FinalPush() {
-  const buttonRef = useRef<HTMLAnchorElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const [isTouch, setIsTouch] = useState(false);
+  const fpRef = useRef<HTMLDivElement>(null);
+  const ctaMagnetic = useMagnetic(0.4);
 
-  useEffect(() => {
-    setIsTouch(window.matchMedia('(hover: none)').matches);
-  }, []);
+  const { scrollYProgress: fpScroll } = useScroll({
+    target: fpRef,
+    offset: ["start 0.8", "start 0.3"],
+  });
 
-  function handleMouseMove(e: React.MouseEvent<HTMLAnchorElement>) {
-    if (isTouch) return;
-    const rect = buttonRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    x.set((e.clientX - centerX) * 0.3);
-    y.set((e.clientY - centerY) * 0.3);
-  }
-
-  function handleMouseLeave() {
-    x.set(0);
-    y.set(0);
-  }
-
-  const springX = useSpring(x, { stiffness: 300, damping: 20 });
-  const springY = useSpring(y, { stiffness: 300, damping: 20 });
+  const fpHeadlineY = useTransform(fpScroll, [0, 1], [40, 0]);
+  const fpHeadlineOpacity = useTransform(fpScroll, [0, 0.6], [0, 1]);
+  const fpCtaY = useTransform(fpScroll, [0, 1], [40, 0]);
+  const fpCtaOpacity = useTransform(fpScroll, [0.2, 0.8], [0, 1]);
 
   return (
     <motion.section 
+      ref={fpRef}
       className="py-32 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)] relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={staggerContainer}
     >
+      {/* Ambient animated background */}
+      <div className="fp-ambient" aria-hidden="true" />
+      
       {/* Abstract background shapes */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-[var(--color-bz-teal-light)] to-transparent opacity-20 blur-3xl pointer-events-none rounded-full"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-[var(--color-bz-teal-light)] to-transparent opacity-20 blur-3xl pointer-events-none rounded-full z-0"></div>
       
       <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
-        <motion.div variants={sectionHeader}>
+        <motion.div style={{ y: fpHeadlineY, opacity: fpHeadlineOpacity }} className="will-change-transform">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-[var(--color-bz-text)] mb-6 leading-tight">
             Stop searching.<br />Start manufacturing.
           </h2>
@@ -52,13 +43,15 @@ export function FinalPush() {
           </p>
         </motion.div>
         
-        <motion.div variants={scaleUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <motion.div style={{ y: fpCtaY, opacity: fpCtaOpacity }} className="flex flex-col sm:flex-row items-center justify-center gap-4 will-change-transform">
           <motion.a 
-            ref={buttonRef}
+            ref={ctaMagnetic.ref as React.Ref<HTMLAnchorElement>}
             href="#demo"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={isTouch ? {} : { x: springX, y: springY }}
+            onMouseMove={ctaMagnetic.onMouseMove}
+            onMouseLeave={ctaMagnetic.onMouseLeave}
+            style={{ x: ctaMagnetic.springX, y: ctaMagnetic.springY }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
             className="btn-primary !px-8 !py-4 text-base group w-full sm:w-auto text-center block"
           >
             Find your manufacturer

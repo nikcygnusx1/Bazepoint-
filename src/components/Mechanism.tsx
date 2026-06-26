@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { Search, Filter, MessageSquare, CheckCircle2 } from 'lucide-react';
 import { sectionHeader, staggerContainer, fadeUp } from '../lib/motion-variants';
 
@@ -83,6 +83,23 @@ const STEPS = [
 export function Mechanism() {
   const [activeStep, setActiveStep] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const spineRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: spineRef,
+    offset: ["start 0.8", "end 0.3"],
+  });
+
+  const dot0Opacity = useTransform(scrollYProgress, [0/3, 0/3 + 0.15], [0, 1]);
+  const dot1Opacity = useTransform(scrollYProgress, [1/3, 1/3 + 0.15], [0, 1]);
+  const dot2Opacity = useTransform(scrollYProgress, [2/3, 2/3 + 0.15], [0, 1]);
+  const dotOpacities = [dot0Opacity, dot1Opacity, dot2Opacity];
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (latest < 0.33) setActiveStep(1);
+    else if (latest < 0.66) setActiveStep(2);
+    else setActiveStep(3);
+  });
 
   return (
     <motion.section 
@@ -106,7 +123,53 @@ export function Mechanism() {
           
           {/* Left: Steps Navigation */}
           <div className="flex flex-col gap-2 relative">
-            <div className="absolute left-[23px] top-8 bottom-8 w-px bg-[var(--color-bz-border)] hidden md:block"></div>
+            <div ref={spineRef} className="absolute left-[23px] top-8 bottom-8 hidden md:block" style={{ width: 1 }}>
+              <svg
+                width="1"
+                height="100%"
+                viewBox="0 0 1 100"
+                preserveAspectRatio="none"
+                className="absolute inset-0 w-full h-full"
+                aria-hidden="true"
+              >
+                {/* Static background line */}
+                <line
+                  x1="0.5" y1="0"
+                  x2="0.5" y2="100"
+                  stroke="var(--color-bz-border)"
+                  strokeWidth="1"
+                  vectorEffect="non-scaling-stroke"
+                />
+                {/* Animated fill line — draws from top as scroll progresses */}
+                <motion.line
+                  x1="0.5" y1="0"
+                  x2="0.5" y2="100"
+                  stroke="var(--color-bz-teal)"
+                  strokeWidth="1.5"
+                  vectorEffect="non-scaling-stroke"
+                  style={{
+                    pathLength: scrollYProgress,
+                    opacity: useTransform(scrollYProgress, [0, 0.1], [0, 1]),
+                  }}
+                />
+              </svg>
+
+              {/* Waypoint dots — one per step, positioned at even thirds of the spine */}
+              {[0, 1, 2].map((i) => {
+                const dotProgress = dotOpacities[i];
+                return (
+                  <motion.div
+                    key={i}
+                    className="absolute left-1/2 -translate-x-1/2 w-[10px] h-[10px] rounded-full border-2 border-[var(--color-bz-teal)] bg-[var(--color-bz-bg)] will-change-transform"
+                    style={{
+                      top: `${(i / 2) * 100}%`,
+                      scale: dotProgress,
+                      opacity: dotProgress,
+                    }}
+                  />
+                );
+              })}
+            </div>
             
             {STEPS.map((step, index) => {
               const isActive = activeStep === step.id;

@@ -1,4 +1,5 @@
-import { motion } from 'motion/react';
+import { useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { MapPin, Shield, CheckCircle2, Factory } from 'lucide-react';
 import { staggerContainer, sectionHeader, staggerFast, fadeUpFast } from '../lib/motion-variants';
 
@@ -37,23 +38,57 @@ const CRITERIA = [
   "Accepts MOQs under 500"
 ];
 
+const TICKER_ITEMS = [
+  "✓ Pacific Packaging Systems verified — Guangzhou",
+  "✓ Nusantara Naturals passed quality audit — Surabaya",
+  "✓ New factory onboarded: Atlas Ceramics — Hanoi",
+  "✓ Gulf Cosmetics re-verified — Dubai",
+  "✓ Anatolia Apparel completed 43rd order",
+  "✓ Vertex Tech MOQ updated — Penang",
+  "✓ New category added: Sustainable Packaging — SE Asia",
+];
+
 export function Supply() {
+  const supplyRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: supplyScroll } = useScroll({
+    target: supplyRef,
+    offset: ["start end", "start 0.3"],
+  });
+  
+  const headerY = useTransform(supplyScroll, [0, 1], [40, 0]);
+  const headerOpacity = useTransform(supplyScroll, [0, 0.4], [0, 1]);
+
   return (
     <motion.section 
       id="supply"
+      ref={supplyRef}
       className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)]"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
       variants={staggerContainer}
     >
-      <div className="max-w-[1440px] mx-auto px-6 md:px-16">
+      {/* Live Ticker */}
+      <div className="w-full bg-[var(--color-bz-surface)] border-b border-[var(--color-bz-border)] h-9 overflow-hidden absolute top-0 left-0 flex items-center relative z-20">
+        <div className="absolute inset-y-0 left-0 w-8 md:w-16 bg-gradient-to-r from-[var(--color-bz-surface)] to-transparent z-10 pointer-events-none"></div>
+        <div className="ticker-track">
+          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+            <span key={i} className="text-xs font-body text-[var(--color-bz-text-muted)] flex items-center gap-4">
+              {item}
+              <span className="w-1 h-1 rounded-full bg-[var(--color-bz-border-strong)] ml-4"></span>
+            </span>
+          ))}
+        </div>
+        <div className="absolute inset-y-0 right-0 w-8 md:w-16 bg-gradient-to-l from-[var(--color-bz-surface)] to-transparent z-10 pointer-events-none"></div>
+      </div>
+
+      <div className="max-w-[1440px] mx-auto px-6 md:px-16 mt-8">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           
           {/* Left: Copy */}
           <div className="col-span-1 lg:col-span-5">
-            <motion.div variants={sectionHeader}>
+            <motion.div variants={sectionHeader} style={{ y: headerY, opacity: headerOpacity }} className="will-change-transform">
               <h2 className="section-label mb-4">The Supply Network</h2>
               <p className="text-3xl md:text-5xl font-serif font-normal text-[var(--color-bz-text)] mb-6 leading-tight">
                 Quality production outside of China.

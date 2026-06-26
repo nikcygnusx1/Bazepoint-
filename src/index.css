@@ -219,6 +219,30 @@ body {
   100% { background-position: 40% 40%; }
 }
 
+@property --fp-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes fp-rotate {
+  to { --fp-angle: 360deg; }
+}
+
+.fp-ambient {
+  background: conic-gradient(
+    from var(--fp-angle) at 30% 60%,
+    color-mix(in oklch, var(--color-bz-teal) 8%, transparent) 0deg,
+    transparent 60deg,
+    color-mix(in oklch, var(--color-bz-amber) 5%, transparent) 200deg,
+    transparent 280deg
+  );
+  animation: fp-rotate 20s linear infinite;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
 .hero-ambient-bg {
   background: radial-gradient(
     ellipse 80% 60% at var(--ambient-x, 50%) var(--ambient-y, 45%),
@@ -231,6 +255,23 @@ body {
   position: absolute;
   inset: 0;
   z-index: 0;
+}
+
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-track {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  animation: ticker-scroll 28s linear infinite;
+  white-space: nowrap;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
 }
 
 /* ─── MICROINTERACTION LAYER ─────────────────────────────────────────────── */

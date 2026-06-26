@@ -52,8 +52,15 @@ export function PromptDemo() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
   const cycleInterval = useRef<number | null>(null);
-  
   const typingInterval = useRef<number | null>(null);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('demo-focus', { detail: isFocused }));
+  }, [isFocused]);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('demo-searching', { detail: isProcessing }));
+  }, [isProcessing]);
 
   useEffect(() => {
     if (!isFocused && !input) {

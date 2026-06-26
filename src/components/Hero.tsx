@@ -1,11 +1,27 @@
+import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight, Shield, ChevronDown } from 'lucide-react';
 import { HeroVisual } from './HeroVisual';
+import HeroCanvas from './HeroCanvas';
 import { heroContainer, heroLabel, heroHeadline, heroSubtext, heroCta, heroStats, staggerFast, fadeUpFast } from '../lib/motion-variants';
 
 export function Hero() {
   const { scrollY } = useScroll();
   const indicatorOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+
+  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const handleFocus = (e: any) => setIsInputFocused(e.detail);
+    const handleSearch = (e: any) => setIsSearching(e.detail);
+    window.addEventListener('demo-focus', handleFocus);
+    window.addEventListener('demo-searching', handleSearch);
+    return () => {
+      window.removeEventListener('demo-focus', handleFocus);
+      window.removeEventListener('demo-searching', handleSearch);
+    };
+  }, []);
 
   const handleChipClick = (text: string) => {
     // Strip the emoji and just pass the text for the demo
@@ -26,7 +42,19 @@ export function Hero() {
       animate="visible"
       className="relative pt-[120px] pb-[80px] min-h-[90vh] flex items-center overflow-hidden bg-bz-bg"
     >
-      <div className="hero-ambient-bg" aria-hidden="true" />
+      {/* Hero canvas — absolutely fills the section, pointer-events none */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        aria-hidden="true"
+      >
+        <HeroCanvas
+          isFocused={isInputFocused}
+          isSearching={isSearching}
+          className="w-full h-full"
+        />
+      </div>
+
+      <div className="hero-ambient-bg z-0 relative" aria-hidden="true" />
       {/* Subtle Background Gradient */}
       <div className="absolute inset-0 pointer-events-none opacity-50 z-0" style={{
         backgroundImage: 'linear-gradient(135deg, transparent 0%, rgba(201,107,42,0.03) 100%)',

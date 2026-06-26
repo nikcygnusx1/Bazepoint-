@@ -1,4 +1,5 @@
-import { motion } from 'motion/react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, useMotionTemplate } from 'motion/react';
 import { AlertCircle, XCircle } from 'lucide-react';
 import { staggerContainer, fadeUp, sectionHeader, staggerFast, fadeUpFast } from '../lib/motion-variants';
 
@@ -11,9 +12,26 @@ const PAIN_POINTS = [
 ];
 
 export function Enemy() {
+  const enemyRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: enemyScroll } = useScroll({
+    target: enemyRef,
+    offset: ["start 0.7", "end 0.4"],
+  });
+
+  // Problem side: starts full, dims as you scroll
+  const problemOpacity  = useTransform(enemyScroll, [0, 0.5, 1], [1, 0.85, 0.6]);
+  const problemScale    = useTransform(enemyScroll, [0, 1], [1, 0.98]);
+  const problemGrayscale = useTransform(enemyScroll, [0, 1], [0, 100]); // % grayscale filter
+  const problemFilter = useMotionTemplate`grayscale(${problemGrayscale}%)`;
+
+  // Solution side: starts dimmer, comes to full as you scroll
+  const solutionOpacity = useTransform(enemyScroll, [0, 0.4, 1], [0.7, 0.85, 1]);
+  const solutionScale   = useTransform(enemyScroll, [0, 1], [0.97, 1]);
+
   return (
     <motion.section 
       id="trap"
+      ref={enemyRef}
       className="py-24 bg-[var(--color-bz-bg)] relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
@@ -30,7 +48,7 @@ export function Enemy() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             
             {/* Left: The Problem */}
-            <div>
+            <motion.div style={{ opacity: problemOpacity, scale: problemScale, filter: problemFilter }} className="will-change-transform">
               <motion.div variants={sectionHeader}>
                 <div className="flex items-center gap-2 text-[var(--color-bz-amber)] mb-4">
                   <AlertCircle className="w-5 h-5" />
@@ -52,10 +70,10 @@ export function Enemy() {
                   </motion.li>
                 ))}
               </motion.ul>
-            </div>
+            </motion.div>
             
             {/* Right: The Solution Contrast */}
-            <motion.div variants={fadeUp} className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8">
+            <motion.div variants={fadeUp} style={{ opacity: solutionOpacity, scale: solutionScale }} className="bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-xl p-6 md:p-8 will-change-transform">
               <h3 className="text-xl font-serif text-[var(--color-bz-text)] mb-4">
                 Bazepoint changes the equation.
               </h3>
