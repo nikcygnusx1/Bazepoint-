@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValue, useTransform, useSpring, useMotionTemplate } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate } from 'motion/react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { navContainer, navItem, buttonHoverProps } from '../lib/motion-variants';
+import { WaitlistForm } from './WaitlistForm';
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const { scrollY } = useScroll();
 
   const headerPy    = useTransform(scrollY, [0, 80], [24, 16]);  // padding-y (py-6 is 24px, py-4 is 16px)
@@ -54,136 +56,194 @@ export function Header() {
   ];
 
   return (
-    <motion.header
-      initial="hidden"
-      animate="visible"
-      variants={navContainer}
-      className="fixed top-0 left-0 right-0 z-50 border-b will-change-transform"
-      style={{
-        paddingTop: headerPy,
-        paddingBottom: headerPy,
-        backgroundColor: headerBg,
-        backdropFilter: useMotionTemplate`blur(${headerBlur}px)`,
-        borderBottomColor: headerBorder,
-      }}
-    >
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 flex items-center justify-between">
-        
-        {/* Logo */}
-        <motion.div 
-          variants={navItem}
-          className="flex items-center gap-3"
-        >
-          <div className="bg-[#B8E2F2] rounded-[10px] w-8 h-8 flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <circle cx="10" cy="10" r="9" stroke="#4A9EBF" strokeWidth="1.5" />
-              <path d="M10 1 L10 19" stroke="#4A9EBF" strokeWidth="1.5" />
-            </svg>
-          </div>
-          <a href="#" className="font-body text-[22px] text-[var(--color-bz-text)] font-semibold leading-none hover:opacity-80 transition-opacity">
-            Bazepoint
-          </a>
-        </motion.div>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <motion.li key={link.name} variants={navItem} className="list-none">
-              <motion.a
-                className="relative text-[var(--color-bz-text-muted)] hover:text-[var(--color-bz-text)] transition-colors duration-200 text-sm font-medium py-1 inline-block"
-                href={link.href}
-                whileHover="hover"
-              >
-                {link.name}
-                <motion.span
-                  className="absolute bottom-0 left-0 h-[1.5px] w-full bg-[var(--color-bz-teal)] origin-left"
-                  variants={{
-                    initial: { scaleX: 0 },
-                    hover:   { scaleX: 1, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } },
-                  }}
-                  initial="initial"
-                />
-              </motion.a>
-            </motion.li>
-          ))}
-        </nav>
-
-        {/* Desktop CTA */}
-        <motion.div
-          variants={navItem}
-          className="hidden md:block"
-        >
-          <motion.button 
-            ref={buttonRef}
-            className="btn-primary group"
-            onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={isTouch ? {} : { x: springX, y: springY }}
-            {...buttonHoverProps}
+    <>
+      <motion.header
+        initial="hidden"
+        animate="visible"
+        variants={navContainer}
+        className="fixed top-0 left-0 right-0 z-50 border-b will-change-transform"
+        style={isTouch ? {
+          paddingTop: '16px',
+          paddingBottom: '16px',
+          backgroundColor: 'rgba(245,244,240,0.85)',
+          backdropFilter: 'blur(12px)',
+          borderBottomColor: 'rgba(224,219,211,1)'
+        } : {
+          paddingTop: headerPy,
+          paddingBottom: headerPy,
+          backgroundColor: headerBg,
+          backdropFilter: useMotionTemplate`blur(${headerBlur}px)`,
+          borderBottomColor: headerBorder,
+        }}
+      >
+        <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 flex items-center justify-between">
+          
+          {/* Logo */}
+          <motion.div 
+            variants={navItem}
+            className="flex items-center gap-3"
           >
-            Describe your product 
-            <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
-          </motion.button>
-        </motion.div>
+            <div className="bg-[#B8E2F2] rounded-[10px] w-8 h-8 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <circle cx="10" cy="10" r="9" stroke="#4A9EBF" strokeWidth="1.5" />
+                <path d="M10 1 L10 19" stroke="#4A9EBF" strokeWidth="1.5" />
+              </svg>
+            </div>
+            <a href="#" className="font-body text-[22px] text-[var(--color-bz-text)] font-semibold leading-none hover:opacity-80 transition-opacity">
+              Bazepoint
+            </a>
+          </motion.div>
 
-        {/* Mobile Hamburger */}
-        <button 
-          className="md:hidden text-bz-text-muted"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-expanded={menuOpen}
-          aria-label="Toggle navigation menu"
-        >
-          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </div>
-
-      {/* Mobile Drawer */}
-      <AnimatePresence mode="wait">
-        {menuOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden overflow-hidden bg-[#F5F4F0] border-b border-[var(--color-bz-border)] absolute top-full left-0 right-0 shadow-md"
-          >
-            <div className="px-6 py-4 flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <a 
-                  key={link.name}
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <motion.li key={link.name} variants={navItem} className="list-none">
+                <motion.a
+                  className="relative text-[var(--color-bz-text-muted)] hover:text-[var(--color-bz-text)] transition-colors duration-200 text-sm font-medium py-1 inline-block"
                   href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="font-body text-base font-medium text-[var(--color-bz-text-muted)] py-3 border-b border-[var(--color-bz-border-soft)] hover:text-[var(--color-bz-text)] transition-colors block"
+                  whileHover="hover"
                 >
                   {link.name}
-                </a>
-              ))}
-              <div className="pt-4 pb-2 flex flex-col gap-3">
-                <button 
-                  className="btn-primary w-full justify-center group"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  Describe your product 
-                  <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
-                </button>
-                <button 
-                  className="btn-ghost w-full justify-center"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  See it work
-                </button>
-              </div>
-            </div>
+                  <motion.span
+                    className="absolute bottom-0 left-0 h-[1.5px] w-full bg-[var(--color-bz-teal)] origin-left"
+                    variants={{
+                      initial: { scaleX: 0 },
+                      hover:   { scaleX: 1, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } },
+                    }}
+                    initial="initial"
+                  />
+                </motion.a>
+              </motion.li>
+            ))}
+          </nav>
+
+          {/* Desktop CTA */}
+          <motion.div
+            variants={navItem}
+            className="hidden md:block"
+          >
+            <motion.button 
+              ref={buttonRef}
+              className="btn-primary group"
+              onClick={() => setModalOpen(true)}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              style={isTouch ? {} : { x: springX, y: springY }}
+              {...buttonHoverProps}
+            >
+              Claim Early Access
+              <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
+            </motion.button>
           </motion.div>
+
+          {/* Mobile Hamburger */}
+          <button 
+            className="md:hidden text-bz-text-muted"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-expanded={menuOpen}
+            aria-label="Toggle navigation menu"
+          >
+            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Drawer */}
+        <AnimatePresence mode="wait">
+          {menuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="md:hidden overflow-hidden bg-[#F5F4F0] border-b border-[var(--color-bz-border)] absolute top-full left-0 right-0 shadow-md"
+            >
+              <div className="px-6 py-4 flex flex-col gap-2">
+                {navLinks.map((link) => (
+                  <a 
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="font-body text-base font-medium text-[var(--color-bz-text-muted)] py-3 border-b border-[var(--color-bz-border-soft)] hover:text-[var(--color-bz-text)] transition-colors block"
+                  >
+                    {link.name}
+                  </a>
+                ))}
+                <div className="pt-4 pb-2 flex flex-col gap-3">
+                  <button 
+                    className="btn-primary w-full justify-center group"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setModalOpen(true);
+                    }}
+                  >
+                    Claim Early Access
+                    <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
+                  </button>
+                  <button 
+                    className="btn-ghost w-full justify-center"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    See it work
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.header>
+
+      {/* Waitlist Modal */}
+      <AnimatePresence>
+        {modalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setModalOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-md"
+            />
+
+            {/* Modal Dialog */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 12 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+              className="relative w-full max-w-md bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-2xl p-8 shadow-xl overflow-hidden z-10"
+            >
+              {/* Top Decorative Border Accent */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-bz-teal)] to-transparent opacity-60"></div>
+              
+              {/* Close Button */}
+              <button
+                onClick={() => setModalOpen(false)}
+                className="absolute top-4 right-4 text-[var(--color-bz-text-muted)] hover:text-[var(--color-bz-text)] transition-colors p-1 rounded-full hover:bg-[var(--color-bz-bg)]"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-display font-[800] tracking-[-0.5px] text-[var(--color-bz-text)] mb-2">
+                  Claim Early Access
+                </h3>
+                <p className="text-sm font-body text-[var(--color-bz-text-muted)] leading-relaxed">
+                  Bazepoint is in private beta. Join 500+ other founders serious about building physical products.
+                </p>
+              </div>
+
+              <WaitlistForm onSuccess={() => {
+                // Auto-close modal after a delay upon success if desired, or keep it open to show success state
+              }} />
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </>
   );
 }
