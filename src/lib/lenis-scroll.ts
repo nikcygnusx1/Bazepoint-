@@ -5,7 +5,19 @@ import Lenis from "@studio-freight/lenis";
 
 let lenisInstance: Lenis | null = null;
 
-export function initLenis(): Lenis {
+export function initLenis(): Lenis | null {
+  if (typeof window === "undefined") return null;
+
+  // Detect touch/mobile devices to prevent smooth scroll blocking/blank screens
+  const isTouchDevice =
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    (window.matchMedia && window.matchMedia("(any-pointer: coarse)").matches);
+
+  if (isTouchDevice) {
+    return null;
+  }
+
   if (lenisInstance) return lenisInstance;
 
   lenisInstance = new Lenis({
@@ -15,7 +27,7 @@ export function initLenis(): Lenis {
     gestureOrientation: "vertical",
     smoothWheel: true,
     wheelMultiplier: 0.9,
-    touchMultiplier: 1.5,
+    touchMultiplier: 0,      // Disable smooth touch to let native mobile scrolling take over
     infinite: false,
   });
 
