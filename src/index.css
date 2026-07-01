@@ -6,7 +6,7 @@
   /* ── Core palette ─────────────────────── */
   --color-bz-bg:              #F5F4F0;
   --color-bz-surface:         #FFFFFF;
-  --color-bz-surface-2:       #FFFFFF;
+  --color-bz-surface-2:       #FAFAF8;
   --color-bz-surface-offset:  #F5F4F0;
   --color-bz-surface-offset-2:#EDECE8;
   --color-bz-surface-dynamic: #E8E7E3;
@@ -33,7 +33,8 @@
   --color-bz-success:         #22C55E;
   --color-bz-success-bg:      rgba(34,197,94,0.1);
   --color-bz-error:           #EF4444;
-  --color-bz-amber:           #4A9EBF;   /* remap amber → blue-dark for this palette */
+  --color-bz-amber:           #D4A017;
+  --color-bz-amber-dim:       rgba(212, 160, 23, 0.08);
 
   /* ── Nav ──────────────────────────────── */
   --color-bz-nav-bg:          rgba(245,244,240,0.85);
@@ -47,11 +48,11 @@
 
   /* ── Fonts (Inter only) ───────────────── */
   --font-body:    'Satoshi', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-display: 'Instrument Serif', 'Georgia', serif;
 
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', ui-monospace, monospace;
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
-  --font-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', ui-monospace, monospace;
 
   --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
   --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);

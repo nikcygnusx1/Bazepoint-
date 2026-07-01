@@ -111,7 +111,7 @@ function TickerStrip({ items }: { items: string[] }) {
 
 export function Supply() {
   const [activeRegion, setActiveRegion] = useState<string | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const scrollProgressRef = useRef(0);
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export function Supply() {
       start: 'top 90%',
       end: 'top 10%',
       onUpdate: (self) => {
-        setScrollProgress(self.progress);
+        scrollProgressRef.current = self.progress;
       },
     });
 
@@ -249,7 +249,7 @@ export function Supply() {
             <GlobeScene
               activeRegion={activeRegion}
               onRegionHover={setActiveRegion}
-              scrollProgress={scrollProgress}
+              scrollProgressRef={scrollProgressRef}
             />
           </Suspense>
         </div>

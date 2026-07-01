@@ -159,8 +159,8 @@ export function Enemy() {
               </div>
               <div className="grid grid-cols-3 divide-x divide-[var(--color-bz-border)] pt-6 border-t border-[var(--color-bz-border)] w-full">
                 <div className="text-center px-1">
-                  <div className="text-[20px] sm:text-[24px] md:text-[28px] font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums leading-none">0</div>
-                  <div className="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Fake Brokers</div>
+                  <div className="text-[20px] sm:text-[24px] md:text-[28px] font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums leading-none">6–8 weeks</div>
+                  <div className="text-[9px] md:text-[10px] uppercase tracking-wider text-[var(--color-bz-text-faint)] font-body leading-tight">Avg. Time Wasted</div>
                 </div>
                 <div className="text-center px-1">
                   <div className="text-[20px] sm:text-[24px] md:text-[28px] font-display font-[800] text-[var(--color-bz-text)] mb-1 tabular-nums leading-none">&lt;1min</div>

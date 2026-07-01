@@ -8,12 +8,12 @@ import { cursorPos } from '../CustomCursor';
 interface GlobeSceneProps {
   activeRegion: string | null;
   onRegionHover: (region: string | null) => void;
-  scrollProgress: number;
+  scrollProgressRef: React.RefObject<number>;
 }
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
-function GlobeGroup({ activeRegion, onRegionHover, scrollProgress }: GlobeSceneProps) {
+function GlobeGroup({ activeRegion, onRegionHover, scrollProgressRef }: GlobeSceneProps) {
   const groupRef = useRef<THREE.Group>(null);
   
   // Rotational states
@@ -61,7 +61,7 @@ function GlobeGroup({ activeRegion, onRegionHover, scrollProgress }: GlobeSceneP
     groupRef.current.rotation.z = currentRotationRef.current.z;
 
     // 5. Scroll entrance progress
-    const p = Math.min(Math.max(scrollProgress, 0), 1);
+    const p = Math.min(Math.max(scrollProgressRef.current || 0, 0), 1);
     const scale = 0.7 + p * 0.3; // Scale 0.7 -> 1.0
     groupRef.current.scale.setScalar(scale);
   });
@@ -74,7 +74,7 @@ function GlobeGroup({ activeRegion, onRegionHover, scrollProgress }: GlobeSceneP
   );
 }
 
-export function GlobeScene({ activeRegion, onRegionHover, scrollProgress }: GlobeSceneProps) {
+export function GlobeScene({ activeRegion, onRegionHover, scrollProgressRef }: GlobeSceneProps) {
   const dpr = typeof window !== 'undefined'
     ? window.matchMedia('(hover: none)').matches
       ? 1.5
@@ -92,7 +92,7 @@ export function GlobeScene({ activeRegion, onRegionHover, scrollProgress }: Glob
         <GlobeGroup
           activeRegion={activeRegion}
           onRegionHover={onRegionHover}
-          scrollProgress={scrollProgress}
+          scrollProgressRef={scrollProgressRef}
         />
         <ambientLight intensity={0.4} color="#F5F4F0" />
         <directionalLight position={[5, 3, 5]} intensity={0.8} color="#FFFFFF" />

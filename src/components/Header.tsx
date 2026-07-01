@@ -124,7 +124,7 @@ export function Header() {
   const navLinks = [
     { name: 'How it works', href: '#mechanism' },
     { name: 'Verified network', href: '#supply' },
-    { name: 'Why Bazepoint', href: '#trap' },
+    { name: 'The Problem', href: '#trap' },
   ];
 
   return (

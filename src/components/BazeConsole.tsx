@@ -16,8 +16,8 @@ const SCAN_LINES = [
 const BOOT_SEQUENCE = [
   "BAZE OS v1.0 — Initializing...",
   "Loading factory network index...",
-  "MENA region: 312 verified partners ✓",
-  "SEA region: 201 verified partners ✓",
+  "MENA region: 287 verified partners ✓",
+  "SEA region: 213 verified partners ✓",
   "UAE supplement labs: 47 certified ✓",
   "Quality audit layer: ACTIVE",
   "MOQ filter engine: ACTIVE",
