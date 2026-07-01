@@ -72,6 +72,8 @@ export const BazeConsole = React.memo(function BazeConsole({
   const consoleSectionRef = useRef<HTMLDivElement>(null);
   const bootTerminalRef = useRef<HTMLDivElement>(null);
   const consoleUIRef = useRef<HTMLDivElement>(null);
+  const pendingBootLinesRef = useRef<string[]>([]);
+  const bootLinesRafRef = useRef<number>(0);
 
 
 
@@ -79,6 +81,18 @@ export const BazeConsole = React.memo(function BazeConsole({
     if (mode !== 'interactive') return;
 
     let scrollTriggerInstance: any = null;
+
+    // rAF loop: reads from ref, calls setState at most once per frame
+    const flushBootLines = () => {
+      setBootLines(prev => {
+        const next = pendingBootLinesRef.current;
+        // Only update if length actually changed — avoids redundant renders
+        if (prev.length === next.length) return prev;
+        return next;
+      });
+      bootLinesRafRef.current = requestAnimationFrame(flushBootLines);
+    };
+    bootLinesRafRef.current = requestAnimationFrame(flushBootLines);
 
     const timer = setTimeout(() => {
       if (!consoleSectionRef.current) return;
@@ -90,9 +104,17 @@ export const BazeConsole = React.memo(function BazeConsole({
         scrub: 1,
         pin: true,
         onUpdate: (progress) => {
+          // ─── ALL DOM MUTATIONS — zero React setState calls here ───
+
           if (progress <= 0.4) {
-            const linesVisible = Math.floor((progress / 0.4) * BOOT_SEQUENCE.length);
-            setBootLines(BOOT_SEQUENCE.slice(0, Math.max(0, linesVisible)));
+            const linesVisible = Math.floor(
+              (progress / 0.4) * BOOT_SEQUENCE.length
+            );
+            // Write to ref — synchronous, no React render triggered
+            pendingBootLinesRef.current = BOOT_SEQUENCE.slice(
+              0,
+              Math.max(0, linesVisible)
+            );
 
             if (bootTerminalRef.current) {
               bootTerminalRef.current.style.opacity = '1';
@@ -101,15 +123,18 @@ export const BazeConsole = React.memo(function BazeConsole({
             if (consoleUIRef.current) {
               consoleUIRef.current.style.opacity = '0';
             }
+
           } else if (progress <= 0.55) {
             const p = (progress - 0.4) / 0.15;
             if (bootTerminalRef.current) {
               bootTerminalRef.current.style.opacity = String(1 - p);
-              bootTerminalRef.current.style.transform = `translateY(${-20 * p}px)`;
+              bootTerminalRef.current.style.transform =
+                `translateY(${-20 * p}px)`;
             }
             if (consoleUIRef.current) {
               consoleUIRef.current.style.opacity = '0';
             }
+
           } else if (progress <= 0.8) {
             const p = (progress - 0.55) / 0.25;
             if (bootTerminalRef.current) {
@@ -118,9 +143,11 @@ export const BazeConsole = React.memo(function BazeConsole({
             if (consoleUIRef.current) {
               consoleUIRef.current.style.opacity = String(p);
             }
-            if (p > 0.9 && !bootComplete) {
-              setBootComplete(true);
+            // Direct DOM flag — no setState, no re-render
+            if (p > 0.9 && consoleUIRef.current) {
+              consoleUIRef.current.dataset.bootComplete = 'true';
             }
+
           } else {
             if (consoleUIRef.current) {
               consoleUIRef.current.style.opacity = '1';
@@ -132,9 +159,11 @@ export const BazeConsole = React.memo(function BazeConsole({
 
     return () => {
       clearTimeout(timer);
+      cancelAnimationFrame(bootLinesRafRef.current);
       if (scrollTriggerInstance) scrollTriggerInstance.kill();
+      pendingBootLinesRef.current = [];
     };
-  }, [mode, bootComplete]);
+  }, [mode]);
 
   // Mobile View Toggle: 'list' or 'draft'
   const [activeMobileTab, setActiveMobileTab] = useState<'list' | 'draft'>('list');
@@ -552,7 +581,7 @@ if (shouldReduceMotion) {
   return (
     <div ref={consoleSectionRef} className="relative w-full cinematic-pin">
       {/* Boot terminal overlay */}
-      {mode === 'interactive' && !bootComplete && (
+      {mode === 'interactive' && (
         <div
           ref={bootTerminalRef}
           className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
