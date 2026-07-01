@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, MessageSquare, HelpCircle } from 'lucide-react';
+import { Search, Filter, MessageSquare } from 'lucide-react';
 import { revealVariant } from '../lib/motion-variants';
 import { BazeConsole } from './BazeConsole';
 
 const STEPS = [
   {
     id: 1,
-    title: "Tell Baze what you want to make",
+    title: "Describe your product",
     icon: Search,
-    description: "Type your product brief in plain language — category, region, MOQ, budget. No procurement jargon required. Baze maps your intent to 847 verified factories in under 60 seconds.",
+    description: "Type what you need in plain language. Baze searches our verified factory network and returns your top matches in under 90 seconds.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="brief" />
@@ -18,10 +18,9 @@ const STEPS = [
   },
   {
     id: 2,
-    title: "AI surfaces verified matches only",
+    title: "AI filters the verified network",
     icon: Filter,
-    description: "Baze searches verified MENA and SEA manufacturing networks and filters by your exact MOQ, budget ceiling, and product category. Every result has passed direct contact confirmation, product validation, and audit scoring.",
-    verifiedTooltip: true,
+    description: "Baze filters by MOQ, budget, product category, and region. Only factories that match your exact requirements come through.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="list" highlightRow={0} />
@@ -30,9 +29,9 @@ const STEPS = [
   },
   {
     id: 3,
-    title: "First email drafted, ready to send",
+    title: "Email drafted, ready to send",
     icon: MessageSquare,
-    description: "Your outreach email uses each factory's actual product categories, MOQ, and lead time — not a template. One click copies it to your clipboard. The factory gets something worth reading.",
+    description: "Your intro email includes the factory's name, your product brief, and your target MOQ. Send it in one click — no editing needed.",
     visual: (
       <div className="w-full max-w-md mx-auto">
         <BazeConsole mode="fragment" zone="email" />
@@ -40,49 +39,6 @@ const STEPS = [
     )
   }
 ];
-
-function VerifiedTooltip() {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative inline-block">
-      <button
-        className="flex items-center gap-1 text-xs text-[var(--color-bz-teal)] font-body mt-2 group focus:outline-none"
-        onClick={() => setOpen(v => !v)}
-        aria-expanded={open}
-        aria-label="What does verified mean?"
-      >
-        <HelpCircle className="w-3.5 h-3.5" />
-        <span className="underline underline-offset-2">What does "verified" actually mean?</span>
-      </button>
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 6, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.97 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute z-20 left-0 mt-2 w-72 bg-[var(--color-bz-surface)] border border-[var(--color-bz-border)] rounded-xl p-4 shadow-lg text-left"
-          >
-            <p className="text-xs font-body font-semibold text-[var(--color-bz-text)] mb-2">Every factory in Bazepoint has passed:</p>
-            <ul className="space-y-1.5">
-              {[
-                "Direct contact confirmation — a real person picked up",
-                "Product category validation — they actually make what they claim",
-                "Minimum sample availability check",
-                "At least one successful founder introduction on record",
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-[var(--color-bz-text-muted)] font-body">
-                  <span className="text-[var(--color-bz-teal)] mt-0.5">✓</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 export function Mechanism() {
   const [activeStep, setActiveStep] = useState(1);
@@ -101,7 +57,7 @@ export function Mechanism() {
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 id="mechanism-title" className="section-label justify-center mb-4">How it works</h2>
           <p className="text-3xl md:text-4xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)]">
-            Three prompts.<br />Your first factory, ready to talk.
+            Stop searching Alibaba.<br />Start building.
           </p>
         </div>
 
@@ -147,18 +103,15 @@ export function Mechanism() {
                     </h3>
                     <AnimatePresence initial={false}>
                       {isActive && (
-                        <motion.div
+                        <motion.p 
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                          className="overflow-hidden"
+                          className="text-[var(--color-bz-text-muted)] font-body text-base leading-relaxed overflow-hidden"
                         >
-                          <p className="text-[var(--color-bz-text-muted)] font-body text-base leading-relaxed">
-                            {step.description}
-                          </p>
-                          {step.verifiedTooltip && <VerifiedTooltip />}
-                        </motion.div>
+                          {step.description}
+                        </motion.p>
                       )}
                     </AnimatePresence>
                   </div>

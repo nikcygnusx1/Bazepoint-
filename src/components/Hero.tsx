@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, Shield, ChevronDown } from 'lucide-react';
 import { HeroVisual } from './HeroVisual';
 import HeroCanvas from './HeroCanvas';
-import { WordReveal } from './WordReveal';
-import { heroContainer, heroLabel, heroSubtext, heroCta, revealVariant, buttonHoverProps } from '../lib/motion-variants';
+import { heroContainer, heroLabel, heroHeadline, heroSubtext, heroCta, heroStats, revealVariant, buttonHoverProps } from '../lib/motion-variants';
 
 export function Hero() {
   const { scrollY } = useScroll();
@@ -25,12 +24,14 @@ export function Hero() {
   }, []);
 
   const handleChipClick = (text: string) => {
-    const cleanText = text.replace(/^[^[\w]+\s/, '');
+    // Strip the emoji and just pass the text for the demo
+    const cleanText = text.replace(/^[^\w]+\s/, '');
     window.dispatchEvent(new CustomEvent('populate-demo', { detail: cleanText }));
     document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const headlineText = "Tell Baze what you want to make. Get three verified factories, ready to talk.";
+  const headlineText = "Your product idea meets the right factory.";
+  const headlineWords = headlineText.split(" ");
 
   return (
     <motion.section 
@@ -73,15 +74,31 @@ export function Hero() {
             <span>AI Sourcing Agent</span>
           </motion.div>
           
-          <h1 id="hero-title" className="text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.05] font-display font-[800] text-[#4A9EBF] tracking-[-1px] md:tracking-[-3px] mb-6">
-            <WordReveal text={headlineText} delay={0.15} />
+          <h1 id="hero-title" className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-display font-[800] text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] mb-6">
+            <div className="flex flex-wrap justify-center lg:justify-start">
+              {headlineWords.map((word, i) => (
+                <motion.span
+                  key={i}
+                  className="inline-block mr-[0.25em]"
+                  variants={heroHeadline}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </div>
+            <div className="flex flex-wrap mt-2 justify-center lg:justify-start">
+              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>In</motion.span>
+              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>minutes,</motion.span>
+              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>not</motion.span>
+              <motion.span className="inline-block line-through opacity-50" variants={heroHeadline}>months.</motion.span>
+            </div>
           </h1>
           
           <motion.p 
             variants={heroSubtext}
             className="max-w-[480px] text-base md:text-lg text-[var(--color-bz-text-muted)] leading-[1.7] font-body font-normal mb-10"
           >
-            Describe your product in plain language. Baze searches a vetted manufacturing network across MENA, Southeast Asia and Oceania, filters by your budget and MOQs, and drafts your first outreach email — ready to send.
+            Describe what you want to make. We'll search verified factories in Turkey, Indonesia, and the UAE. You'll get matches filtered by budget and MOQ with drafted outreach emails.
           </motion.p>
           
           <motion.div 
@@ -98,27 +115,12 @@ export function Hero() {
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />
               </motion.button>
             </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mt-4 text-left w-full max-w-[480px]">
-              {[
-                "✓ Verified factories only — no directories, no brokers",
-                "✓ Free during beta. No account needed",
-                "✓ Strict IP Protection — isolated model runs",
-                "✓ First factory match in under 90 seconds"
-              ].map((text, idx) => (
-                <motion.div 
-                  key={idx}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + 0.08 * idx, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex items-start gap-1.5 text-xs text-[var(--color-bz-text-faint)] font-body"
-                >
-                  <span className="text-[#4A9EBF] font-bold mt-0.5">✓</span>
-                  <span>{text.replace(/^✓\s*/, '')}</span>
-                </motion.div>
-              ))}
-            </div>
+            <motion.div variants={heroStats} className="flex items-center gap-2 text-left">
+              <Shield className="w-3 h-3 text-[var(--color-bz-teal)] flex-shrink-0" />
+              <span className="text-xs text-[var(--color-bz-text-faint)] font-body">
+                Verified manufacturers across Turkey, Indonesia, and UAE
+              </span>
+            </motion.div>
           </motion.div>
 
           {/* Example Prompt Chips */}

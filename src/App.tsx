@@ -9,7 +9,6 @@ import { Mechanism } from './components/Mechanism';
 import { Supply } from './components/Supply';
 import { Enemy } from './components/Enemy';
 import { FinalPush } from './components/FinalPush';
-import { Waitlist } from './components/Waitlist';
 import { Footer } from './components/Footer';
 
 export default function App() {
@@ -32,12 +31,11 @@ export default function App() {
         <Header />
         <main>
           <Hero />
-          <PromptDemo />
           <Enemy />
+          <PromptDemo />
           <Mechanism />
           <Supply />
           <FinalPush />
-          <Waitlist />
         </main>
         <Footer />
       </div>
