@@ -19,13 +19,6 @@ export function initLenis(): Lenis {
     infinite: false,
   });
 
-  // Sync Lenis with Framer Motion's RAF loop
-  function raf(time: number) {
-    lenisInstance?.raf(time);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
-
   return lenisInstance;
 }
 

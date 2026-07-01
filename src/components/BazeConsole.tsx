@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Shield, CheckCircle2, MapPin, ArrowRight, ChevronDown, ChevronUp, Copy, ExternalLink, Mail, Inbox, FileText, Check } from 'lucide-react';
 import { MANUFACTURERS, Manufacturer, HERO_SCENARIO } from '../lib/console-data';
 import { EASE_HERO, revealVariant, cardHoverProps } from '../lib/motion-variants';
+import { createPinnedSequence } from '../lib/use-gsap-scroll';
 
 type ConsoleMode = "hero" | "interactive" | "fragment";
 type FragmentZone = "topbar" | "brief" | "list" | "email";
@@ -43,6 +44,87 @@ export function BazeConsole({
   highlightField = null
 }: BazeConsoleProps) {
   const shouldReduceMotion = useReducedMotion();
+
+  const [bootLines, setBootLines] = useState<string[]>([]);
+  const [bootComplete, setBootComplete] = useState(false);
+
+  const consoleSectionRef = useRef<HTMLDivElement>(null);
+  const bootTerminalRef = useRef<HTMLDivElement>(null);
+  const consoleUIRef = useRef<HTMLDivElement>(null);
+
+  const BOOT_SEQUENCE = useMemo(() => [
+    "BAZE OS v1.0 — Initializing...",
+    "Loading factory network index...",
+    "MENA region: 312 verified partners ✓",
+    "SEA region: 201 verified partners ✓",
+    "UAE supplement labs: 47 certified ✓",
+    "Quality audit layer: ACTIVE",
+    "MOQ filter engine: ACTIVE",
+    "Email draft module: ACTIVE",
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    "READY. Describe your product below.",
+  ], []);
+
+  useEffect(() => {
+    if (mode !== 'interactive') return;
+
+    let scrollTriggerInstance: any = null;
+
+    const timer = setTimeout(() => {
+      if (!consoleSectionRef.current) return;
+
+      scrollTriggerInstance = createPinnedSequence({
+        trigger: consoleSectionRef.current,
+        start: "top top",
+        end: "+=150%",
+        scrub: 1,
+        pin: true,
+        onUpdate: (progress) => {
+          if (progress <= 0.4) {
+            const linesVisible = Math.floor((progress / 0.4) * BOOT_SEQUENCE.length);
+            setBootLines(BOOT_SEQUENCE.slice(0, Math.max(0, linesVisible)));
+
+            if (bootTerminalRef.current) {
+              bootTerminalRef.current.style.opacity = '1';
+              bootTerminalRef.current.style.transform = 'translateY(0px)';
+            }
+            if (consoleUIRef.current) {
+              consoleUIRef.current.style.opacity = '0';
+            }
+          } else if (progress <= 0.55) {
+            const p = (progress - 0.4) / 0.15;
+            if (bootTerminalRef.current) {
+              bootTerminalRef.current.style.opacity = String(1 - p);
+              bootTerminalRef.current.style.transform = `translateY(${-20 * p}px)`;
+            }
+            if (consoleUIRef.current) {
+              consoleUIRef.current.style.opacity = '0';
+            }
+          } else if (progress <= 0.8) {
+            const p = (progress - 0.55) / 0.25;
+            if (bootTerminalRef.current) {
+              bootTerminalRef.current.style.opacity = '0';
+            }
+            if (consoleUIRef.current) {
+              consoleUIRef.current.style.opacity = String(p);
+            }
+            if (p > 0.9 && !bootComplete) {
+              setBootComplete(true);
+            }
+          } else {
+            if (consoleUIRef.current) {
+              consoleUIRef.current.style.opacity = '1';
+            }
+          }
+        }
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      if (scrollTriggerInstance) scrollTriggerInstance.kill();
+    };
+  }, [mode, bootComplete, BOOT_SEQUENCE]);
 
   // Mobile View Toggle: 'list' or 'draft'
   const [activeMobileTab, setActiveMobileTab] = useState<'list' | 'draft'>('list');
@@ -466,11 +548,50 @@ Best,
   }
 
   return (
-    <div 
-      className="w-full bg-[var(--bz-console-bg)] border border-[var(--bz-console-border)] rounded-xl overflow-hidden flex flex-col font-console shadow-2xl relative"
-      role="toolbar" 
-      aria-label="Baze sourcing console"
-    >
+    <div ref={consoleSectionRef} className="relative w-full cinematic-pin">
+      {/* Boot terminal overlay */}
+      {mode === 'interactive' && !bootComplete && (
+        <div
+          ref={bootTerminalRef}
+          className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
+        >
+          <div className="w-full max-w-2xl mx-auto rounded-xl overflow-hidden border border-[var(--color-bz-border)]"
+               style={{ background: 'var(--color-bz-text)' }}>
+            {/* Title bar */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#FF5F56' }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: '#FFBD2E' }} />
+              <span className="w-3 h-3 rounded-full" style={{ background: '#27C93F' }} />
+              <span className="flex-1 text-center font-mono text-xs"
+                    style={{ color: 'var(--color-bz-text-faint)' }}>
+                baze — boot
+              </span>
+            </div>
+            {/* Boot lines */}
+            <div className="p-6 font-mono text-[13px] leading-relaxed text-left"
+                 style={{ color: 'var(--color-bz-teal)' }}>
+              {bootLines.map((line, i) => (
+                <div key={i}>{line}</div>
+              ))}
+              {bootLines.length > 0 && bootLines.length < BOOT_SEQUENCE.length && (
+                <span className="boot-cursor">|</span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Console UI Wrapper */}
+      <div 
+        ref={consoleUIRef} 
+        style={{ opacity: mode === 'interactive' ? 0 : 1 }}
+        className="w-full"
+      >
+        <div 
+          className="w-full bg-[var(--bz-console-bg)] border border-[var(--bz-console-border)] rounded-xl overflow-hidden flex flex-col font-console shadow-2xl relative"
+          role="toolbar" 
+          aria-label="Baze sourcing console"
+        >
       {/* 2B. TOP BAR */}
       <div className="h-11 bg-[var(--bz-console-surface)] border-b border-[var(--bz-console-border)] flex items-center justify-between px-3 md:px-4 z-10 select-none relative">
         <div className="flex items-center gap-2">
@@ -908,6 +1029,8 @@ Best,
           </div>
         </>
       )}
+        </div>
+      </div>
     </div>
   );
 }

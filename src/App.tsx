@@ -10,14 +10,48 @@ import { Supply } from './components/Supply';
 import { Enemy } from './components/Enemy';
 import { FinalPush } from './components/FinalPush';
 import { Footer } from './components/Footer';
+import { initScrollTrigger } from './lib/use-gsap-scroll';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function App() {
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const lenis = initLenis();
+    // Initialize Lenis smooth scroll
+    const lenisInstance = initLenis();
+
+    // Register ScrollTrigger and central GSAP configurations
+    gsap.registerPlugin(ScrollTrigger);
+    initScrollTrigger();
+
+    // Bridge Lenis scroll events to GSAP ScrollTrigger ticker loop
+    if (lenisInstance) {
+      // Manual ScrollTrigger update on Lenis scroll event
+      lenisInstance.on('scroll', () => {
+        ScrollTrigger.update();
+      });
+
+      // Centralized animation frame updates via GSAP ticker
+      const tickUpdate = (time: number) => {
+        lenisInstance.raf(time * 1000);
+      };
+      gsap.ticker.add(tickUpdate);
+      gsap.ticker.lagSmoothing(0);
+
+      // Save references for potential cleanup
+      (window as any)._gsapTickUpdate = tickUpdate;
+    }
+
     return () => {
+      // Clean up tick listener
+      const tickUpdate = (window as any)._gsapTickUpdate;
+      if (tickUpdate) {
+        gsap.ticker.remove(tickUpdate);
+      }
+      
       destroyLenis();
+      ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
 

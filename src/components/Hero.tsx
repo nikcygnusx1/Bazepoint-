@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowRight, Shield, ChevronDown } from 'lucide-react';
 import { HeroVisual } from './HeroVisual';
 import HeroCanvas from './HeroCanvas';
-import { heroContainer, heroLabel, heroHeadline, heroSubtext, heroCta, heroStats, revealVariant, buttonHoverProps } from '../lib/motion-variants';
+import { heroContainer, heroLabel, heroCta, heroStats, revealVariant, buttonHoverProps } from '../lib/motion-variants';
+import { createPinnedSequence, splitTextToSpans, createCharParticleTimeline } from '../lib/use-gsap-scroll';
 
 export function Hero() {
   const { scrollY } = useScroll();
@@ -11,6 +12,12 @@ export function Hero() {
 
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  const heroRef = useRef<HTMLElement>(null);
+  const heroHeadlineRef = useRef<HTMLHeadingElement>(null);
+  const heroBodyRef = useRef<HTMLParagraphElement>(null);
+  const heroCTARef = useRef<HTMLDivElement>(null);
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleFocus = (e: CustomEvent) => setIsInputFocused(e.detail);
@@ -23,18 +30,58 @@ export function Hero() {
     };
   }, []);
 
+  useEffect(() => {
+    let revertFn: (() => void) | null = null;
+    let scrollTriggerInstance: any = null;
+    let tl: any = null;
+
+    const timer = setTimeout(() => {
+      if (!heroHeadlineRef.current) return;
+      const { chars, revert } = splitTextToSpans(heroHeadlineRef.current, { type: 'chars' });
+      revertFn = revert;
+
+      tl = createCharParticleTimeline(chars, { direction: 'shatter' });
+      tl.pause();
+
+      scrollTriggerInstance = createPinnedSequence({
+        trigger: heroRef.current!,
+        start: "bottom 90%",
+        end: "+=80%",
+        scrub: 1.2,
+        onUpdate: (progress) => {
+          const p = Math.min(1, Math.max(0, progress / 0.5));
+          if (tl) tl.progress(p);
+          
+          if (heroBodyRef.current) {
+            heroBodyRef.current.style.opacity = String(1 - p);
+          }
+          if (heroCTARef.current) {
+            heroCTARef.current.style.opacity = String(1 - p);
+          }
+          if (canvasWrapperRef.current) {
+            canvasWrapperRef.current.style.transform = `scaleY(${1 - p * 0.7})`;
+            canvasWrapperRef.current.style.opacity = String(1 - p);
+          }
+        }
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      if (revertFn) revertFn();
+      if (scrollTriggerInstance) scrollTriggerInstance.kill();
+    };
+  }, []);
+
   const handleChipClick = (text: string) => {
-    // Strip the emoji and just pass the text for the demo
     const cleanText = text.replace(/^[^\w]+\s/, '');
     window.dispatchEvent(new CustomEvent('populate-demo', { detail: cleanText }));
     document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const headlineText = "Your product idea meets the right factory.";
-  const headlineWords = headlineText.split(" ");
-
   return (
     <motion.section 
+      ref={heroRef}
       aria-labelledby="hero-title"
       variants={heroContainer}
       initial="hidden"
@@ -43,6 +90,7 @@ export function Hero() {
     >
       {/* Hero canvas — absolutely fills the section, pointer-events none */}
       <div
+        ref={canvasWrapperRef}
         className="absolute inset-0 z-[1] pointer-events-none"
         aria-hidden="true"
       >
@@ -74,34 +122,24 @@ export function Hero() {
             <span>AI Sourcing Agent</span>
           </motion.div>
           
-          <h1 id="hero-title" className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-display font-[800] text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] mb-6">
-            <div className="flex flex-wrap justify-center lg:justify-start">
-              {headlineWords.map((word, i) => (
-                <motion.span
-                  key={i}
-                  className="inline-block mr-[0.25em]"
-                  variants={heroHeadline}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </div>
-            <div className="flex flex-wrap mt-2 justify-center lg:justify-start">
-              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>In</motion.span>
-              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>minutes,</motion.span>
-              <motion.span className="inline-block mr-[0.25em]" variants={heroHeadline}>not</motion.span>
-              <motion.span className="inline-block line-through opacity-50" variants={heroHeadline}>months.</motion.span>
-            </div>
+          <h1 
+            ref={heroHeadlineRef}
+            id="hero-title" 
+            className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-serif font-normal text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] mb-6"
+          >
+            Your product idea meets the <em className="italic">right factory.</em> In minutes, not months.
           </h1>
           
           <motion.p 
-            variants={heroSubtext}
+            ref={heroBodyRef}
+            variants={revealVariant}
             className="max-w-[480px] text-base md:text-lg text-[var(--color-bz-text-muted)] leading-[1.7] font-body font-normal mb-10"
           >
             Describe what you want to make. We'll search verified factories in Turkey, Indonesia, and the UAE. You'll get matches filtered by budget and MOQ with drafted outreach emails.
           </motion.p>
           
           <motion.div 
+            ref={heroCTARef}
             variants={heroCta}
             className="flex flex-col gap-4 mb-12 items-center lg:items-start"
           >
@@ -109,7 +147,7 @@ export function Hero() {
               <motion.button 
                 onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
                 {...buttonHoverProps}
-                className="btn-primary group"
+                className="btn-primary group font-body"
               >
                 See it work
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform duration-150 ease-out group-hover:translate-x-1" />

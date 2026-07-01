@@ -4,10 +4,11 @@
 ═══════════════════════════════════════════════════════════════
 */
 
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { AlertCircle, XCircle, Shield, CheckCircle2 } from 'lucide-react';
 import { revealVariant, cardHoverProps } from '../lib/motion-variants';
+import { createPinnedSequence, splitTextToSpans, createCharParticleTimeline } from '../lib/use-gsap-scroll';
 
 const PAIN_POINTS = [
   "Factories ghost you after 3 weeks of emails",
@@ -19,6 +20,9 @@ const PAIN_POINTS = [
 
 export function Enemy() {
   const enemyRef = useRef<HTMLDivElement>(null);
+  const enemyHeadlineRef = useRef<HTMLHeadingElement>(null);
+  const enemySectionLabelRef = useRef<HTMLParagraphElement>(null);
+
   const { scrollYProgress: enemyScroll } = useScroll({
     target: enemyRef,
     offset: ["start 0.7", "end 0.4"],
@@ -31,6 +35,64 @@ export function Enemy() {
   // Solution side: starts dimmer, comes to full as you scroll
   const solutionOpacity = useTransform(enemyScroll, [0, 0.4, 1], [0.7, 0.85, 1]);
   const solutionScale   = useTransform(enemyScroll, [0, 1], [0.97, 1]);
+
+  useEffect(() => {
+    let revertFn: (() => void) | null = null;
+    let scrollTriggerInstance: any = null;
+    let tl: any = null;
+
+    if (enemyRef.current) {
+      enemyRef.current.style.clipPath = "inset(100% 0 0 0)";
+    }
+
+    const timer = setTimeout(() => {
+      if (!enemyHeadlineRef.current) return;
+      const { chars, revert } = splitTextToSpans(enemyHeadlineRef.current, { type: 'chars' });
+      revertFn = revert;
+
+      // Set all chars to opacity 0 initially
+      chars.forEach(char => {
+        char.style.opacity = '0';
+      });
+
+      tl = createCharParticleTimeline(chars, { direction: 'assemble' });
+      tl.pause();
+
+      scrollTriggerInstance = createPinnedSequence({
+        trigger: enemyRef.current!,
+        start: "top 85%",
+        end: "top 20%",
+        scrub: 1,
+        pin: false, // Non-pinned
+        onUpdate: (progress) => {
+          const inset = 100 - (progress * 100);
+          if (enemyRef.current) {
+            enemyRef.current.style.clipPath = `inset(${inset}% 0 0 0)`;
+          }
+
+          // Assemble headline chars as progress goes 0.2 -> 1.0
+          if (progress > 0.2) {
+            const p = Math.min(1, Math.max(0, (progress - 0.2) / 0.8));
+            if (tl) tl.progress(p);
+          } else {
+            if (tl) tl.progress(0);
+          }
+
+          // Fade in section label after 0.4 progress
+          if (enemySectionLabelRef.current) {
+            enemySectionLabelRef.current.style.opacity =
+              String(Math.min(1, Math.max(0, (progress - 0.4) / 0.6)));
+          }
+        }
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+      if (revertFn) revertFn();
+      if (scrollTriggerInstance) scrollTriggerInstance.kill();
+    };
+  }, []);
 
   return (
     <motion.section 
@@ -45,7 +107,7 @@ export function Enemy() {
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-16">
         
-        <p className="section-label text-center mb-8">
+        <p ref={enemySectionLabelRef} className="section-label text-center mb-8">
           The Problem
         </p>
         
@@ -63,7 +125,11 @@ export function Enemy() {
                   <AlertCircle className="w-5 h-5" />
                   <span className="text-sm font-body font-bold uppercase tracking-wider">The Reality</span>
                 </div>
-                <h2 id="trap-title" className="text-3xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-4 leading-snug">
+                <h2 
+                  ref={enemyHeadlineRef}
+                  id="trap-title" 
+                  className="text-3xl font-serif font-normal tracking-[-1px] text-[var(--color-bz-text)] mb-4 leading-snug"
+                >
                   This is what sourcing actually costs you.
                 </h2>
                 <p className="text-base text-[var(--color-bz-text-muted)] font-body leading-relaxed mb-6">
