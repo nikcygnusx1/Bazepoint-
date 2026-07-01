@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { buildLandFlags } from '../../lib/globe-utils';
+import { buildLandFlags, buildFibonacciPoints } from '../../lib/globe-utils';
 
 interface GlobeCoreProps {
   radius: number;
@@ -16,7 +16,7 @@ export function GlobeCore({ radius, onLandFlagsReady }: GlobeCoreProps) {
 
   // High-resolution sphere geometry for dot matrix
   const geometry = useMemo(() => {
-    return new THREE.SphereGeometry(radius, 96, 96);
+    return buildFibonacciPoints(3500, radius);
   }, [radius]);
 
   const vertexCount = geometry.attributes.position.count;

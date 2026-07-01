@@ -1,6 +1,7 @@
 import { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { gsap } from 'gsap';
 import { GlobeCore } from './GlobeCore';
 import { GlobeNodes } from './GlobeNodes';
 import { cursorPos } from '../CustomCursor';
@@ -9,9 +10,23 @@ interface GlobeSceneProps {
   activeRegion: string | null;
   onRegionHover: (region: string | null) => void;
   scrollProgressRef: React.RefObject<number>;
+  isVisible?: boolean;
 }
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+function GsapTicker() {
+  const elapsedRef = useRef(0);
+  useEffect(() => {
+    gsap.ticker.remove(gsap.updateRoot);
+    return () => { gsap.ticker.add(gsap.updateRoot); };
+  }, []);
+  useFrame((_, delta) => {
+    elapsedRef.current += delta;
+    gsap.updateRoot(elapsedRef.current);
+  });
+  return null;
+}
 
 function GlobeGroup({ activeRegion, onRegionHover, scrollProgressRef }: GlobeSceneProps) {
   const groupRef = useRef<THREE.Group>(null);
@@ -74,7 +89,7 @@ function GlobeGroup({ activeRegion, onRegionHover, scrollProgressRef }: GlobeSce
   );
 }
 
-export function GlobeScene({ activeRegion, onRegionHover, scrollProgressRef }: GlobeSceneProps) {
+export function GlobeScene({ activeRegion, onRegionHover, scrollProgressRef, isVisible = true }: GlobeSceneProps) {
   const dpr = typeof window !== 'undefined'
     ? window.matchMedia('(hover: none)').matches
       ? 1.5
@@ -84,11 +99,13 @@ export function GlobeScene({ activeRegion, onRegionHover, scrollProgressRef }: G
   return (
     <div className="w-full h-full globe-canvas-container relative select-none">
       <Canvas
+        frameloop={isVisible ? "always" : "demand"}
         camera={{ position: [0, 0, 2.6], fov: 45 }}
         dpr={dpr}
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent', pointerEvents: 'auto' }}
       >
+        <GsapTicker />
         <GlobeGroup
           activeRegion={activeRegion}
           onRegionHover={onRegionHover}

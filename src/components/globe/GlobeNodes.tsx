@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Html, Billboard } from '@react-three/drei';
+import { Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { latLonToVector3, createArcCurve } from '../../lib/globe-utils';
@@ -19,6 +19,93 @@ const FACTORY_NODES = [
   { id: 'indonesia', lat: -2.5, lon: 118.0, label: 'Indonesia', sub: 'Bamboo · Ceramics',        phase: 2.1 },
   { id: 'uae',       lat: 24.0, lon: 54.0,  label: 'UAE',       sub: 'Pharma · Supplements',     phase: 4.2 },
 ];
+
+interface GlobeLabelProps {
+  label: string; sub: string; isActive: boolean;
+  position: [number, number, number];
+  onPointerEnter: () => void; onPointerLeave: () => void;
+}
+
+function GlobeLabel({ label, sub, isActive, position, onPointerEnter, onPointerLeave }: GlobeLabelProps) {
+  const texture = useMemo(() => {
+    const W = 256, H = 72;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d')!;
+
+    const R = 10;
+    ctx.beginPath();
+    ctx.moveTo(R,0); ctx.lineTo(W-R,0); ctx.quadraticCurveTo(W,0,W,R);
+    ctx.lineTo(W,H-R); ctx.quadraticCurveTo(W,H,W-R,H);
+    ctx.lineTo(R,H); ctx.quadraticCurveTo(0,H,0,H-R);
+    ctx.lineTo(0,R); ctx.quadraticCurveTo(0,0,R,0);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(26,26,24,0.90)';
+    ctx.fill();
+    ctx.strokeStyle = isActive ? 'rgba(184,226,242,0.7)' : 'rgba(255,255,255,0.10)';
+    ctx.lineWidth = isActive ? 2 : 1;
+    ctx.stroke();
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 22px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label.toUpperCase(), W/2, H*0.38);
+
+    ctx.fillStyle = '#9C9C96';
+    ctx.font = '16px sans-serif';
+    ctx.fillText(sub, W/2, H*0.68);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.needsUpdate = true;
+    return tex;
+  }, [label, sub, isActive]);
+
+  return (
+    <sprite position={position} scale={[0.28, 0.08, 1]}
+      onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
+      <spriteMaterial map={texture} transparent depthWrite={false} alphaTest={0.01} />
+    </sprite>
+  );
+}
+
+function YouLabel({ position }: { position: [number, number, number] }) {
+  const texture = useMemo(() => {
+    const W = 160, H = 48;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d')!;
+
+    const R = 8;
+    ctx.beginPath();
+    ctx.moveTo(R,0); ctx.lineTo(W-R,0); ctx.quadraticCurveTo(W,0,W,R);
+    ctx.lineTo(W,H-R); ctx.quadraticCurveTo(W,H,W-R,H);
+    ctx.lineTo(R,H); ctx.quadraticCurveTo(0,H,0,H-R);
+    ctx.lineTo(0,R); ctx.quadraticCurveTo(0,0,R,0);
+    ctx.closePath();
+    ctx.fillStyle = '#F5F4F0';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = '#1A1A18';
+    ctx.font = 'bold 20px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('YOUR INBOX', W/2, H/2);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.needsUpdate = true;
+    return tex;
+  }, []);
+
+  return (
+    <sprite position={position} scale={[0.22, 0.065, 1]}>
+      <spriteMaterial map={texture} transparent depthWrite={false} alphaTest={0.01} />
+    </sprite>
+  );
+}
 
 export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProps) {
   // 1. Convert positions to Vector3
@@ -41,7 +128,7 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
   // 3. Create Arc Geometries (TubeGeometry along Bezier curve)
   const arcGeometries = useMemo(() => {
     return arcCurves.map(curve => {
-      return new THREE.TubeGeometry(curve, 64, 0.0025, 6, false);
+      return new THREE.TubeGeometry(curve, 20, 0.0025, 3, false);
     });
   }, [arcCurves]);
 
@@ -53,7 +140,7 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
   const packetGroupRefs = useRef<THREE.Group[]>([]);
 
   // 4. Custom Ring Shader Material definition
-  const ringShaderMaterial = useMemo(() => {
+  const createRingShaderBase = () => {
     return new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
@@ -90,6 +177,11 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     });
+  };
+
+  const ringMaterials = useMemo(() => {
+    const base = createRingShaderBase();
+    return Array.from({ length: 7 }, () => base.clone());
   }, []);
 
   // Arc Shader Material template function
@@ -183,6 +275,11 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
       const r1 = ring1Refs.current[i];
       const r2 = ring2Refs.current[i];
       
+      const mat1 = ringMaterials[i * 2];
+      const mat2 = ringMaterials[i * 2 + 1];
+      if (mat1) { mat1.uniforms.uTime.value = time; mat1.uniforms.uPhase.value = node.phase; mat1.uniforms.uActive.value = isActive ? 1.0 : 0.0; }
+      if (mat2) { mat2.uniforms.uTime.value = time; mat2.uniforms.uPhase.value = node.phase + Math.PI; mat2.uniforms.uActive.value = isActive ? 1.0 : 0.0; }
+
       if (r1) {
         const scale = 1.0 + Math.sin(time * 2.0 + node.phase) * 0.25;
         r1.scale.setScalar(isActive ? scale * 1.4 : scale);
@@ -194,6 +291,9 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
     });
 
     // Animate YOU Node Ring
+    const youMat = ringMaterials[6];
+    if (youMat) { youMat.uniforms.uTime.value = time; youMat.uniforms.uPhase.value = 0; youMat.uniforms.uActive.value = 1.0; }
+
     if (youRingRef.current[0]) {
       const scale = 1.0 + Math.sin(time * 2.0) * 0.2;
       youRingRef.current[0].scale.setScalar(scale);
@@ -267,10 +367,8 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
               >
                 <ringGeometry args={[0.018, 0.024, 32]} />
                 <primitive
-                  object={ringShaderMaterial}
+                  object={ringMaterials[i * 2]}
                   attach="material"
-                  uPhase={node.phase}
-                  uActive={isActive ? 1.0 : 0.0}
                 />
               </mesh>
               <mesh
@@ -280,38 +378,17 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
               >
                 <ringGeometry args={[0.028, 0.034, 32]} />
                 <primitive
-                  object={ringShaderMaterial}
+                  object={ringMaterials[i * 2 + 1]}
                   attach="material"
-                  uPhase={node.phase + Math.PI}
-                  uActive={isActive ? 1.0 : 0.0}
                 />
               </mesh>
             </Billboard>
 
             {/* THREE HTML Labels overlay */}
-            <Html
-              position={[0, 0.03, 0]}
-              center
-              distanceFactor={8}
-              className="drei-html-label pointer-events-auto"
-            >
-              <div
-                className={`flex flex-col items-center bg-[#1A1A18]/90 border px-2 py-1 rounded text-center transition-all duration-300 backdrop-blur-sm select-none cursor-pointer ${
-                  isActive
-                    ? 'border-[#B8E2F2] shadow-[0_0_12px_rgba(184,226,242,0.4)] scale-105'
-                    : 'border-white/10 hover:border-[#B8E2F2]'
-                }`}
-                onMouseEnter={() => onNodeHover(node.id)}
-                onMouseLeave={() => onNodeHover(null)}
-              >
-                <span className="font-mono text-[9px] uppercase tracking-wider font-semibold text-white">
-                  {node.label}
-                </span>
-                <span className="font-sans text-[7px] text-[#9C9C96] whitespace-nowrap mt-0.5">
-                  {node.sub}
-                </span>
-              </div>
-            </Html>
+            <GlobeLabel label={node.label} sub={node.sub} isActive={isActive}
+              position={[0, 0.06, 0]}
+              onPointerEnter={() => onNodeHover(node.id)}
+              onPointerLeave={() => onNodeHover(null)} />
           </group>
         );
       })}
@@ -333,22 +410,14 @@ export function GlobeNodes({ radius, activeRegion, onNodeHover }: GlobeNodesProp
           >
             <ringGeometry args={[0.020, 0.026, 24]} />
             <primitive
-              object={ringShaderMaterial}
+              object={ringMaterials[6]}
               attach="material"
-              uPhase={0}
-              uActive={1.0}
             />
           </mesh>
         </Billboard>
 
         {/* HTML label */}
-        <Html position={[0, 0.03, 0]} center distanceFactor={8} className="drei-html-label select-none">
-          <div className="flex flex-col items-center bg-[#F5F4F0] border border-[rgba(0,0,0,0.07)] px-1.5 py-0.5 rounded text-center shadow-sm">
-            <span className="font-mono text-[8px] uppercase tracking-wider font-bold text-[#1A1A18]">
-              Your Inbox
-            </span>
-          </div>
-        </Html>
+        <YouLabel position={[0, 0.055, 0]} />
       </group>
     </group>
   );

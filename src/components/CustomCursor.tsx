@@ -5,6 +5,10 @@ export const cursorPos = { x: 0, y: 0 };
 
 type CursorState = 'default' | 'hover' | 'cta' | 'drag';
 
+let _pendingX = 0;
+let _pendingY = 0;
+let _rafPending = false;
+
 export function CustomCursor() {
   const [cursorState, setCursorState] = useState<CursorState>('default');
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -34,10 +38,18 @@ export function CustomCursor() {
     if (touchCheck || motionCheck) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
-      cursorPos.x = e.clientX;
-      cursorPos.y = e.clientY;
+      _pendingX = e.clientX;
+      _pendingY = e.clientY;
+      if (!_rafPending) {
+        _rafPending = true;
+        requestAnimationFrame(() => {
+          cursorPos.x = _pendingX;
+          cursorPos.y = _pendingY;
+          mouseX.set(_pendingX);
+          mouseY.set(_pendingY);
+          _rafPending = false;
+        });
+      }
     };
 
     let pendingCursorState: CursorState = 'default';
@@ -76,6 +88,7 @@ export function CustomCursor() {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseover', handleMouseOver);
       if (cursorStateRafId !== null) cancelAnimationFrame(cursorStateRafId);
+      _rafPending = false;
     };
   }, [mouseX, mouseY]);
 

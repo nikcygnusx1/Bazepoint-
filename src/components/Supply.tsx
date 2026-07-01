@@ -111,6 +111,7 @@ function TickerStrip({ items }: { items: string[] }) {
 
 export function Supply() {
   const [activeRegion, setActiveRegion] = useState<string | null>(null);
+  const [isGlobeVisible, setIsGlobeVisible] = useState(false);
   const scrollProgressRef = useRef(0);
   const sectionRef = useRef<HTMLDivElement>(null);
 
@@ -129,6 +130,16 @@ export function Supply() {
     return () => {
       trigger.kill();
     };
+  }, []);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsGlobeVisible(entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -250,6 +261,7 @@ export function Supply() {
               activeRegion={activeRegion}
               onRegionHover={setActiveRegion}
               scrollProgressRef={scrollProgressRef}
+              isVisible={isGlobeVisible}
             />
           </Suspense>
         </div>

@@ -91,3 +91,19 @@ export function createArcCurve(
   midpoint.multiplyScalar(radius + arcHeight);
   return new THREE.QuadraticBezierCurve3(startVec, midpoint, endVec);
 }
+
+export function buildFibonacciPoints(count: number, radius: number): THREE.BufferGeometry {
+  const positions = new Float32Array(count * 3);
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < count; i++) {
+    const y = 1 - (2 * i) / (count - 1);
+    const r = Math.sqrt(Math.max(0, 1 - y * y));
+    const theta = goldenAngle * i;
+    positions[i * 3]     = Math.cos(theta) * r * radius;
+    positions[i * 3 + 1] = y * radius;
+    positions[i * 3 + 2] = Math.sin(theta) * r * radius;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  return geo;
+}
