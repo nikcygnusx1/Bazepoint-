@@ -458,6 +458,7 @@ self.onmessage = (e: MessageEvent) => {
     const wasInvisible = !isVisible;
     isVisible = e.data.visible;
     if (isVisible && wasInvisible && ctx) {
+      cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(draw);
     }
   }
