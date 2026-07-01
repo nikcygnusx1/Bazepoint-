@@ -434,7 +434,7 @@ self.onmessage = (e: MessageEvent) => {
     ctx = canvas.getContext('2d', { alpha: true }) as OffscreenCanvasRenderingContext2D;
     ctx.scale(dpr, dpr);
 
-    ctx.font = `10px 'Satoshi', 'Inter', sans-serif`;
+    ctx.font = `10px -apple-system, BlinkMacSystemFont, sans-serif`;
 
     startTime = performance.now();
     rafId = requestAnimationFrame(draw);
@@ -454,7 +454,7 @@ self.onmessage = (e: MessageEvent) => {
     if (ctx) {
       ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
       ctx.scale(dpr, dpr);
-      ctx.font = `10px 'Satoshi', 'Inter', sans-serif`;
+      ctx.font = `10px -apple-system, BlinkMacSystemFont, sans-serif`;
     }
     controlPointsCached = false;
     cachedGlowGradient = null;
