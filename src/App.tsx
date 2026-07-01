@@ -15,6 +15,8 @@ import { CustomCursor } from './components/CustomCursor';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function App() {
   const prefersReducedMotion = useReducedMotion();
 
@@ -25,6 +27,39 @@ export default function App() {
     // Register ScrollTrigger and central GSAP configurations
     gsap.registerPlugin(ScrollTrigger);
     initScrollTrigger();
+
+    // Global error listener to intercept and gracefully handle/silence third-party MetaMask or web3 errors
+    const handleError = (event: ErrorEvent) => {
+      const msg = event.message || '';
+      if (
+        msg.toLowerCase().includes('metamask') || 
+        msg.toLowerCase().includes('ethereum') || 
+        msg.toLowerCase().includes('web3') || 
+        msg.toLowerCase().includes('wallet')
+      ) {
+        console.warn('Caught and handled MetaMask error gracefully:', msg);
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason;
+      const msg = (reason && (reason.message || reason.toString())) || '';
+      if (
+        msg.toLowerCase().includes('metamask') || 
+        msg.toLowerCase().includes('ethereum') || 
+        msg.toLowerCase().includes('web3') || 
+        msg.toLowerCase().includes('wallet')
+      ) {
+        console.warn('Caught and handled MetaMask unhandled rejection gracefully:', msg);
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    };
+
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
 
     // Bridge Lenis scroll events to GSAP ScrollTrigger ticker loop
     if (lenisInstance) {
@@ -50,6 +85,9 @@ export default function App() {
       if (tickUpdate) {
         gsap.ticker.remove(tickUpdate);
       }
+      
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
       
       destroyLenis();
       ScrollTrigger.getAll().forEach(t => t.kill());

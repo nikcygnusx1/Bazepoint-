@@ -1,28 +1,11 @@
-import { useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Shield, Factory } from 'lucide-react';
-import { revealVariant, cardHoverProps } from '../lib/motion-variants';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { revealVariant } from '../lib/motion-variants';
+import GlobeScene from './globe/GlobeScene';
 
-const REGIONS = [
-  {
-    name: "Turkey",
-    description: "Turkey is your strongest option for apparel, leather goods, and custom packaging. Fast land and sea freight to Europe. Zero tariff overhead for most EU-bound categories.",
-    specialty: "Vertically Integrated Apparel & Textiles",
-    coords: { top: '35%', left: '52%' }
-  },
-  {
-    name: "Indonesia",
-    description: "Indonesia specialises in wood, bamboo, ceramics, and sustainable packaging. Strong for home goods and furniture. Zero-tariff access to North American and Oceania markets.",
-    specialty: "Sustainable Packaging & Custom Homeware",
-    coords: { top: '70%', left: '75%' }
-  },
-  {
-    name: "UAE",
-    description: "UAE factories lead on supplements, cosmetics, and halal-certified products. Air freight positioning is unmatched. Most orders clear customs faster than any other hub in the network.",
-    specialty: "Premium Formulations & Halal Beauty",
-    coords: { top: '48%', left: '60%' }
-  }
-];
+gsap.registerPlugin(ScrollTrigger);
 
 const TICKER_ITEMS = [
   "✓ Pacific Packaging Systems verified — Guangzhou",
@@ -34,137 +17,239 @@ const TICKER_ITEMS = [
   "✓ New category added: Sustainable Packaging — SE Asia",
 ];
 
-export function Supply() {
+const REGION_CARDS = [
+  { id: 'turkey',    name: 'Turkey',    tags: ['Apparel', 'Leather', 'Textiles'],         desc: 'Vertically Integrated Apparel & Textiles' },
+  { id: 'indonesia', name: 'Indonesia', tags: ['Bamboo', 'Wood', 'Ceramics'],              desc: 'Sustainable Packaging & Custom Homeware' },
+  { id: 'uae',       name: 'UAE',       tags: ['Pharma', 'Supplements', 'Halal Certified'], desc: 'Premium Formulations & Halal Beauty' },
+];
+
+function GlobeLoadingSkeleton() {
   return (
-    <motion.section 
-      id="supply"
-      aria-labelledby="supply-title"
-      className="py-24 bg-[var(--color-bz-surface)] border-y border-[var(--color-bz-border)] relative"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
-      variants={revealVariant}
-    >
-      {/* Live Ticker */}
-      <div className="w-full bg-[var(--color-bz-surface)] border-b border-[var(--color-bz-border)] h-9 overflow-hidden absolute top-0 left-0 flex items-center relative z-20" aria-hidden="true">
-        <div className="absolute inset-y-0 left-0 w-8 md:w-16 bg-gradient-to-r from-[var(--color-bz-surface)] to-transparent z-10 pointer-events-none"></div>
-        <div className="ticker-track">
-          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-            <span key={i} className="text-xs font-body text-[var(--color-bz-text-muted)] flex items-center gap-4">
-              {item}
-              <span className="w-1 h-1 rounded-full bg-[var(--color-bz-border-strong)] ml-4"></span>
-            </span>
-          ))}
-        </div>
-        <div className="absolute inset-y-0 right-0 w-8 md:w-16 bg-gradient-to-l from-[var(--color-bz-surface)] to-transparent z-10 pointer-events-none"></div>
+    <div className="w-full h-full flex items-center justify-center min-h-[400px]" aria-hidden="true">
+      <div className="globe-skeleton w-60 h-60 rounded-full border border-[rgba(184,226,242,0.25)] flex items-center justify-center">
+        <div className="w-48 h-48 rounded-full border border-dashed border-[rgba(184,226,242,0.15)] animate-spin" style={{ animationDuration: '12s' }}></div>
       </div>
-
-      <div className="max-w-[1440px] mx-auto px-6 md:px-16 mt-8">
-        
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-          
-          {/* Left: Copy */}
-          <motion.div variants={revealVariant} className="col-span-1 lg:col-span-5">
-            <div>
-              <h2 className="section-label mb-4">The Supply Network</h2>
-              <p id="supply-title" className="text-3xl md:text-5xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)] mb-6 leading-tight">
-                Quality production outside the trade war zone.
-              </p>
-              <p className="text-lg text-[var(--color-bz-text-muted)] font-body font-light leading-relaxed mb-8">
-                We've audited every factory in the network in person or by verified third party. MOQs start as low as 100 units. You'll hear back within 48 hours or we flag the factory.
-              </p>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 border-b border-[var(--color-bz-border)] pb-4">
-                <Shield className="w-5 h-5 text-[var(--color-bz-teal)] flex-shrink-0" />
-                <h3 className="font-display font-[800] tracking-[-0.5px] text-lg text-[var(--color-bz-text)]">Vetted for founders</h3>
-              </div>
-              
-              <p className="text-sm font-body text-[var(--color-bz-text-faint)] mt-6">
-                Every factory passes business license verification, English comms check, export compliance review, and sample production audit before listing.
-              </p>
-            </div>
-
-            <div className="w-full border border-[var(--color-bz-border)] rounded-xl overflow-hidden bg-[var(--color-bz-surface)] mt-10 grid grid-cols-3 divide-x divide-[var(--color-bz-border)]">
-              {/* STAT CELL 1 */}
-              <div className="py-6 px-4 text-center">
-                <p className="text-2xl md:text-3xl font-bold tabular-nums text-[var(--color-bz-text)] leading-none">500+</p>
-                <p className="text-[10px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-sans">Verified Factories</p>
-              </div>
-
-              {/* STAT CELL 2 */}
-              <div className="py-6 px-4 text-center">
-                <p className="text-2xl md:text-3xl font-bold tabular-nums text-[var(--color-bz-text)] leading-none">3</p>
-                <p className="text-[10px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-sans">Active Regions</p>
-              </div>
-
-              {/* STAT CELL 3 */}
-              <div className="py-6 px-4 text-center">
-                <p className="text-2xl md:text-3xl font-bold tabular-nums text-[var(--color-bz-text)] leading-none">&lt;90s</p>
-                <p className="text-[10px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-sans">Avg. Match Time</p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right: Interactive Map Concept */}
-          <motion.div 
-            variants={revealVariant}
-            className="col-span-1 lg:col-span-7 bg-[var(--color-bz-surface-2)] logistics-grid border border-[var(--color-bz-border)] rounded-2xl p-8 relative overflow-hidden min-h-[500px] flex items-center justify-center"
-          >
-            {/* Abstract World Map Base */}
-            <svg viewBox="0 0 1000 500" className="absolute inset-0 w-full h-full object-cover opacity-[0.05]" fill="currentColor">
-              <path d="M100 100 Q 200 50, 300 150 T 500 100 T 700 200 T 900 150 L 900 400 L 100 400 Z" stroke="var(--color-bz-text)" strokeWidth="2" fill="none" />
-              <circle cx="200" cy="200" r="2" />
-              <circle cx="350" cy="180" r="2" />
-              <circle cx="600" cy="250" r="2" />
-              <circle cx="800" cy="120" r="2" />
-            </svg>
-            
-            {/* Grid Pattern */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-bz-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-bz-border)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.3]"></div>
-
-            {/* Region Pins & Cards */}
-            {REGIONS.map((region, i) => (
-              <motion.div 
-                key={region.name}
-                variants={revealVariant}
-                transition={{ duration: 0.5, delay: 0.3 + (i * 0.15) }}
-                className="absolute group z-10"
-                style={{ top: region.coords.top, left: region.coords.left }}
-                {...cardHoverProps}
-              >
-                {/* Pin marker */}
-                <div className="relative">
-                  <div className="w-4 h-4 bg-[var(--color-bz-teal)] rounded-full flex items-center justify-center cursor-pointer relative z-10 shadow-sm border border-[var(--color-bz-bg)] group-hover:scale-125 transition-transform duration-300">
-                    <div className="w-1.5 h-1.5 bg-[var(--color-bz-bg)] rounded-full"></div>
-                  </div>
-                </div>
-                
-                {/* Info Card (Visible on hover) */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[220px] bg-[var(--color-bz-bg)] border border-[var(--color-bz-border)] rounded-lg shadow-lg p-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200 pointer-events-none z-20">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="font-display font-[800] tracking-tight text-[var(--color-bz-text)]">{region.name}</span>
-                    <Factory className="w-3.5 h-3.5 text-[var(--color-bz-teal)]" />
-                  </div>
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-[var(--color-bz-amber)] mb-2">
-                    {region.specialty}
-                  </div>
-                  <p className="text-xs font-body text-[var(--color-bz-text-muted)] leading-snug">
-                    {region.description}
-                  </p>
-                  
-                  {/* Triangle Arrow */}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[var(--color-bz-border)]"></div>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[2px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[var(--color-bz-bg)]"></div>
-                </div>
-              </motion.div>
-            ))}
-
-          </motion.div>
-
-        </div>
-      </div>
-    </motion.section>
+    </div>
   );
 }
+
+interface RegionCardProps {
+  card: typeof REGION_CARDS[0];
+  isActive: boolean;
+  onHover: () => void;
+  onLeave: () => void;
+}
+
+function RegionCard({ card, isActive, onHover, onLeave }: RegionCardProps) {
+  return (
+    <div
+      tabIndex={0}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      onFocus={onHover}
+      onBlur={onLeave}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onHover();
+        }
+      }}
+      className={`region-card p-5 rounded-xl text-left outline-none ${
+        isActive ? 'region-card-active shadow-sm' : 'border-transparent bg-transparent'
+      }`}
+    >
+      <div className="flex items-center gap-3 mb-2">
+        <div
+          className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+            isActive ? 'bg-[#4A9EBF] scale-125 animate-pulse' : 'bg-[#9C9C96]'
+          }`}
+        />
+        <h3 className="font-mono text-xs uppercase tracking-wider font-bold text-[var(--color-bz-text)]">
+          {card.name}
+        </h3>
+        {isActive && (
+          <span className="text-[#4A9EBF] text-xs font-semibold ml-auto animate-bounce-horizontal">
+            →
+          </span>
+        )}
+      </div>
+      <p className="text-xs text-[var(--color-bz-text-muted)] font-body font-medium mb-3">
+        {card.desc}
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {card.tags.map((tag, i) => (
+          <span
+            key={i}
+            className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-[var(--color-bz-border)] text-[var(--color-bz-text-faint)] bg-white/40"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TickerStrip({ items }: { items: string[] }) {
+  return (
+    <div className="relative flex items-center w-full h-full">
+      <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--color-bz-bg)] to-transparent z-10 pointer-events-none" />
+      <div className="flex items-center whitespace-nowrap ticker-strip gap-8">
+        {[...items, ...items, ...items].map((item, i) => (
+          <span
+            key={i}
+            className="text-[11px] font-mono text-[var(--color-bz-text-muted)] flex items-center gap-4"
+          >
+            {item}
+            <span className="w-1 h-1 rounded-full bg-[var(--color-bz-border-strong)]" />
+          </span>
+        ))}
+      </div>
+      <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--color-bz-bg)] to-transparent z-10 pointer-events-none" />
+    </div>
+  );
+}
+
+export function Supply() {
+  const [activeRegion, setActiveRegion] = useState<string | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const trigger = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: 'top 90%',
+      end: 'top 10%',
+      onUpdate: (self) => {
+        setScrollProgress(self.progress);
+      },
+    });
+
+    return () => {
+      trigger.kill();
+    };
+  }, []);
+
+  return (
+    <section
+      id="supply"
+      aria-labelledby="supply-title"
+      className="relative min-h-screen bg-[var(--color-bz-bg)] overflow-hidden flex flex-col justify-between"
+      ref={sectionRef}
+    >
+      {/* Main Content Grid */}
+      <div className="max-w-[1440px] mx-auto px-6 md:px-16 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 min-h-[90vh] items-center py-16 md:py-24">
+        
+        {/* LEFT COLUMN — Text Content */}
+        <div className="col-span-1 lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
+          <motion.p
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={revealVariant}
+            className="font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--color-bz-text-faint)] mb-4"
+          >
+            The Supply Network
+          </motion.p>
+
+          <motion.h2
+            id="supply-title"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={revealVariant}
+            className="text-[clamp(1.8rem,3.5vw,3rem)] font-serif font-normal leading-[1.1] text-[var(--color-bz-text)] mb-6 tracking-[-0.02em]"
+          >
+            Quality production outside the trade war zone.
+          </motion.h2>
+
+          <motion.p
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={revealVariant}
+            className="text-[var(--color-bz-text-muted)] text-base leading-relaxed max-w-[44ch] mb-8 font-body"
+          >
+            We've spent years auditing factories across emerging manufacturing hubs. We only list partners who communicate clearly, accept reasonable MOQs, and deliver on time.
+          </motion.p>
+
+          {/* Mobile Active Region Tabs Switcher */}
+          <div className="flex lg:hidden border border-[var(--color-bz-border)] rounded-full p-1 bg-white mb-6">
+            {REGION_CARDS.map((card) => (
+              <button
+                key={card.id}
+                onClick={() => setActiveRegion(activeRegion === card.id ? null : card.id)}
+                className={`flex-1 text-center py-2 px-1 rounded-full text-[10px] font-mono transition-all uppercase tracking-wider ${
+                  activeRegion === card.id
+                    ? 'bg-[#1A1A18] text-white font-bold'
+                    : 'text-[var(--color-bz-text-muted)] hover:text-[#1A1A18]'
+                }`}
+              >
+                {card.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Desktop Region Cards List */}
+          <div className="hidden lg:flex flex-col gap-2 mb-8">
+            {REGION_CARDS.map((card) => (
+              <RegionCard
+                key={card.id}
+                card={card}
+                isActive={activeRegion === card.id}
+                onHover={() => setActiveRegion(card.id)}
+                onLeave={() => setActiveRegion(null)}
+              />
+            ))}
+          </div>
+
+          {/* Three Stat Block */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={revealVariant}
+            className="border border-[var(--color-bz-border)] rounded-xl overflow-hidden bg-[var(--color-bz-surface)] grid grid-cols-3 divide-x divide-[var(--color-bz-border)]"
+          >
+            {[
+              { num: '500+',  label: 'Verified Factories' },
+              { num: '3',     label: 'Active Regions' },
+              { num: '<90s',  label: 'Avg. Match Time' },
+            ].map((stat) => (
+              <div key={stat.label} className="py-5 px-3 text-center">
+                <p className="text-xl md:text-2xl font-bold tabular-nums text-[var(--color-bz-text)] leading-none">
+                  {stat.num}
+                </p>
+                <p className="text-[9px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-mono whitespace-nowrap">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* RIGHT COLUMN — R3F Globe Canvas Container */}
+        <div
+          className="col-span-1 lg:col-span-7 relative order-1 lg:order-2 h-[55vw] lg:h-[600px] min-h-[320px] lg:min-h-[500px]"
+          aria-hidden="true"
+        >
+          <Suspense fallback={<GlobeLoadingSkeleton />}>
+            <GlobeScene
+              activeRegion={activeRegion}
+              onRegionHover={setActiveRegion}
+              scrollProgress={scrollProgress}
+            />
+          </Suspense>
+        </div>
+
+      </div>
+
+      {/* FOOTER LIVE TICKER */}
+      <div className="border-t border-[var(--color-bz-border)] bg-[var(--color-bz-surface)] overflow-hidden py-3">
+        <TickerStrip items={TICKER_ITEMS} />
+      </div>
+    </section>
+  );
+}
+export default Supply;

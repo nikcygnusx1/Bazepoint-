@@ -604,4 +604,56 @@ body {
   animation: cursor-glow-pulse 2s ease-in-out infinite;
 }
 
+/* ── Supply Globe Section ─────────────────────────────────────── */
+
+/* Ticker marquee animation */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ticker-strip {
+  animation: marquee 40s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* Globe loading skeleton pulse */
+@keyframes globe-skeleton-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.97); }
+  50%       { opacity: 0.7; transform: scale(1.0);  }
+}
+
+.globe-skeleton {
+  animation: globe-skeleton-pulse 2.2s ease-in-out infinite;
+}
+
+/* Region card — active border glow */
+.region-card-active {
+  border-left: 2px solid var(--color-bz-teal);
+  background: var(--color-bz-surface);
+}
+
+.region-card {
+  border-left: 2px solid transparent;
+  transition: border-color 220ms ease, background 220ms ease;
+  cursor: pointer;
+}
+
+/* drei Html labels — ensure they render above the canvas */
+.drei-html-label {
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  color: var(--color-bz-text-faint);
+}
+
+/* Canvas container — correct blend with page background */
+.globe-canvas-container {
+  mix-blend-mode: normal;
+  isolation: isolate;
+}
+
+
 

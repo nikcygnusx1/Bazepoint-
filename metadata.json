@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "description": "",
+  "name": "Bazepoint",
+  "description": "AI-powered global manufacturer matching and contact automation for physical product founders.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
