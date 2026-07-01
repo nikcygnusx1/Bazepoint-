@@ -16,6 +16,7 @@ export default function HeroCanvas({ isFocused, isSearching, className }: HeroCa
   const workerRef = useRef<Worker | null>(null);
   const transferredRef = useRef(false);
   const cursorRafRef = useRef<number>(0);
+  const visibleRef = useRef(true);
 
   // ── Initialize worker and transfer canvas control ───────────────────────
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function HeroCanvas({ isFocused, isSearching, className }: HeroCa
     // ── IntersectionObserver — pause/resume worker rAF ───────────────────
     const io = new IntersectionObserver(
       ([entry]) => {
+        visibleRef.current = entry.isIntersecting;
         workerRef.current?.postMessage({
           type: 'visibility',
           visible: entry.isIntersecting,
@@ -78,11 +80,13 @@ export default function HeroCanvas({ isFocused, isSearching, className }: HeroCa
 
     // ── rAF-gated cursor relay ───────────────────────────────────────────
     const relayLoop = () => {
-      workerRef.current?.postMessage({
-        type: 'cursor',
-        x: cursorPos.x,
-        y: cursorPos.y,
-      });
+      if (visibleRef.current) {
+        workerRef.current?.postMessage({
+          type: 'cursor',
+          x: cursorPos.x,
+          y: cursorPos.y,
+        });
+      }
       cursorRafRef.current = requestAnimationFrame(relayLoop);
     };
     cursorRafRef.current = requestAnimationFrame(relayLoop);

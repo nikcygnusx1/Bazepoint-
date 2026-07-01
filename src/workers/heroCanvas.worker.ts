@@ -104,7 +104,8 @@ function draw() {
   const dt = 1 / 60; // assume 60fps for consistent animation speed
 
   // Background clear
-  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#F5F4F0';
+  ctx.fillRect(0, 0, W, H);
 
   // Logical coordinates
   const cursorCanvasX = cursorX;
@@ -414,7 +415,7 @@ self.onmessage = (e: MessageEvent) => {
     canvas.width = W * dpr;
     canvas.height = H * dpr;
 
-    ctx = canvas.getContext('2d', { alpha: false }) as OffscreenCanvasRenderingContext2D;
+    ctx = canvas.getContext('2d', { alpha: true }) as OffscreenCanvasRenderingContext2D;
     ctx.scale(dpr, dpr);
 
     ctx.font = `10px 'Satoshi', 'Inter', sans-serif`;

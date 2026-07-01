@@ -1,9 +1,30 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Shield, CheckCircle2, MapPin, ArrowRight, ChevronDown, ChevronUp, Copy, ExternalLink, Mail, Inbox, FileText, Check } from 'lucide-react';
 import { MANUFACTURERS, Manufacturer, HERO_SCENARIO } from '../lib/console-data';
 import { EASE_HERO, revealVariant, cardHoverProps } from '../lib/motion-variants';
 import { createPinnedSequence } from '../lib/use-gsap-scroll';
+
+const SCAN_LINES = [
+  '[00:00.1]  Parsing brief · category: Packaging Systems',
+  '[00:00.3]  Loading MENA supplier index · 287 records',
+  '[00:00.6]  Cross-referencing SEA verified network · 213 records',
+  '[00:00.9]  Applying filters · MOQ ≤ 500, budget < $2.00/unit',
+  '[00:01.2]  Audit score pass threshold: 88.0 — 3 suppliers matched ✓',
+];
+
+const BOOT_SEQUENCE = [
+  "BAZE OS v1.0 — Initializing...",
+  "Loading factory network index...",
+  "MENA region: 312 verified partners ✓",
+  "SEA region: 201 verified partners ✓",
+  "UAE supplement labs: 47 certified ✓",
+  "Quality audit layer: ACTIVE",
+  "MOQ filter engine: ACTIVE",
+  "Email draft module: ACTIVE",
+  "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+  "READY. Describe your product below.",
+];
 
 type ConsoleMode = "hero" | "interactive" | "fragment";
 type FragmentZone = "topbar" | "brief" | "list" | "email";
@@ -29,7 +50,7 @@ interface BazeConsoleProps {
   highlightField?: string | null;
 }
 
-export function BazeConsole({
+export const BazeConsole = React.memo(function BazeConsole({
   mode,
   beat = 1,
   customFactoryName = null,
@@ -52,18 +73,7 @@ export function BazeConsole({
   const bootTerminalRef = useRef<HTMLDivElement>(null);
   const consoleUIRef = useRef<HTMLDivElement>(null);
 
-  const BOOT_SEQUENCE = useMemo(() => [
-    "BAZE OS v1.0 — Initializing...",
-    "Loading factory network index...",
-    "MENA region: 312 verified partners ✓",
-    "SEA region: 201 verified partners ✓",
-    "UAE supplement labs: 47 certified ✓",
-    "Quality audit layer: ACTIVE",
-    "MOQ filter engine: ACTIVE",
-    "Email draft module: ACTIVE",
-    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-    "READY. Describe your product below.",
-  ], []);
+
 
   useEffect(() => {
     if (mode !== 'interactive') return;
@@ -124,7 +134,7 @@ export function BazeConsole({
       clearTimeout(timer);
       if (scrollTriggerInstance) scrollTriggerInstance.kill();
     };
-  }, [mode, bootComplete, BOOT_SEQUENCE]);
+  }, [mode, bootComplete]);
 
   // Mobile View Toggle: 'list' or 'draft'
   const [activeMobileTab, setActiveMobileTab] = useState<'list' | 'draft'>('list');
@@ -201,13 +211,13 @@ export function BazeConsole({
   }, [mode, beat, customFactoryName, manufacturers, scenario, highlightRow, interactiveActiveId]);
 
   // Handle active row click
-  const handleSelectRow = (id: string) => {
+  const handleSelectRow = useCallback((id: string) => {
     if (mode === 'hero' || mode === 'fragment') return; 
     if (onSelectManufacturer) {
       onSelectManufacturer(id);
       setActiveMobileTab('draft');
     }
-  };
+  }, [mode, onSelectManufacturer]);
 
   // Status message in the top-right corner
   const statusInfo = useMemo(() => {
@@ -337,15 +347,7 @@ The Bazepoint Team`;
       return;
     }
 
-    const SCAN_LINES = [
-      '[00:00.1]  Parsing brief · category: Packaging Systems',
-      '[00:00.3]  Loading MENA supplier index · 287 records',
-      '[00:00.6]  Cross-referencing SEA verified network · 213 records',
-      '[00:00.9]  Applying filters · MOQ ≤ 500, budget < $2.00/unit',
-      '[00:01.2]  Audit score pass threshold: 88.0 — 3 suppliers matched ✓',
-    ];
-
-    if (shouldReduceMotion) {
+if (shouldReduceMotion) {
       setDisplayedLines(SCAN_LINES);
       return;
     }
@@ -369,20 +371,20 @@ The Bazepoint Team`;
   }, [beat, mode, shouldReduceMotion]);
 
   // Clipboard copy handler
-  const handleCopyEmail = () => {
+  const handleCopyEmail = useCallback(() => {
     if (!emailDraftData) return;
     navigator.clipboard.writeText(emailDraftData.body);
     setCopiedText(true);
     setTimeout(() => setCopiedText(false), 2000);
-  };
+  }, [emailDraftData]);
 
   // Gmail prefill window open
-  const handleGmailOpen = () => {
+  const handleGmailOpen = useCallback(() => {
     if (!selectedManufacturer || !emailDraftData) return;
     const emailTo = 'sourcing@' + selectedManufacturer.name.toLowerCase().replace(/\s+/g, '') + '.com';
     const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailTo}&su=${encodeURIComponent(emailDraftData.subject)}&body=${encodeURIComponent(emailDraftData.body)}`;
     window.open(url, '_blank');
-  };
+  }, [selectedManufacturer, emailDraftData]);
 
   const briefTags = useMemo(() => {
     if (mode === 'hero') return scenario.briefTags;
@@ -1033,4 +1035,4 @@ The Bazepoint Team`;
       </div>
     </div>
   );
-}
+});
