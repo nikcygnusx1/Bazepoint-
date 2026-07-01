@@ -56,6 +56,7 @@ let ctx: OffscreenCanvasRenderingContext2D | null = null;
 let W = 0, H = 0;
 let dpr = 1;
 let cursorX = -999, cursorY = -999;
+let cursorDirty = false;
 let isFocused = false;
 let isSearching = false;
 let isVisible = true;
@@ -111,6 +112,11 @@ function draw() {
   const cursorCanvasX = cursorX;
   const cursorCanvasY = cursorY;
 
+  // ── Dirty flag guard ──────────────────────────────────
+  if (cursorDirty) {
+    cursorDirty = false;
+  }
+
   // ── Draw cursor glow ───────────────────────────────────────────────────
   if (quality !== 'low' && cursorCanvasX > 0 && cursorCanvasX < W && cursorCanvasY > 0 && cursorCanvasY < H) {
     if (Math.abs(cursorCanvasX - lastGlowX) > 4 || Math.abs(cursorCanvasY - lastGlowY) > 4 || cachedGlowGradient === null) {
@@ -151,15 +157,20 @@ function draw() {
   const ideaBaseY = H * IDEA_PY;
   
   if (quality !== 'low') {
-    const idx = ideaBaseX - cursorCanvasX;
-    const idy = ideaBaseY - cursorCanvasY;
-    const idist = Math.sqrt(idx * idx + idy * idy);
+    if (cursorDirty) {
+      const idx = ideaBaseX - cursorCanvasX;
+      const idy = ideaBaseY - cursorCanvasY;
+      const idist = Math.sqrt(idx * idx + idy * idy);
 
-    if (idist < REPULSION_RADIUS && idist > 0) {
-      const force = (1 - idist / REPULSION_RADIUS) * 20; 
-      const angle = Math.atan2(idy, idx);
-      ideaRepulsion.rx = Math.cos(angle) * force;
-      ideaRepulsion.ry = Math.sin(angle) * force;
+      if (idist < REPULSION_RADIUS && idist > 0) {
+        const force = (1 - idist / REPULSION_RADIUS) * 20; 
+        const angle = Math.atan2(idy, idx);
+        ideaRepulsion.rx = Math.cos(angle) * force;
+        ideaRepulsion.ry = Math.sin(angle) * force;
+      } else {
+        ideaRepulsion.rx = lerp(ideaRepulsion.rx, 0, REPULSION_DECAY);
+        ideaRepulsion.ry = lerp(ideaRepulsion.ry, 0, REPULSION_DECAY);
+      }
     } else {
       ideaRepulsion.rx = lerp(ideaRepulsion.rx, 0, REPULSION_DECAY);
       ideaRepulsion.ry = lerp(ideaRepulsion.ry, 0, REPULSION_DECAY);
@@ -202,15 +213,20 @@ function draw() {
     const baseY = H * node.py + driftY;
 
     if (quality !== 'low') {
-      const dx = baseX - cursorCanvasX;
-      const dy = baseY - cursorCanvasY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (cursorDirty) {
+        const dx = baseX - cursorCanvasX;
+        const dy = baseY - cursorCanvasY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist < REPULSION_RADIUS && dist > 0) {
-        const force = (1 - dist / REPULSION_RADIUS) * REPULSION_FORCE;
-        const angle = Math.atan2(dy, dx);
-        repulsion[i].rx = Math.cos(angle) * force;
-        repulsion[i].ry = Math.sin(angle) * force;
+        if (dist < REPULSION_RADIUS && dist > 0) {
+          const force = (1 - dist / REPULSION_RADIUS) * REPULSION_FORCE;
+          const angle = Math.atan2(dy, dx);
+          repulsion[i].rx = Math.cos(angle) * force;
+          repulsion[i].ry = Math.sin(angle) * force;
+        } else {
+          repulsion[i].rx = lerp(repulsion[i].rx, 0, REPULSION_DECAY);
+          repulsion[i].ry = lerp(repulsion[i].ry, 0, REPULSION_DECAY);
+        }
       } else {
         repulsion[i].rx = lerp(repulsion[i].rx, 0, REPULSION_DECAY);
         repulsion[i].ry = lerp(repulsion[i].ry, 0, REPULSION_DECAY);
@@ -445,8 +461,11 @@ self.onmessage = (e: MessageEvent) => {
   }
 
   if (type === 'cursor') {
-    cursorX = e.data.x;
-    cursorY = e.data.y;
+    if (cursorX !== e.data.x || cursorY !== e.data.y) {
+      cursorX = e.data.x;
+      cursorY = e.data.y;
+      cursorDirty = true;
+    }
   }
 
   if (type === 'state') {
