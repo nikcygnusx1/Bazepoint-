@@ -13,8 +13,8 @@ export function CustomCursor() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const orbSpringX = useSpring(mouseX, { stiffness: 800, damping: 35 });
-  const orbSpringY = useSpring(mouseY, { stiffness: 800, damping: 35 });
+  const orbSpringX = useSpring(mouseX, { stiffness: 600, damping: 32 });
+  const orbSpringY = useSpring(mouseY, { stiffness: 600, damping: 32 });
 
   const auraSpringX = useSpring(mouseX, { stiffness: 120, damping: 28 });
   const auraSpringY = useSpring(mouseY, { stiffness: 120, damping: 28 });
@@ -40,29 +40,33 @@ export function CustomCursor() {
       cursorPos.y = e.clientY;
     };
 
+    let pendingCursorState: CursorState = 'default';
+    let cursorStateRafId: number | null = null;
+
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
+      let newState: CursorState = 'default';
       const ctaEl = target.closest('[data-cursor="cta"]');
-      if (ctaEl) {
-        setCursorState('cta');
-        return;
+      if (ctaEl) { newState = 'cta'; }
+      else {
+        const dragEl = target.closest('[data-cursor="drag"]');
+        if (dragEl) { newState = 'drag'; }
+        else {
+          const hoverEl = target.closest('a, button, [data-cursor="hover"]');
+          if (hoverEl) { newState = 'hover'; }
+        }
       }
 
-      const dragEl = target.closest('[data-cursor="drag"]');
-      if (dragEl) {
-        setCursorState('drag');
-        return;
-      }
+      pendingCursorState = newState;
 
-      const hoverEl = target.closest('a, button, [data-cursor="hover"]');
-      if (hoverEl) {
-        setCursorState('hover');
-        return;
+      if (cursorStateRafId === null) {
+        cursorStateRafId = requestAnimationFrame(() => {
+          setCursorState(pendingCursorState);
+          cursorStateRafId = null;
+        });
       }
-
-      setCursorState('default');
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -71,6 +75,7 @@ export function CustomCursor() {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseover', handleMouseOver);
+      if (cursorStateRafId !== null) cancelAnimationFrame(cursorStateRafId);
     };
   }, [mouseX, mouseY]);
 

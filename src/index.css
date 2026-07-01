@@ -655,5 +655,92 @@ body {
   isolation: isolate;
 }
 
+/* ── Performance compositor hints ──────────────────────────────────── */
 
+/*
+  Canvas element: promote to its own GPU layer so the browser's
+  compositor doesn't re-composite the entire page when it repaints.
+  The OffscreenCanvas renders in a separate thread; this ensures
+  the result is blitted to a dedicated compositing layer.
+*/
+canvas[aria-hidden="true"] {
+  will-change: contents;
+  contain: strict;
+}
+
+/*
+  ScrollProgress bar: it updates on every scroll tick.
+  Promoting to its own layer prevents it from invalidating
+  the paint of any other element on scroll.
+*/
+[data-scroll-progress],
+.scroll-progress-bar {
+  will-change: transform;
+  contain: layout style;
+}
+
+/*
+  Custom cursor elements: they move on every mousemove.
+  Fixed position, z-index 9999 — already likely on their own
+  layer in modern browsers, but this guarantees it.
+*/
+[class*="cursor"] {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/*
+  Magnetic motion elements: any element using Framer Motion
+  spring-based translate. The transform property changes on
+  every spring frame. GPU layer promotion eliminates per-frame
+  paint cost.
+*/
+[data-cursor="cta"],
+[data-cursor="hover"],
+[data-cursor="drag"] {
+  will-change: transform;
+}
+
+/*
+  Sticky header: promoted to its own layer so its
+  backdrop-filter blur doesn't force full-page compositing.
+*/
+header[class*="sticky"],
+header[class*="fixed"] {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/*
+  Animated section entrance elements: Framer Motion applies
+  opacity/transform changes during scroll reveals.
+  contain: content prevents layout recalculation from leaking
+  outside each section during entrance animations.
+*/
+section {
+  contain: content;
+}
+
+/*
+  Reduce motion: ensure all will-change hints are removed for
+  users who prefer no motion, preventing unnecessary GPU layer
+  allocation for a static experience.
+*/
+@media (prefers-reduced-motion: reduce) {
+  canvas[aria-hidden="true"],
+  [data-scroll-progress],
+  .scroll-progress-bar,
+  [class*="cursor"],
+  [data-cursor="cta"],
+  [data-cursor="hover"],
+  [data-cursor="drag"],
+  header[class*="sticky"],
+  header[class*="fixed"] {
+    will-change: auto;
+    contain: none;
+  }
+  section {
+    contain: none;
+  }
+}
 

@@ -69,17 +69,11 @@ export default function App() {
 
     // Bridge Lenis scroll events to GSAP ScrollTrigger ticker loop
     if (lenisInstance) {
-      // Manual ScrollTrigger update on Lenis scroll event
-      lenisInstance.on('scroll', () => {
-        ScrollTrigger.update();
-      });
-
       // Centralized animation frame updates via GSAP ticker
       const tickUpdate = (time: number) => {
         lenisInstance.raf(time * 1000);
       };
       gsap.ticker.add(tickUpdate);
-      gsap.ticker.lagSmoothing(0);
 
       // Save references for potential cleanup
       (window as any)._gsapTickUpdate = tickUpdate;

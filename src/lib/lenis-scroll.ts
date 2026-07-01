@@ -17,7 +17,10 @@ export function initLenis(): Lenis {
     wheelMultiplier: 0.9,
     touchMultiplier: 1.5,
     infinite: false,
-  });
+    syncToGSAP: false,
+  } as any); // using `as any` because syncToGSAP might not be officially typed in this older version of lenis depending on definition
+
+  document.body.style.willChange = 'transform';
 
   return lenisInstance;
 }
@@ -27,6 +30,7 @@ export function getLenis(): Lenis | null {
 }
 
 export function destroyLenis(): void {
+  document.body.style.willChange = '';
   lenisInstance?.destroy();
   lenisInstance = null;
 }
