@@ -11,6 +11,7 @@ import { Enemy } from './components/Enemy';
 import { FinalPush } from './components/FinalPush';
 import { Footer } from './components/Footer';
 import { initScrollTrigger } from './lib/use-gsap-scroll';
+import { CustomCursor } from './components/CustomCursor';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -61,6 +62,7 @@ export default function App() {
         className="min-h-screen bg-[var(--color-bz-bg)] text-[var(--color-bz-text)] font-sans selection:bg-bz-teal-light selection:text-bz-teal overflow-x-hidden"
         key="main"
       >
+        <CustomCursor />
         <ScrollProgress />
         <Header />
         <main>

@@ -9,6 +9,7 @@ import { createPinnedSequence, splitTextToSpans, createCharParticleTimeline } fr
 export function Hero() {
   const { scrollY } = useScroll();
   const indicatorOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const ghostY = useTransform(scrollY, [0, 600], [0, -80]);
 
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -88,11 +89,12 @@ export function Hero() {
       animate="visible"
       className="relative pt-[120px] pb-[80px] min-h-[90vh] flex items-center overflow-hidden bg-bz-bg"
     >
-      {/* Hero canvas — absolutely fills the section, pointer-events none */}
+      {/* Hero canvas — absolutely fills the section, pointer-events-auto for hover detection */}
       <div
         ref={canvasWrapperRef}
-        className="absolute inset-0 z-[1] pointer-events-none"
+        className="absolute inset-0 z-[1] pointer-events-auto"
         aria-hidden="true"
+        data-cursor="drag"
       >
         <HeroCanvas
           isFocused={isInputFocused}
@@ -122,13 +124,37 @@ export function Hero() {
             <span>AI Sourcing Agent</span>
           </motion.div>
           
-          <h1 
-            ref={heroHeadlineRef}
-            id="hero-title" 
-            className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-serif font-normal text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] mb-6"
-          >
-            Your product idea meets the <em className="italic">right factory.</em> In minutes, not months.
-          </h1>
+          <div className="relative mb-6 w-full">
+            {/* Ghost headline — parallax depth layer */}
+            <motion.h1
+              aria-hidden="true"
+              className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-serif font-normal tracking-[-1px] md:tracking-[-3px] hero-ghost-headline"
+              style={{
+                y: ghostY,
+                color: 'transparent',
+                WebkitTextStroke: '1px rgba(184,226,242,0.12)',
+                x: 2,
+                filter: 'blur(0.4px)',
+                userSelect: 'none',
+                pointerEvents: 'none',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                zIndex: -1,
+              }}
+            >
+              Your product idea meets the <em className="italic">right factory.</em> In minutes, not months.
+            </motion.h1>
+
+            <h1 
+              ref={heroHeadlineRef}
+              id="hero-title" 
+              className="text-[clamp(2rem,6vw,4rem)] leading-[1.05] font-serif font-normal text-[#B8E2F2] tracking-[-1px] md:tracking-[-3px] relative z-10"
+            >
+              Your product idea meets the <em className="italic">right factory.</em> In minutes, not months.
+            </h1>
+          </div>
           
           <motion.p 
             ref={heroBodyRef}

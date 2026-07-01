@@ -567,4 +567,41 @@ body {
   }
 }
 
+/* ── Custom Cursor System ────────────────────────────────────── */
+
+/* Hide native cursor globally when custom cursor is active      */
+/* The CustomCursor component injects this via a <style> tag     */
+/* This class-based version is a fallback for SSR safety         */
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Aura spin animation for drag state */
+@keyframes cursor-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.cursor-aura-spin {
+  animation: cursor-spin 3s linear infinite;
+}
+
+/* Ghost headline text effect — ensure no text selection bleed */
+.hero-ghost-headline {
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Cursor glow pulse — applied to the orb on CTA state */
+@keyframes cursor-glow-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(184,226,242,0.4); }
+  50%       { box-shadow: 0 0 24px rgba(184,226,242,0.7),
+                           0 0 48px rgba(184,226,242,0.2); }
+}
+
+.cursor-orb-cta {
+  animation: cursor-glow-pulse 2s ease-in-out infinite;
+}
+
 

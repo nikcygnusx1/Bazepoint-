@@ -16,11 +16,54 @@ export function useMagnetic(strength: number = 0.35) {
     if (isTouch) return;
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
+
+    if (ref.current) {
+      ref.current.setAttribute('data-cursor', 'hover');
+    }
+
     x.set((e.clientX - (rect.left + rect.width  / 2)) * strength);
     y.set((e.clientY - (rect.top  + rect.height / 2)) * strength);
   }
 
   function onMouseLeave() {
+    if (ref.current) {
+      ref.current.removeAttribute('data-cursor');
+    }
+    x.set(0);
+    y.set(0);
+  }
+
+  return { ref, springX, springY, onMouseMove, onMouseLeave };
+}
+
+export function useMagneticCTA(strength: number = 0.5) {
+  const ref = useRef<HTMLElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 200, damping: 15 });
+  const springY = useSpring(y, { stiffness: 200, damping: 15 });
+
+  // Check for touch device — disable magnetic on touch
+  const isTouch = typeof window !== 'undefined'
+    && window.matchMedia('(hover: none)').matches;
+
+  function onMouseMove(e: React.MouseEvent<HTMLElement>) {
+    if (isTouch) return;
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    if (ref.current) {
+      ref.current.setAttribute('data-cursor', 'cta');
+    }
+
+    x.set((e.clientX - (rect.left + rect.width  / 2)) * strength);
+    y.set((e.clientY - (rect.top  + rect.height / 2)) * strength);
+  }
+
+  function onMouseLeave() {
+    if (ref.current) {
+      ref.current.removeAttribute('data-cursor');
+    }
     x.set(0);
     y.set(0);
   }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { cursorPos } from './CustomCursor';
 
 interface HeroCanvasProps {
   isFocused: boolean;
@@ -64,6 +65,14 @@ export default function HeroCanvas({ isFocused, isSearching, className }: HeroCa
     }))
   );
 
+  // Repulsion offsets for factory nodes
+  const repulsionRef = useRef<Array<{ rx: number; ry: number }>>(
+    NODE_DEFS.map(() => ({ rx: 0, ry: 0 }))
+  );
+
+  // Repulsion offset for central IDEA node
+  const ideaRepulsionRef = useRef({ rx: 0, ry: 0 });
+
   // Packet progress [0..1] per edge, initialized at staggered offsets
   const packetProgressRef = useRef([0.0, 0.18, 0.35, 0.52, 0.67, 0.83]);
 
@@ -102,6 +111,29 @@ export default function HeroCanvas({ isFocused, isSearching, className }: HeroCa
 
     ctx.clearRect(0, 0, W, H);
 
+    // Canvas bounding rect for cursor coordinate conversion
+    const rect = canvas.getBoundingClientRect();
+    const cursorCanvasX = (cursorPos.x - rect.left) * (W / rect.width);
+    const cursorCanvasY = (cursorPos.y - rect.top)  * (H / rect.height);
+
+    // ── Draw cursor glow ───────────────────────────────────────────────────
+    if (
+      cursorCanvasX > 0 && cursorCanvasX < W &&
+      cursorCanvasY > 0 && cursorCanvasY < H
+    ) {
+      const glowGradient = ctx.createRadialGradient(
+        cursorCanvasX, cursorCanvasY, 0,
+        cursorCanvasX, cursorCanvasY, 70
+      );
+      glowGradient.addColorStop(0, 'rgba(184, 226, 242, 0.08)');
+      glowGradient.addColorStop(0.5, 'rgba(184, 226, 242, 0.03)');
+      glowGradient.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(cursorCanvasX, cursorCanvasY, 70, 0, Math.PI * 2);
+      ctx.fillStyle = glowGradient;
+      ctx.fill();
+    }
+
     // ── Lerp state toward targets ──────────────────────────────────────────
     const targetEdgeOpacity   = isFocused || isSearching ? 0.32 : 0.18;
     const targetPacketOpacity = isFocused || isSearching ? 1.0  : 0.7;
@@ -113,17 +145,37 @@ export default function HeroCanvas({ isFocused, isSearching, className }: HeroCa
     state.packetSpeed   = lerp(state.packetSpeed,    targetPacketSpeed,   0.06);
     state.pulseFreq     = lerp(state.pulseFreq,      targetPulseFreq,     0.06);
 
-    // ── Compute node positions with drift ─────────────────────────────────
-    const ideaX = W * IDEA_PX;
-    const ideaY = H * IDEA_PY;
+    const REPULSION_RADIUS = 80;   // px — nodes within this radius are pushed
+    const REPULSION_FORCE  = 28;   // max px of displacement at center
+    const REPULSION_DECAY  = 0.08; // lerp factor back to zero per frame
+
+    // ── Repulsion for central IDEA node ────────────────────────────────────
+    const ideaBaseX = W * IDEA_PX;
+    const ideaBaseY = H * IDEA_PY;
+    const idx = ideaBaseX - cursorCanvasX;
+    const idy = ideaBaseY - cursorCanvasY;
+    const idist = Math.sqrt(idx * idx + idy * idy);
+
+    if (idist < REPULSION_RADIUS && idist > 0) {
+      const force = (1 - idist / REPULSION_RADIUS) * 20; // 20px max force for central IDEA hub
+      const angle = Math.atan2(idy, idx);
+      ideaRepulsionRef.current.rx = Math.cos(angle) * force;
+      ideaRepulsionRef.current.ry = Math.sin(angle) * force;
+    } else {
+      ideaRepulsionRef.current.rx = lerp(ideaRepulsionRef.current.rx, 0, REPULSION_DECAY);
+      ideaRepulsionRef.current.ry = lerp(ideaRepulsionRef.current.ry, 0, REPULSION_DECAY);
+    }
+
+    const ideaX = ideaBaseX + ideaRepulsionRef.current.rx;
+    const ideaY = ideaBaseY + ideaRepulsionRef.current.ry;
 
     // Initialize control points once
     if (controlPointsRef.current.length === 0) {
       controlPointsRef.current = NODE_DEFS.map((node) => {
         const nx = W * node.px;
         const ny = H * node.py;
-        const mx = (ideaX + nx) / 2;
-        const my = (ideaY + ny) / 2;
+        const mx = (ideaBaseX + nx) / 2;
+        const my = (ideaBaseY + ny) / 2;
         return {
           cx: mx + (Math.random() * 80 - 40),
           cy: my + (Math.random() * 60 - 30),
@@ -131,13 +183,34 @@ export default function HeroCanvas({ isFocused, isSearching, className }: HeroCa
       });
     }
 
+    // ── Compute node positions with drift and repulsion ──────────────────
     const nodePositions = NODE_DEFS.map((node, i) => {
       const drift = driftPhasesRef.current[i];
-      const baseX = W * node.px;
-      const baseY = H * node.py;
       const driftX = Math.sin(elapsed * drift.freq * Math.PI * 2 + drift.px) * 3;
       const driftY = Math.cos(elapsed * drift.freq * Math.PI * 2 + drift.py) * 3;
-      return { x: baseX + driftX, y: baseY + driftY, label: node.label };
+      const baseX = W * node.px + driftX;
+      const baseY = H * node.py + driftY;
+
+      // Repulsion from cursor
+      const dx = baseX - cursorCanvasX;
+      const dy = baseY - cursorCanvasY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < REPULSION_RADIUS && dist > 0) {
+        const force = (1 - dist / REPULSION_RADIUS) * REPULSION_FORCE;
+        const angle = Math.atan2(dy, dx);
+        repulsionRef.current[i].rx = Math.cos(angle) * force;
+        repulsionRef.current[i].ry = Math.sin(angle) * force;
+      } else {
+        repulsionRef.current[i].rx = lerp(repulsionRef.current[i].rx, 0, REPULSION_DECAY);
+        repulsionRef.current[i].ry = lerp(repulsionRef.current[i].ry, 0, REPULSION_DECAY);
+      }
+
+      return {
+        x: baseX + repulsionRef.current[i].rx,
+        y: baseY + repulsionRef.current[i].ry,
+        label: node.label
+      };
     });
 
     // ── Draw ghost nodes ───────────────────────────────────────────────────
