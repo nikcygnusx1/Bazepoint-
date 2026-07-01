@@ -234,7 +234,7 @@ export function BazeConsole({
     if (!selectedManufacturer) return null;
     const nameParts = selectedManufacturer.name.split(' ');
     const shortName = (nameParts[0] || selectedManufacturer.name) + ' Team';
-    const cleanBrief = activeBrief.trim() || '[your product brief here]';
+    const cleanBrief = activeBrief.trim() || 'Premium skincare packaging · MOQ 500 · Indonesia';
 
     const subject = selectedManufacturer.emailDraft.subject;
     const body = `Hi ${shortName},
@@ -249,7 +249,7 @@ Could you share your current pricing, minimum order quantities, and lead times f
 Looking forward to hearing from you.
 
 Best,
-[Your Name]`;
+The Bazepoint Team`;
 
     return { subject, body };
   }, [selectedManufacturer, activeBrief]);
@@ -339,8 +339,8 @@ Best,
 
     const SCAN_LINES = [
       '[00:00.1]  Parsing brief · category: Packaging Systems',
-      '[00:00.3]  Loading MENA supplier index · 412 records',
-      '[00:00.6]  Cross-referencing SEA verified network · 218 records',
+      '[00:00.3]  Loading MENA supplier index · 287 records',
+      '[00:00.6]  Cross-referencing SEA verified network · 213 records',
       '[00:00.9]  Applying filters · MOQ ≤ 500, budget < $2.00/unit',
       '[00:01.2]  Audit score pass threshold: 88.0 — 3 suppliers matched ✓',
     ];
@@ -538,7 +538,7 @@ Best,
             <p>Hi AlGhazal team,</p>
             <p>I came across your profile on Bazepoint. We are looking to source high-quality glass dropper bottles for a 500-unit pilot run...</p>
             <p>Could you confirm pricing and standard Q3 capacity metrics?</p>
-            <p className="text-[var(--bz-console-text-faint)] italic">[Your Name]</p>
+            <p className="text-[var(--bz-console-text-faint)] italic">The Bazepoint Team</p>
           </div>
         </div>
       );
@@ -686,7 +686,7 @@ Best,
                 className="mt-2.5 font-console text-[10px] italic text-left"
                 style={{ color: 'var(--bz-console-text-faint)' }}
               >
-                → Baze will search 847 verified suppliers across MENA & SEA
+                → Baze will search 500+ verified factories across MENA & SEA
               </motion.p>
             )}
 

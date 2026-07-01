@@ -22,7 +22,13 @@ export default function App() {
 
   useEffect(() => {
     // Initialize Lenis smooth scroll
-    const lenisInstance = initLenis();
+    let lenisInstance: any = undefined;
+    const isTouchPrimary = window.matchMedia(
+      '(hover: none) and (pointer: coarse)'
+    ).matches;
+    if (!isTouchPrimary) {
+      lenisInstance = initLenis();
+    }
 
     // Register ScrollTrigger and central GSAP configurations
     gsap.registerPlugin(ScrollTrigger);

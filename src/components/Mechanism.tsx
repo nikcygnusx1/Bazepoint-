@@ -121,7 +121,7 @@ export function Mechanism() {
       <div className="max-w-[1440px] mx-auto px-6 md:px-16 relative z-10 w-full flex-grow flex flex-col justify-center">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 id="mechanism-title" className="section-label justify-center mb-4">How it works</h2>
-          <p className="text-3xl md:text-4xl font-display font-[800] tracking-[-1px] text-[var(--color-bz-text)]">
+          <p className="text-3xl md:text-4xl font-display font-serif font-[800] tracking-[-1px] text-[var(--color-bz-text)]">
             Stop searching Alibaba.<br />Start building.
           </p>
         </div>

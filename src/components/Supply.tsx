@@ -210,22 +210,33 @@ export function Supply() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={revealVariant}
-            className="border border-[var(--color-bz-border)] rounded-xl overflow-hidden bg-[var(--color-bz-surface)] grid grid-cols-3 divide-x divide-[var(--color-bz-border)]"
           >
-            {[
-              { num: '500+',  label: 'Verified Factories' },
-              { num: '3',     label: 'Active Regions' },
-              { num: '<90s',  label: 'Avg. Match Time' },
-            ].map((stat) => (
-              <div key={stat.label} className="py-5 px-3 text-center">
-                <p className="text-xl md:text-2xl font-bold tabular-nums text-[var(--color-bz-text)] leading-none">
-                  {stat.num}
+            <div className="mt-10 grid grid-cols-3 divide-x divide-[var(--color-bz-border)] border border-[var(--color-bz-border)] rounded-xl overflow-hidden bg-[var(--color-bz-surface)]">
+              <div className="py-6 px-4 text-center">
+                <p className="text-2xl md:text-3xl font-bold tabular-nums leading-none text-[var(--color-bz-text)]">
+                  500+
                 </p>
-                <p className="text-[9px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-mono whitespace-nowrap">
-                  {stat.label}
+                <p className="text-[10px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-sans">
+                  Verified Factories
                 </p>
               </div>
-            ))}
+              <div className="py-6 px-4 text-center">
+                <p className="text-2xl md:text-3xl font-bold tabular-nums leading-none text-[var(--color-bz-text)]">
+                  3
+                </p>
+                <p className="text-[10px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-sans">
+                  Active Regions
+                </p>
+              </div>
+              <div className="py-6 px-4 text-center">
+                <p className="text-2xl md:text-3xl font-bold tabular-nums leading-none text-[var(--color-bz-text)]">
+                  &lt;90s
+                </p>
+                <p className="text-[10px] uppercase tracking-wider mt-2 text-[var(--color-bz-text-faint)] font-sans">
+                  Avg. Match Time
+                </p>
+              </div>
+            </div>
           </motion.div>
         </div>
 
